@@ -1,0 +1,19 @@
+.BackButtonLogin {
+    position: absolute;
+    display: inline-block;
+    left: 15px;
+    top: 15px;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    padding: 0.3em 0.9em;
+    background-color: transparent;
+    font-weight: 500;
+    font-size: 0.95em;
+    cursor: pointer;
+    transform: scale(1.5);
+    -webkit-app-region: no-drag;
+}
+
+.BackButtonLogin:hover {
+    transform: scale(1.75);
+}

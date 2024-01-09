@@ -1,0 +1,17 @@
+.ForgotPassButton {
+    border-radius: 25px;
+    border: 1px solid transparent;
+    margin-top: 25px;
+    padding: 0.9em 1.5em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: transparent;
+    cursor: pointer;
+    transition: border-color 0.25s;
+    -webkit-app-region: no-drag;
+}
+
+.ForgotPassButton:hover{
+    color: #6F2DA8;
+}

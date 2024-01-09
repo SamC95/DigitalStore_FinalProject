@@ -1,0 +1,39 @@
+.StartButton {
+    border-radius: 0px;
+    border: 1px solid transparent;
+    border-top: transparent;
+    border-right: transparent;
+    border-left: transparent;
+    margin-top: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+    padding: 0.9em 1.5em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: transparent;
+    cursor: pointer;
+    transition: border-color 0.25s;
+    -webkit-app-region: no-drag;
+}
+
+    .StartButton:hover {
+        border-color: #6F2DA8;
+        animation: bubble 0.2s ease-in-out;
+        transform: scale(1.2);
+    }
+
+    .StartButton:focus,
+    .StartButton:focus-visible {
+        outline: none;
+    }
+
+@keyframes bubble {
+    0% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(1.2);
+    }
+}

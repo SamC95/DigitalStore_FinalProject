@@ -1,0 +1,10 @@
+.LoginTitle {
+    position: relative;
+    display: inline;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.LoginTitle:hover {
+    transform: scale(2.0);
+}

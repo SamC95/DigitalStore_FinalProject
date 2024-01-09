@@ -1,0 +1,5 @@
+.ErrorText {
+    position: relative;
+    color: red;
+    min-height: auto;
+}

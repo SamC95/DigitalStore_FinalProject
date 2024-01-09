@@ -1,0 +1,19 @@
+.Maximise {
+    position: absolute;
+    display: inline-block;
+    right: 38px;
+    top: 0;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    padding: 0.3em 0.9em;
+    background-color: transparent;
+    font-weight: 500;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: border-color 0.25s;
+    -webkit-app-region: no-drag;
+}
+
+    .Maximise:hover {
+        background-color: rgb(48, 48, 48)
+    }

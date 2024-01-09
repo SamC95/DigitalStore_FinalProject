@@ -1,0 +1,16 @@
+#root {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+    -webkit-app-region: drag;
+}
+
+.card {
+    padding: 2em;
+}
+
+.ForgotPass {
+    margin-top: 75px;
+    color: #888;
+}
