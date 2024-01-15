@@ -5,7 +5,7 @@ import '../Styles/TextBoxIndicator.css'
 import '../Styles/TextStyle.css'
 import '../Styles/ErrorText.css'
 import '../Styles/InputField.css'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
 
 function Login() {
@@ -14,15 +14,17 @@ function Login() {
     const [password, setPassword] = useState("");
     const [loginMsg, setLoginMsg] = useState("");
     const [submitPressed, setSubmitPressed] = useState(false);
-
+    
     const handleClick = () => {
         setSubmitPressed(true)
+    }
 
-        if ((username != "username" || password != "password") && submitPressed == true) {
+    const pageChange = () => {
+        if (username != "username" && password != "password" && submitPressed == true) {
             setLoginMsg("Username or password is incorrect")
         }
-    }
-   
+    } 
+    
     return (
         <>
         <button className='BackButtonLogin' onClick={() => navigate('/')}>
@@ -57,9 +59,9 @@ function Login() {
             </label>
         </div>
         <div>
-            <button className='StartButton' onClick={handleClick}>
-                Submit
-            </button>
+            <Link onClick={pageChange} to={{ pathname: '/store-main-page'}}>
+                <button className='StartButton' onClick={(handleClick)}>Submit</button>
+            </Link>
         </div>
         <p className='ErrorText'>
             {loginMsg}

@@ -9,6 +9,7 @@ import '../Styles/ControllerLogo.css'
 function Start() {
     const navigate = useNavigate()
 
+    window.resizeTo(450, 600)
 
     return (
         <>

@@ -11,9 +11,11 @@
     font-size: 0.95em;
     cursor: pointer;
     transition: border-color 0.25s;
+    z-index: 1;
+    pointer-events: auto;
     -webkit-app-region: no-drag;
 }
 
 .Minimise:hover {
-    background-color: rgb(48, 48, 48)
+    background-color: rgb(48, 48, 48);
 }

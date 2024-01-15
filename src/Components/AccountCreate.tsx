@@ -11,9 +11,13 @@ import { useState } from 'react';
 function AccountCreate() {
     const navigate = useNavigate()
     const [username, setUsername] = useState("");
+    const [emailAddress, setEmailAddress] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPass, setConfirmPass] = useState("");
     const [loginMsg, setLoginMsg] = useState("");
     const [submitPressed, setSubmitPressed] = useState(false);
+
+    window.resizeTo(450, 800)
 
     const handleClick = () => {
         setSubmitPressed(true)
@@ -46,6 +50,16 @@ function AccountCreate() {
                     />
                 </label>
             </div>
+            <div className='EmailAddress'>
+                <label className='TextBoxIndicator'>
+                    Email Address
+                    <input className='InputField'
+                        type="text"
+                        value={emailAddress}
+                        onChange={(e) => setEmailAddress(e.target.value)}
+                    />
+                </label>
+            </div>
             <div className='Password'>
                 <label className='TextBoxIndicator'>
                     Password
@@ -53,6 +67,16 @@ function AccountCreate() {
                         type="text"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                    />
+                </label>
+            </div>
+            <div className='ConfirmPass'>
+                <label className='TextBoxIndicator'>
+                    Confirm Password
+                    <input className='InputField'
+                        type="text"
+                        value={confirmPass}
+                        onChange={(e) => setConfirmPass(e.target.value)}
                     />
                 </label>
             </div>

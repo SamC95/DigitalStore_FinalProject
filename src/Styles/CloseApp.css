@@ -10,9 +10,11 @@
     font-size: 0.95em;
     cursor: pointer;
     transition: border-color 0.25s;
+    z-index: 1;
+    pointer-events: auto;
     -webkit-app-region: no-drag;
 }
 
 .CloseButton:hover {
-    background-color: firebrick
+    background-color: firebrick;
 }
