@@ -1,5 +1,6 @@
 .CloseButton {
     position: absolute;
+    z-index: 1;
     right: 0;
     top: 0;
     border: 1px solid transparent;
@@ -9,12 +10,12 @@
     font-weight: 500;
     font-size: 0.95em;
     cursor: pointer;
-    transition: border-color 0.25s;
-    z-index: 1;
+    transition: background-color 0.25s;
     pointer-events: auto;
     -webkit-app-region: no-drag;
 }
 
 .CloseButton:hover {
     background-color: firebrick;
+    z-index: 2;
 }

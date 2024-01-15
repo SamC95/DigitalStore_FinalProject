@@ -1,4 +1,5 @@
 import './App.tsx';
+import ApplicationButtons from './ApplicationButtons.tsx';
 import '../Styles/backButtonLogin.css'
 import '../Styles/LoginTitle.css'
 import '../Styles/TextBoxIndicator.css'
@@ -27,6 +28,7 @@ function Login() {
     
     return (
         <>
+        <ApplicationButtons/>
         <button className='BackButtonLogin' onClick={() => navigate('/')}>
             {String.fromCharCode(8592)}
         </button>

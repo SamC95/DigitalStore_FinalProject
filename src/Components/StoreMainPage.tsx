@@ -5,6 +5,8 @@ function StoreMainPage() {
     window.resizeTo(1850, 1150)
     
     return (
+        
+
         <div>
             <NavBar/>
         </div>

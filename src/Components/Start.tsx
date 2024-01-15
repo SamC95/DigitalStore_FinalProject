@@ -1,6 +1,7 @@
 import controllerLogo from '../assets/8002123.png'
 import { useNavigate } from 'react-router-dom'
 import './App.tsx'
+import ApplicationButtons from './ApplicationButtons.tsx'
 import '../Styles/StartButton.css'
 import '../Styles/ForgotPassButton.css'
 import '../Styles/CloseApp.css'
@@ -13,6 +14,7 @@ function Start() {
 
     return (
         <>
+        <ApplicationButtons/>
             <div>
                 <a>
                     <img src={controllerLogo} className="logo" alt="logo" />
