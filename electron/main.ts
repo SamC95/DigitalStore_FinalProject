@@ -38,6 +38,10 @@ function createWindow() {
         maximizable: false,
     })
 
+    function centerWindow() {
+        win?.center
+    }
+
     // Test active push message to Renderer-process.
     win.webContents.on('did-finish-load', () => {
         win?.webContents.send('main-process-message', (new Date).toLocaleString())
@@ -86,4 +90,12 @@ ipcMain.on("maximiseApp", () => {
 
 ipcMain.on("closeApp", () => {
     win?.close();
+});
+
+ipcMain.on("resizeWindow", (event, dimensions) => {
+    win?.setSize(dimensions.width, dimensions.height)
+});
+
+ipcMain.on("centerWindow", () => {
+    win?.center();
 })

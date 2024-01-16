@@ -56,7 +56,7 @@ function AccountCreate() {
                 <label className='TextBoxIndicator'>
                     Email Address
                     <input className='InputField'
-                        type="text"
+                        type="email"
                         value={emailAddress}
                         onChange={(e) => setEmailAddress(e.target.value)}
                     />
@@ -66,7 +66,7 @@ function AccountCreate() {
                 <label className='TextBoxIndicator'>
                     Password
                     <input className='InputField'
-                        type="text"
+                        type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
@@ -76,7 +76,7 @@ function AccountCreate() {
                 <label className='TextBoxIndicator'>
                     Confirm Password
                     <input className='InputField'
-                        type="text"
+                        type="password"
                         value={confirmPass}
                         onChange={(e) => setConfirmPass(e.target.value)}
                     />
