@@ -8,6 +8,7 @@ import '../Styles/ErrorText.css'
 import '../Styles/InputField.css'
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { ipcRenderer } from 'electron';
 
 function AccountCreate() {
     const navigate = useNavigate()
@@ -18,7 +19,8 @@ function AccountCreate() {
     const [loginMsg, setLoginMsg] = useState("");
     const [submitPressed, setSubmitPressed] = useState(false);
 
-    window.resizeTo(450, 800)
+    // Resizes the window using the ipcMain function in main.ts
+    ipcRenderer.send('resizeWindow', {width: 450, height: 800})
 
     const handleClick = () => {
         setSubmitPressed(true)

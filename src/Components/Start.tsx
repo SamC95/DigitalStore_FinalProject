@@ -6,11 +6,15 @@ import '../Styles/StartButton.css'
 import '../Styles/ForgotPassButton.css'
 import '../Styles/CloseApp.css'
 import '../Styles/ControllerLogo.css'
+import { ipcRenderer } from 'electron'
 
 function Start() {
     const navigate = useNavigate()
 
-    window.resizeTo(450, 600)
+    // Resizes the window using the ipcMain function in main.ts
+    // For when the user returns to the page later, such as pressing back from create account or login sections
+    ipcRenderer.send('resizeWindow', {width: 450, height: 600})
+    ipcRenderer.send('centerWindow')
 
     return (
         <>

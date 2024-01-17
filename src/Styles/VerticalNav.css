@@ -1,0 +1,24 @@
+.verticalNav {
+    position: fixed;
+    right: 85%;
+    left: 2.5%;
+    height: 100vh;
+    top: 100px;
+    background-color: transparent;
+    pointer-events: auto;
+    -webkit-app-region: no-drag;
+}
+
+.verticalNav_li {
+    font-size: 0.800em;
+    color: #fff
+}
+
+.verticalNav_li:hover {
+    color: #7F00FF
+}
+
+h4 {
+    color: #7F00FF	
+}
+  

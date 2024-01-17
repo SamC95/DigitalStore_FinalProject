@@ -36,11 +36,9 @@ function createWindow() {
         focusable: true, // Allows draggable window without disabling buttons and other elements
         minimizable: true,
         maximizable: false,
+        resizable: true,
     })
 
-    function centerWindow() {
-        win?.center
-    }
 
     // Test active push message to Renderer-process.
     win.webContents.on('did-finish-load', () => {
@@ -98,4 +96,8 @@ ipcMain.on("resizeWindow", (event, dimensions) => {
 
 ipcMain.on("centerWindow", () => {
     win?.center();
+})
+
+ipcMain.on("defineMinSize", (event, dimensions) => {
+    win?.setMinimumSize(dimensions.width, dimensions.height)
 })

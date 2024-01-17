@@ -18,7 +18,7 @@
 }
 
     .StartButton:hover {
-        border-color: #6F2DA8;
+        border-color: #7F00FF;
         animation: bubble 0.2s ease-in-out;
         transform: scale(1.2);
     }

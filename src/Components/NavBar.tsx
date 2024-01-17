@@ -4,6 +4,7 @@ import '../Styles/NavBar.css'
 
 const NavBar = () => {
     
+    // ApplicationButtons is used to ensure that the close, minimise and maximise buttons are included as part of the NavBar
     return (
         <>
         <nav>
