@@ -1,0 +1,13 @@
+.igdb-logo {
+    background-color: transparent;
+    border: solid 1px transparent;
+    height: 4.5rem;
+    cursor: pointer;
+    -webkit-app-region: no-drag;
+    transition: ease-in 0.25s;
+    padding: auto;
+}
+
+.igdb-logo:hover {
+    filter: drop-shadow(0 0 1em #6F2DA8)
+}

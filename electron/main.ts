@@ -1,6 +1,9 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import path from 'node:path'
 
+const ACCESS_KEY = '6yslyuaibilxznlj7n9i0osewb3lxd';
+const ACCESS_TOKEN = 's527m8w325atvsmuft238gd5xsb7be';
+
 // The built directory structure
 //
 // ├─┬─┬ dist
@@ -25,6 +28,7 @@ function createWindow() {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: true,
             contextIsolation: false
+            // devTools: false, // Prevents the user from opening browser developer mode
         },
         width: 450,
         height: 600,
@@ -73,10 +77,14 @@ app.on('activate', () => {
 
 app.whenReady().then(createWindow)
 
+// Controls the minimise button on the application
 ipcMain.on("minimiseApp", () => {
     win?.minimize();
 });
 
+// Controls the maximise button on the application
+// If the application is already maximised it will instead
+// revert to its unmaximised state
 ipcMain.on("maximiseApp", () => {
     if (win?.isMaximized()) {
         win?.unmaximize();
@@ -86,18 +94,53 @@ ipcMain.on("maximiseApp", () => {
     }
 });
 
+// Controls the close button of the application, this will
+// close the app entirely and end the current run of the program
 ipcMain.on("closeApp", () => {
     win?.close();
 });
 
-ipcMain.on("resizeWindow", (event, dimensions) => {
+// Resizes the window based on specified dimensions
+// to dynamically adjust the size based on the current window
+ipcMain.on("resizeWindow", (_event, dimensions) => {
     win?.setSize(dimensions.width, dimensions.height)
 });
 
+// Re-centers the window to help with the resizing effect
 ipcMain.on("centerWindow", () => {
     win?.center();
 })
 
-ipcMain.on("defineMinSize", (event, dimensions) => {
+// Re-defines the minimum size of the window depending on
+// which window is active
+ipcMain.on("defineMinSize", (_event, dimensions) => {
     win?.setMinimumSize(dimensions.width, dimensions.height)
 })
+
+// Used to open a link to an external website, 
+// uses the user's set default browser
+ipcMain.on("openLink", (_event, link) => {
+    require('electron').shell.openExternal(link)
+})
+
+// API request to IGDB to retrieve data
+ipcMain.handle('api-test', async (_event, data) => {
+    fetch(
+        "https://api.igdb.com/v4/games", 
+        {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Client-ID': ACCESS_KEY,
+                'Authorization': 'Bearer ' + ACCESS_TOKEN,
+            },
+            body: "fields *;"
+        })
+        .then(response => response.json())
+        .then (data => {
+            console.log(data)
+        })
+        .catch(error => {
+            console.error(error)
+        });
+    })
