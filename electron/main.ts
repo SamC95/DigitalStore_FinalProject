@@ -5,6 +5,13 @@ var ACCESS_KEY = "";
 var ACCESS_TOKEN = "";
 
 // Retrieves required data from database file
+/* 
+NOTE - If retrieving from Github, Access.db is NOT included. 
+        Please assign your own access key and token for the IGDB API into an sqlite3 .db file 
+        of the same name to gain access to required data.
+
+        This does NOT apply to final project submission where Access.db will be included.
+*/
 async function retrieveAccess() {
     const sqlite3 = require('sqlite3').verbose();
     let db = new sqlite3.Database('./Access.db', sqlite3.OPEN_READWRITE, (error: { message: any; }) => {
@@ -170,6 +177,42 @@ ipcMain.handle('api-test', async (_event) => {
                     'Authorization': 'Bearer ' + ACCESS_TOKEN,
                 },
                 body: "fields *;"
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+            })
+            .catch(error => {
+                console.error(error)
+            });
+    }
+    catch (error) {
+        console.error(error)
+    }
+});
+
+// Handles API request for when the user provides a search request on the store page
+/*
+NOTE : version_parent = null - Removes any separate editions of the same product
+       platforns = (6) - Only retrieve results that are available on PC (Microsoft Windows)
+       keywords != (413) - Removes unofficial games from the retrieved results
+       themes != (42) - Removes explicit material from the retrieved results
+       limit 20 - Limits the amount of retrieved results to 20
+*/
+ipcMain.handle('product-search', async (_event, userSearch) => {
+    try {
+        await retrieveAccess()
+
+        fetch(
+            "https://api.igdb.com/v4/games", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Client-ID': ACCESS_KEY,
+                    'Authorization': 'Bearer ' + ACCESS_TOKEN,
+                },
+                body: "fields *; search " + '"' + userSearch + '";' +
+                "where version_parent = null & platforms = (6) & keywords != (413) & themes != (42); limit 20;"
             })
             .then(response => response.json())
             .then(data => {
