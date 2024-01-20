@@ -1,9 +1,6 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import path from 'node:path'
 
-const ACCESS_KEY = '6yslyuaibilxznlj7n9i0osewb3lxd';
-const ACCESS_TOKEN = 's527m8w325atvsmuft238gd5xsb7be';
-
 // The built directory structure
 //
 // ├─┬─┬ dist
