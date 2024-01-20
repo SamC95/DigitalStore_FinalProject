@@ -1,0 +1,14 @@
+.MagnifyingGlass {
+    background-color: transparent;
+    border: solid 1px transparent;
+    height: 2.2rem;
+    cursor: pointer;
+    -webkit-app-region: no-drag;
+    transition: ease-in 0.25s;
+    padding: auto;
+    display: inline-block;
+}
+
+.MagnifyingGlass:hover {
+    filter: drop-shadow(0 0 1em #6F2DA8)
+}

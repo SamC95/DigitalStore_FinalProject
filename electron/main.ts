@@ -1,8 +1,40 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import path from 'node:path'
 
-const ACCESS_KEY = '6yslyuaibilxznlj7n9i0osewb3lxd';
-const ACCESS_TOKEN = 's527m8w325atvsmuft238gd5xsb7be';
+var ACCESS_KEY = "";
+var ACCESS_TOKEN = "";
+
+// Retrieves required data from database file
+async function retrieveAccess() {
+    const sqlite3 = require('sqlite3').verbose();
+    let db = new sqlite3.Database('./Access.db', sqlite3.OPEN_READWRITE, (error: { message: any; }) => {
+        if (error) {
+            console.error(error.message)
+        }
+        console.log('Connected to the Access database')
+    })
+
+    let sql = 'SELECT ACCESS_KEY, ACCESS_TOKEN FROM AccessData WHERE NAME = "Retrieve_Data"'
+
+    db.all(sql, [], (error: any, rows: any[]) => {
+        if (error) {
+            throw error;
+        }
+        rows.forEach((row: { ACCESS_KEY: any; ACCESS_TOKEN: any; }) => {
+            ACCESS_KEY = row.ACCESS_KEY
+            ACCESS_TOKEN = row.ACCESS_TOKEN
+
+        })
+    })
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            ACCESS_KEY != "";
+            ACCESS_TOKEN != "";
+            resolve({ACCESS_KEY, ACCESS_TOKEN})
+        }, 50)
+    })
+}
+
 
 // The built directory structure
 //
@@ -124,23 +156,30 @@ ipcMain.on("openLink", (_event, link) => {
 })
 
 // API request to IGDB to retrieve data
-ipcMain.handle('api-test', async (_event, data) => {
-    fetch(
-        "https://api.igdb.com/v4/games", 
-        {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Client-ID': ACCESS_KEY,
-                'Authorization': 'Bearer ' + ACCESS_TOKEN,
-            },
-            body: "fields *;"
-        })
-        .then(response => response.json())
-        .then (data => {
-            console.log(data)
-        })
-        .catch(error => {
-            console.error(error)
-        });
-    })
+ipcMain.handle('api-test', async (_event) => {
+    try {
+        await retrieveAccess()
+
+        fetch(
+            "https://api.igdb.com/v4/games",
+            {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Client-ID': ACCESS_KEY,
+                    'Authorization': 'Bearer ' + ACCESS_TOKEN,
+                },
+                body: "fields *;"
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+            })
+            .catch(error => {
+                console.error(error)
+            });
+    }
+    catch (error) {
+        console.error(error)
+    }
+});
