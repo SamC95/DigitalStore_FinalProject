@@ -7,13 +7,14 @@ import '../Styles/TextStyle.css'
 import '../Styles/ErrorText.css'
 import '../Styles/InputField.css'
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { SetStateAction, useState } from 'react';
 import { ipcRenderer } from 'electron';
 
 function AccountCreate() {
     const navigate = useNavigate()
     const [username, setUsername] = useState("");
     const [emailAddress, setEmailAddress] = useState("");
+    const [isEmailValid, setEmailValid] = useState(false)
     const [password, setPassword] = useState("");
     const [confirmPass, setConfirmPass] = useState("");
     const [loginMsg, setLoginMsg] = useState("");
@@ -22,11 +23,59 @@ function AccountCreate() {
     // Resizes the window using the ipcMain function in main.ts
     ipcRenderer.send('resizeWindow', {width: 450, height: 800})
 
-    const handleClick = () => {
+    // Ensures that the username must be at least 3 characters long and checks that the field is not empty on submit
+    const validUsernameLength = username.length >= 3;
+    const usernameNotEmpty = username.length > 0;
+
+    // Ensures that the username cannot include numbers or special characters -- DEVNOTE: Maybe change to allow numbers?
+    const validUsername =  /^[a-zA-Z-]+$/.test(username);
+
+    // Checks that the password is long enough and that the Password and Confirm Password fields match
+    const validPassLength = password.length >= 8;
+    const passwordMatch = (password == confirmPass);
+
+    // Updates the email address value and then checks that it is of a valid format
+    const checkEmailInput = (event: { target: { value: SetStateAction<string>; }; }) => {
+        setEmailAddress(event.target.value)
+        setSubmitPressed(false)
+
+        const emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+        setEmailValid(emailFormat.test(event.target.value as string))
+    }
+
+    const handleClick = (event: { preventDefault: () => void; }) => {
         setSubmitPressed(true)
 
-        if ((username != "username" || password != "password") && submitPressed == true) {
-            setLoginMsg("Username or password is incorrect")
+        pageChange(event)
+    }
+
+    const pageChange = (event: { preventDefault: () => void; }) => {
+        if (!validUsername && submitPressed == true) {
+            event.preventDefault()
+            setLoginMsg("Username cannot contain numbers or special characters")
+        }
+        else if ((!validUsernameLength || !usernameNotEmpty) && submitPressed == true) {
+            event.preventDefault()
+            setLoginMsg("Username must be at least 3 characters long")
+        }
+        else if (!validPassLength && submitPressed == true) {
+            event.preventDefault()
+            setLoginMsg("Password must be at least 8 characters long")
+        }
+        else if (!passwordMatch && submitPressed == true) {
+            event.preventDefault()
+            setLoginMsg("Passwords must match")
+        }
+        else if (!isEmailValid) {
+            event.preventDefault()
+            setLoginMsg("Email Address is not a valid format")
+        }
+        else {
+            setLoginMsg("")
+            
+            ipcRenderer.invoke("account-create", username, emailAddress, password)
+
+            navigate('/')
         }
     }
 
@@ -60,7 +109,7 @@ function AccountCreate() {
                     <input className='InputField'
                         type="email"
                         value={emailAddress}
-                        onChange={(e) => setEmailAddress(e.target.value)}
+                        onChange={checkEmailInput}
                     />
                 </label>
             </div>
@@ -85,9 +134,7 @@ function AccountCreate() {
                 </label>
             </div>
             <div>
-                <button className='StartButton' onClick={handleClick}>
-                    Submit
-                </button>
+                <button className='StartButton' onClick={handleClick}>Submit</button>
             </div>
             <p className='ErrorText'>
                 {loginMsg}
