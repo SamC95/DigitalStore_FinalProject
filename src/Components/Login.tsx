@@ -8,29 +8,49 @@ import '../Styles/ErrorText.css'
 import '../Styles/InputField.css'
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { ipcRenderer } from 'electron';
 
 function Login() {
     const navigate = useNavigate()
+
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [loginMsg, setLoginMsg] = useState("");
-    const [submitPressed, setSubmitPressed] = useState(false);
+
+    var validLogin = false;
+
+    const usernameNotEmpty = username.length > 0
+    const passwordNotEmpty = password.length > 0
     
-    const handleClick = () => {
-        setSubmitPressed(true)
+    const handleClick = async (event: { preventDefault: () => void; }) => {
+        const validUser = ipcRenderer.invoke('login-details', username, password)
 
-        pageChange(username, password)
-    }
-
-    const pageChange = (username: string, password: string) => {
-        if ((username == "username" || password == "password") && submitPressed == true) {
-            navigate('/store-main-page')
+        if (await validUser) {
+            validLogin = true
         }
         else {
-            setLoginMsg("Incorrect username or password")
+            validLogin = false
+        }
+
+        pageChange(event)
+    }
+
+    const pageChange = (event: { preventDefault: () => void; }) => {
+        if ((!usernameNotEmpty || !passwordNotEmpty)) {
+            event.preventDefault()
+            setLoginMsg("Username or Password field is empty")
+        }
+        else if ((!validLogin)) {
+            event.preventDefault()
+            setLoginMsg("Username or password is incorrect")
+        }
+        else {
+            setLoginMsg("")
+
+            navigate('/store-main-page')
         }
     } 
-    
+
     return (
         <>
         <ApplicationButtons/>

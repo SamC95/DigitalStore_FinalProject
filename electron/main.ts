@@ -4,8 +4,9 @@ import path from 'node:path'
 var ACCESS_KEY = "";
 var ACCESS_TOKEN = "";
 
-// Retrieves required data from database file
 /* 
+Retrieves required data to be able to make an API call from database file
+
 NOTE - If project has been downloaded from Github, Access.db is NOT included. 
         Please assign your own access key and token for the IGDB API into an sqlite3 .db file 
         of the same name to gain access to required data.
@@ -50,8 +51,8 @@ async function accountCreation(username: any, emailAddress: any, password: any) 
     const hashedPassword = await bcrypt.hash(password, hashSalt);
 
     // Opens the account database so that the user details can be added to it 
-    const sqplite3 = require('sqlite3').verbose();
-    let accountDatabase = new sqplite3.Database('./AccountDatabase.db', sqplite3.OPEN_READWRITE, (error: { message: any; }) => {
+    const sqlite3 = require('sqlite3').verbose();
+    let accountDatabase = new sqlite3.Database('./AccountDatabase.db', sqlite3.OPEN_READWRITE, (error: { message: any; }) => {
         if (error) {
             console.error(error.message)
         }
@@ -115,6 +116,81 @@ async function generateUserID(accountDatabase: { get: (arg0: string, arg1: numbe
     return newId;
 }
 
+async function retrieveDetails(username: any, emailAddress: any) {
+    // Pre-requisite of sqlite3
+    const sqlite3 = require('sqlite3').verbose()
+
+    return new Promise((resolve, reject) => {
+        // Opens account database
+        let accountDatabase = new sqlite3.Database('./AccountDatabase.db', sqlite3.OPEN_READWRITE, (error: { message: any; }) => {
+            if (error) {
+                console.error(error.message)
+            }
+            console.log('Connected to the Account database')
+
+
+            let sql = 'SELECT Username, EmailAddress FROM Users WHERE Username = ? OR EmailAddress = ?';
+
+            accountDatabase.get(sql, [username, emailAddress], (error: { message: any; }, row: any) => {
+                if (error) {
+                    console.error(error.message);
+                    reject(error.message)
+                }
+                else {
+                    const userExists = !!row;
+
+                    resolve(userExists)
+                }
+
+                accountDatabase.close()
+            });
+        });
+    });
+}
+
+async function checkLoginDetails(username: any, password: any) {
+    const sqlite3 = require('sqlite3').verbose()
+    const bcrypt = require('bcrypt')
+
+    return new Promise((resolve, reject) => {
+        let accountDatabase = new sqlite3.Database('./AccountDatabase.db', sqlite3.OPEN_READWRITE, (error: { message: any; }) => {
+            if (error) {
+                console.error(error.message)
+            }
+            console.log('Connected to the Account database')
+
+            let sql = 'SELECT Username, Password FROM Users WHERE Username = ?';
+
+            accountDatabase.get(sql, [username], async (error: { message: any; }, row: any) => {
+                if (error) {
+                    console.error(error.message)
+                    reject(error.message)
+                }
+                else {
+                    if (row) {
+                        const hashedPassword = row.Password;
+
+                        try {
+                            const doesPasswordMatch = await bcrypt.compare(password, hashedPassword);
+
+                            resolve(doesPasswordMatch);
+                        }
+                        catch (bcryptError: any) {
+                            console.error('Error validating details: ', bcryptError)
+                            reject(bcryptError.message)
+                        }
+                    }
+                    else {
+                        resolve(false)
+                    }
+                }
+
+                accountDatabase.close()
+            })
+        })
+    })
+}
+
 // The built directory structure
 //
 // ├─┬─┬ dist
@@ -138,8 +214,8 @@ function createWindow() {
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: true,
-            contextIsolation: false
-            // devTools: false, // Prevents the user from opening browser developer mode
+            contextIsolation: false,
+            devTools: false, // Prevents the user from opening browser developer mode
         },
         width: 450,
         height: 600,
@@ -299,9 +375,45 @@ ipcMain.handle('product-search', async (_event, userSearch) => {
     }
 });
 
+// Handles the account creation process
 ipcMain.handle('account-create', async (_event, username, emailAddress, password) => {
     try {
         await accountCreation(username, emailAddress, password)
+    }
+    catch (error) {
+        console.error(error)
+    }
+})
+
+// Used to check that the username and email address do not already exist in the database
+ipcMain.handle('check-details', async (_event, username, emailAddress) => {
+    try {
+        const userExists = await retrieveDetails(username, emailAddress)
+        console.log(userExists)
+
+        if (userExists) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    catch (error) {
+        console.error(error)
+    }
+})
+
+ipcMain.handle('login-details', async (_event, username, password) => {
+    try {
+        const validUser = await checkLoginDetails(username, password)
+        console.log(validUser)
+
+        if (validUser) {
+            return true
+        }
+        else {
+            return false
+        }
     }
     catch (error) {
         console.error(error)

@@ -13,12 +13,15 @@ import { ipcRenderer } from 'electron';
 function AccountCreate() {
     const navigate = useNavigate()
     const [username, setUsername] = useState("");
+
     const [emailAddress, setEmailAddress] = useState("");
     const [isEmailValid, setEmailValid] = useState(false)
+
     const [password, setPassword] = useState("");
     const [confirmPass, setConfirmPass] = useState("");
+
     const [loginMsg, setLoginMsg] = useState("");
-    const [submitPressed, setSubmitPressed] = useState(false);
+    var detailsTaken = false;
 
     // Resizes the window using the ipcMain function in main.ts
     ipcRenderer.send('resizeWindow', {width: 450, height: 800})
@@ -35,40 +38,52 @@ function AccountCreate() {
     const passwordMatch = (password == confirmPass);
 
     // Updates the email address value and then checks that it is of a valid format
-    const checkEmailInput = (event: { target: { value: SetStateAction<string>; }; }) => {
+    const checkEmailInput = async (event: { target: { value: any }; }) => {
         setEmailAddress(event.target.value)
-        setSubmitPressed(false)
 
         const emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
-        setEmailValid(emailFormat.test(event.target.value as string))
+        setEmailValid(emailFormat.test(event.target.value))
     }
 
-    const handleClick = (event: { preventDefault: () => void; }) => {
-        setSubmitPressed(true)
+    const handleClick = async (event: { preventDefault: () => void; }) => {
+        if (isEmailValid && validUsername) {
+            const userExists = await ipcRenderer.invoke('check-details', username, emailAddress)
+ 
+            if (userExists) {
+             detailsTaken = true;
+            }
+            else {
+             detailsTaken = false
+            }
+         }
 
         pageChange(event)
     }
 
     const pageChange = (event: { preventDefault: () => void; }) => {
-        if (!validUsername && submitPressed == true) {
-            event.preventDefault()
-            setLoginMsg("Username cannot contain numbers or special characters")
-        }
-        else if ((!validUsernameLength || !usernameNotEmpty) && submitPressed == true) {
+        if ((!validUsernameLength || !usernameNotEmpty)) {
             event.preventDefault()
             setLoginMsg("Username must be at least 3 characters long")
         }
-        else if (!validPassLength && submitPressed == true) {
+        else if (!validUsername) {
+            event.preventDefault()
+            setLoginMsg("Username cannot contain numbers or special characters")
+        }
+        else if (!validPassLength) {
             event.preventDefault()
             setLoginMsg("Password must be at least 8 characters long")
         }
-        else if (!passwordMatch && submitPressed == true) {
+        else if (!passwordMatch) {
             event.preventDefault()
             setLoginMsg("Passwords must match")
         }
         else if (!isEmailValid) {
             event.preventDefault()
             setLoginMsg("Email Address is not a valid format")
+        }
+         else if (detailsTaken) {
+             event.preventDefault()
+             setLoginMsg("This username or email address is already taken")
         }
         else {
             setLoginMsg("")
