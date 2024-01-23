@@ -1,6 +1,6 @@
 .logo {
     height: 10em;
-    padding: 1.5em;
+    padding: 0.5em;
     will-change: filter;
     transition: filter 300ms;
     -webkit-app-region: no-drag;

@@ -8,7 +8,7 @@ import { useLocation } from 'react-router-dom';
 interface Game {
     id: number;
     name: string;
-    releaseDate: string;
+    releaseDate: Date;
     cover: string;
     image_id: string;
 }
@@ -40,7 +40,8 @@ const SearchResults = () => {
                     <li key={game.id}>
                         <img className='gameImage' src={"//images.igdb.com/igdb/image/upload/t_cover_big/" + game.image_id + ".jpg"} alt={'Cover for ' + game.name}/>
                         <p className='gameTitle'>{game.name}</p>
-                        <p className='gameReleaseDate'>{game.releaseDate ? game.releaseDate : "Coming Soon"}</p>
+                        <p className='gameReleaseDate'>{game.releaseDate? `Release Date: ${new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' })
+                                                        .format(new Date(game.releaseDate * 1000))}`: "Release Date: TBA"}</p>
                     </li>
                 ))
                 ) : (

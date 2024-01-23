@@ -1,7 +1,7 @@
 import searchIcon from '../assets/4475396.png'
 import '../Styles/SearchDiv.css'
 import { ipcRenderer } from 'electron';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SearchResults from './SearchResults';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,6 +12,7 @@ interface Game {
     cover: string;
     image_id: string;
 }
+
 
 const SearchBar = () => {
     const navigate = useNavigate()
@@ -50,12 +51,6 @@ const SearchBar = () => {
                 setGameList(updatedGameList)
             }
 
-            if (searchInput != "") {
-                setTimeout(() => {
-                    console.log(gameList)
-                    navigate('/search-results', {state: {gameList}})
-                }, 1000);
-            }
         }
         catch (error) {
             console.error(error)
@@ -64,6 +59,13 @@ const SearchBar = () => {
             setSearching(false)
         }
     }
+
+    useEffect(() => {
+        if (searchInput !== "" && gameList.length > 0) {
+            console.log(gameList)
+            navigate('/search-results', {state: { gameList }})
+        }
+    }, [gameList, searchInput, navigate]);
 
     return (
         <>
