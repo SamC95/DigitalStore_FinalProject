@@ -1,0 +1,46 @@
+.searchResultsDiv {
+    position: absolute;
+    top: 250px;
+    left: 250px;
+    width: 1000px;
+    display: inline-block;
+    z-index: -1;
+    
+}
+
+.customh3 {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: xx-large;
+}
+
+.gameTitle {
+    display: inline;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: xx-large;
+    padding: 5%
+}
+
+.gameReleaseDate {
+    display: inline-block;
+    padding: 2%
+}
+
+.gameImage {
+    position: relative;
+    display: inline-block;
+    height: 200px;
+    width: 150px;
+    border-radius: 10px;
+}
+
+ul {
+    list-style: none;
+    padding: none;
+}
+
+ul li {
+    position: relative;
+    border: 3px solid #6F2DA8;
+    border-radius: 30px;
+    padding-top: 10px;
+}

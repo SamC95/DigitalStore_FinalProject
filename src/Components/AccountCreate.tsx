@@ -7,7 +7,7 @@ import '../Styles/TextStyle.css'
 import '../Styles/ErrorText.css'
 import '../Styles/InputField.css'
 import { useNavigate } from 'react-router-dom';
-import { SetStateAction, useState } from 'react';
+import { useState } from 'react';
 import { ipcRenderer } from 'electron';
 
 function AccountCreate() {

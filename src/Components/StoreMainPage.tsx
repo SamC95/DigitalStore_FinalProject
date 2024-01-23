@@ -3,7 +3,6 @@ import NavBar from './NavBar.tsx'
 import VerticalNav from './VerticalNav.tsx';
 import SearchBar from './SearchBar.tsx';
 import { ipcRenderer } from 'electron';
-import { useState } from 'react';
 
 function StoreMainPage() {
     // Resizes the window and centers it using the ipcMain functions in main.ts

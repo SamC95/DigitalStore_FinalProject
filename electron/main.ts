@@ -215,7 +215,7 @@ function createWindow() {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: true,
             contextIsolation: false,
-            devTools: false, // Prevents the user from opening browser developer mode
+            // devTools: false, // Prevents the user from opening browser developer mode
         },
         width: 450,
         height: 600,
@@ -351,7 +351,7 @@ ipcMain.handle('product-search', async (_event, userSearch) => {
     try {
         await retrieveAccess()
 
-        fetch(
+        const response = await fetch(
             "https://api.igdb.com/v4/games", {
             method: 'POST',
             headers: {
@@ -360,20 +360,64 @@ ipcMain.handle('product-search', async (_event, userSearch) => {
                 'Authorization': 'Bearer ' + ACCESS_TOKEN,
             },
             body: "fields *; search " + '"' + userSearch + '";' +
-                "where version_parent = null & platforms = (6) & keywords != (413) & themes != (42); limit 20;"
+                "where version_parent = null & platforms = (6) & keywords != (413, 24124, 27185, 1603, 2004) & themes != (42); limit 20;"
         })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data)
+
+        if (!response.ok) {
+            throw new Error('Error Status: ' + response.status)
+        }
+
+        const data = await response.json();
+
+        const gameList = data.map((game: {
+            cover: any; first_release_date: any; id: any; name: any;
+        }) => ({
+                id: game.id,
+                name: game.name,
+                releaseDate: game.first_release_date,
+                cover: game.cover
+            }));
+
+        console.log(data)
+        return Promise.resolve(gameList);
+        }
+        catch (error) {
+            console.error(error);
+        }
+    })
+
+ipcMain.handle('get-covers', async (_event, game) => {
+    try {
+        console.log(game)
+
+        const response = await fetch(
+            "https://api.igdb.com/v4/covers", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Client-ID': ACCESS_KEY,
+                    'Authorization': 'Bearer ' + ACCESS_TOKEN,
+                },
+                body: "fields image_id;" +
+                "where game = " + game + ";" 
             })
-            .catch(error => {
-                console.error(error)
-            });
+
+            const coverData = await response.json();
+
+            const imageList = coverData.map((imageData: {
+                image_id: any;
+            }) => ({
+                    imageId: imageData.image_id
+                }));
+
+            console.log(imageList)
+            return Promise.resolve(imageList)
     }
     catch (error) {
         console.error(error)
     }
-});
+})
+
 
 // Handles the account creation process
 ipcMain.handle('account-create', async (_event, username, emailAddress, password) => {
