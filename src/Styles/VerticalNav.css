@@ -1,25 +1,30 @@
 .verticalNav {
     position: absolute;
     height: 100vh;
-    top: 25%;
+    top: 15%;
     left: 10%;
     background-color: transparent;
     pointer-events: auto;
     -webkit-app-region: no-drag;
     transform: translate(-50%);
     z-index: -1;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 .verticalNav_li {
     font-size: 0.800em;
-    color: #fff
+    color: #fff;
+    background-color: transparent;
+    border-color: transparent;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    cursor: pointer;
 }
 
 .verticalNav_li:hover {
-    color: #7F00FF
+    color: #7F00FF;
 }
 
 h4 {
-    color: #7F00FF	
+    color: #fff
 }
   

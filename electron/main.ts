@@ -386,6 +386,46 @@ ipcMain.handle('product-search', async (_event, userSearch) => {
         }
     })
 
+ipcMain.handle('genre-search', async (_event, selectedGenre) => {
+    try {
+        await retrieveAccess() 
+        console.log(selectedGenre)
+
+        const response = await fetch(
+            "https://api.igdb.com/v4/games", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Client-ID': ACCESS_KEY,
+                    'Authorization': 'Bearer ' + ACCESS_TOKEN,
+                },
+                body: `fields *;
+                where total_rating > 85 & genres = (${selectedGenre}) & version_parent = null & platforms = (6) & keywords != (413, 24124, 27185, 1603, 2004) & themes != (42); limit 50;`
+            })
+
+            if (!response.ok) {
+                throw new Error('Error Status: ' + response.status)
+            }
+
+            const retrievedData = await response.json();
+
+            const gameList = retrievedData.map((game: {
+                cover: any; first_release_date: any; id: any; name: any;
+            }) => ({
+                id: game.id,
+                name: game.name,
+                releaseDate: game.first_release_date,
+                cover: game.cover
+            }));
+        
+        console.log(retrievedData)
+        return Promise.resolve(gameList)
+    }
+    catch (error) {
+        console.error(error)
+    }
+}) 
+
 ipcMain.handle('get-covers', async (_event, game) => {
     try {
         console.log(game)
