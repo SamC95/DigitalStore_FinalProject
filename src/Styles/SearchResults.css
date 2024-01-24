@@ -1,7 +1,7 @@
 .searchResultsDiv {
     position: absolute;
-    top: 250px;
-    left: 250px;
+    top: 20%;
+    left: 20%;
     width: 1000px;
     display: inline-block;
     z-index: -1;
@@ -40,6 +40,19 @@
     box-sizing: border-box;
 }
 
+.backgroundImage {
+    position: absolute;
+    padding: 20px;
+    left: 75px;
+    display: inline-block;
+    height: 250px;
+    width: 188px;
+    border-radius: 30px;
+    box-sizing: border-box;
+    filter: blur(0px);
+    transition: filter 0.3s ease;
+}
+
 ul {
     list-style: none;
     padding: none;
@@ -55,8 +68,8 @@ ul li {
     margin-bottom: 10px;
 }
 
-ul li:hover .gameImage {
-    filter: drop-shadow(5px 5px 5px #6F2DA8);
+ul li:hover .backgroundImage {
+    filter: blur(16px)
 }
 
 ul li:hover .gameTitle {

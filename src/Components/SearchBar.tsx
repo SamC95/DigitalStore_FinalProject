@@ -36,7 +36,7 @@ const SearchBar = () => {
                     const coverData = await ipcRenderer.invoke('get-covers', game.id)
                     console.log(coverData)
 
-                    if (coverData.length > 0) {
+                    if (Array.isArray(coverData) && coverData.length > 0) {
                         return {
                             ...game,
                             image_id: coverData[0].imageId,

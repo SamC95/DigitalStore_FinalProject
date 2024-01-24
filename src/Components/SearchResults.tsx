@@ -21,6 +21,8 @@ const SearchResults = () => {
         console.log("Received game list: ", gameList)
     }, [gameList]);
 
+
+    // Two images, one main image and one that displays blurred behind it on mouseover for a mouseover effect
     return (
         <>
         <div>
@@ -38,6 +40,7 @@ const SearchResults = () => {
                 {gameList ? (
                     gameList.map((game: any) => (
                     <li key={game.id}>
+                        <img className='backgroundImage' src={"//images.igdb.com/igdb/image/upload/t_cover_big/" + game.image_id + ".jpg"} alt={'Cover for ' + game.name}/>
                         <img className='gameImage' src={"//images.igdb.com/igdb/image/upload/t_cover_big/" + game.image_id + ".jpg"} alt={'Cover for ' + game.name}/>
                         <p className='gameTitle'>{game.name}</p>
                         <p className='gameReleaseDate'>{game.releaseDate? `Release Date: ${new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' })

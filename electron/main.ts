@@ -360,7 +360,7 @@ ipcMain.handle('product-search', async (_event, userSearch) => {
                 'Authorization': 'Bearer ' + ACCESS_TOKEN,
             },
             body: "fields *; search " + '"' + userSearch + '";' +
-                "where version_parent = null & platforms = (6) & keywords != (413, 24124, 27185, 1603, 2004) & themes != (42); limit 20;"
+                "where version_parent = null & platforms = (6) & keywords != (413, 24124, 27185, 1603, 2004) & themes != (42); limit 50;"
         })
 
         if (!response.ok) {

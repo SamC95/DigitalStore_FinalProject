@@ -1,12 +1,13 @@
 .verticalNav {
-    position: fixed;
-    right: 85%;
-    left: 2.5%;
+    position: absolute;
     height: 100vh;
-    top: 100px;
+    top: 25%;
+    left: 10%;
     background-color: transparent;
     pointer-events: auto;
     -webkit-app-region: no-drag;
+    transform: translate(-50%);
+    z-index: -1;
 }
 
 .verticalNav_li {
