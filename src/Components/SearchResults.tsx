@@ -3,17 +3,8 @@ import VerticalNav from './VerticalNav';
 import SearchBar from './SearchBar';
 import '../Styles/SearchResults.css'
 import '../Styles/Loading.css'
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import LoadingBar from './LoadingBar';
-import { useEffect, useState } from 'react';
-import { ipcRenderer } from 'electron';
-
-// Wait function used for implementing delays in the search process so that the
-// API is not reaching a request limit as much as possible (429 error)
-function wait(ms: number) {
-    const start = Date.now();
-    while (Date.now() - start < ms) { }
-}
 
 function SearchResults() {
     const location = useLocation();
