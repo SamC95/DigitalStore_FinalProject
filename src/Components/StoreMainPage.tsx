@@ -14,11 +14,14 @@ function StoreMainPage() {
         <>
         <div>
             <NavBar/>
-            <VerticalNav/>
         </div>
 
         <div>
             <SearchBar/>
+        </div>
+
+        <div className='mainContainer'>
+            <VerticalNav/>
         </div>
         </>
     );

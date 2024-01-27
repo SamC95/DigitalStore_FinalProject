@@ -1,8 +1,9 @@
 import { Link, useNavigate } from 'react-router-dom';
 import '../Styles/VerticalNav.css'
-import { useEffect, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import { ipcRenderer } from 'electron';
 
+// Interface for a game object
 interface Game {
     id: number;
     name: string;
@@ -11,32 +12,40 @@ interface Game {
     image_id: string;
 }
 
+const genreCache: Record<string, Game[]> = {};
+
 const VerticalNav = () => {
     const navigate = useNavigate()
     const [selectedGenre, setSelectedGenre] = useState("")
+    const [searching, setSearching] = useState(false)
     const [gameList, setGameList] = useState<Game[]>([]);
-    const [_searching, setSearching] = useState(false)
-
+    const [buttonPressed, setButtonPressed] = useState(false);
+    
     function updateGenre(genre: string) {
         setSelectedGenre(genre)
     }
 
     function wait(ms: number) {
-       const start = Date.now();
-       while (Date.now() - start < ms) {}
-    }
+        const start = Date.now();
+        while (Date.now() - start < ms) {}
+     }
 
     async function retrieveData() {
-        try {  
+        try {
             setSearching(true)
 
-            const data = await ipcRenderer.invoke('genre-search', selectedGenre)
-            console.log(data)
-
-            if (data.length === 0) {
-                console.log('No data')
+            if (genreCache[selectedGenre]) {
+                console.log('Using cached result for: ', selectedGenre)
+                setGameList(genreCache[selectedGenre])
             }
             else {
+                const data = await ipcRenderer.invoke('genre-search', selectedGenre)
+
+                if (data.length === 0) {
+                    console.log('No data')
+                }
+
+                wait(3000)
                 const updatedGameList = await Promise.all(
                     data.map(async (game: { id: any; }) => {
                         const coverData = await ipcRenderer.invoke('get-covers', game.id)
@@ -55,17 +64,16 @@ const VerticalNav = () => {
                 )
 
                 const filteredGameList = updatedGameList.filter((game) => game !== null)
-
+                genreCache[selectedGenre] = filteredGameList
                 setGameList(filteredGameList)
             }
         }
         catch (error) {
             console.error(error)
-
-            return null
         }
         finally {
             setSearching(false)
+            setButtonPressed(true)
         }
     }
 
@@ -82,11 +90,11 @@ const VerticalNav = () => {
     }, [selectedGenre]);
 
     useEffect(() => {
-        if (selectedGenre !== "" && gameList.length > 0) {
+        if (buttonPressed) {
             console.log(gameList)
-            navigate('/search-results', { state: { gameList } })
+            navigate('/search-results', { state: { gameList, searching } })
         }
-    }, [gameList, selectedGenre, navigate]);
+    }, [gameList, selectedGenre, searching]);
 
     return (
         <>

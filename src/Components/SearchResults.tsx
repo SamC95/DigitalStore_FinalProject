@@ -1,71 +1,62 @@
-import { useEffect, useState } from 'react'
 import NavBar from './NavBar';
 import VerticalNav from './VerticalNav';
 import SearchBar from './SearchBar';
 import '../Styles/SearchResults.css'
 import '../Styles/Loading.css'
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import LoadingBar from './LoadingBar';
+import { useEffect, useState } from 'react';
+import { ipcRenderer } from 'electron';
 
-/* interface Game {
-    id: number;
-    name: string;
-    releaseDate: Date;
-    cover: string;
-    image_id: string;
-} */
+// Wait function used for implementing delays in the search process so that the
+// API is not reaching a request limit as much as possible (429 error)
+function wait(ms: number) {
+    const start = Date.now();
+    while (Date.now() - start < ms) { }
+}
 
-const SearchResults = () => {
+function SearchResults() {
     const location = useLocation();
+    // const navigate = useNavigate();
     const gameList = location.state?.gameList || [];
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        setLoading(true)
-        setTimeout(() => {
-            console.log("Received game list: ", gameList)
-            setLoading(false)
-        }, 4000);
-    }, [gameList]);
+    const searching = location.state?.searching;
 
     // Two images, one main image and one that displays blurred behind it on mouseover for a mouseover effect
     return (
         <>
             <div>
                 <NavBar />
-                <VerticalNav />
             </div>
 
             <div>
                 <SearchBar />
             </div>
 
-            <div className='searchResultsDiv'>
-                <h3 className='customh3'>Results</h3>
+            <div className='searchContainer'>
+                <VerticalNav />
+                <div className='searchResultsDiv'>
+                    <h3 className='customh3'>Results</h3>
 
-                {loading ? (
-                <div className='center'>
-                    <div className="wave"/>
-                    <div className="wave"/>
-                    <div className="wave"/>
-                    <div className="wave"/>
-                    <div className="wave"/>
-                    <div className="wave"/>
-                    <div className="wave"/>
-                    <div className="wave"/>
+                    {searching && <LoadingBar />}
+
+                    {!searching && gameList.length === 0 && (
+                        <h4 className='customh4'>Sorry, we couldn't find what you're looking for!</h4>
+                    )}
+
+                    {!searching && (
+                        <ul key={gameList.length}>
+                            {gameList.map((game: any) => (
+                                <li key={game.id}>
+                                    <img className='backgroundImage' src={`//images.igdb.com/igdb/image/upload/t_cover_big/${game.image_id}.jpg`} alt={`Cover for ${game.name}`} />
+                                    <img className='gameImage' src={`//images.igdb.com/igdb/image/upload/t_cover_big/${game.image_id}.jpg`} alt={`Cover for ${game.name}`} />
+                                    <p className='gameTitle'>{game.name}</p>
+                                    <p className='gameReleaseDate'>{game.releaseDate ? `Release Date: ${new Intl.DateTimeFormat('default', { year: 'numeric', month: '2-digit', day: '2-digit' })
+                                        .format(new Date(game.releaseDate * 1000))}` : "Release Date: TBA"}</p>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
-                ) : (
-                    <ul key={gameList.length}>
-                        {gameList.map((game: any) => (
-                            <li key={game.id}>
-                                <img className='backgroundImage' src={`//images.igdb.com/igdb/image/upload/t_cover_big/${game.image_id}.jpg`} alt={`Cover for ${game.name}`} />
-                                <img className='gameImage' src={`//images.igdb.com/igdb/image/upload/t_cover_big/${game.image_id}.jpg`} alt={`Cover for ${game.name}`} />
-                                <p className='gameTitle'>{game.name}</p>
-                                <p className='gameReleaseDate'>{game.releaseDate ? `Release Date: ${new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' })
-                                    .format(new Date(game.releaseDate * 1000))}` : "Release Date: TBA"}</p>
-                            </li>
-                        ))}
-                    </ul>
-                )}
             </div>
         </>
     );

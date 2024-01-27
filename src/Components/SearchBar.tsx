@@ -1,10 +1,10 @@
+import { ipcRenderer } from 'electron';
 import searchIcon from '../assets/4475396.png'
 import '../Styles/SearchDiv.css'
-import { ipcRenderer } from 'electron';
 import { useEffect, useState } from 'react';
-import SearchResults from './SearchResults';
 import { useNavigate } from 'react-router-dom';
 
+// Interface for a game object
 interface Game {
     id: number;
     name: string;
@@ -13,59 +13,88 @@ interface Game {
     image_id: string;
 }
 
+// caches that is used to more easily retrieve data for
+// searches that have already been performed, without the need recalling the API
+const searchCache: Record<string, Game[]> = {};
 
 const SearchBar = () => {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const [searchInput, setSearchInput] = useState("")
     const [gameList, setGameList] = useState<Game[]>([]);
     const [searching, setSearching] = useState(false)
+    const [buttonPressed, setButtonPressed] = useState(false)
+
+    // Wait function used for implementing delays in the search process so that the
+    // API is not reaching a request limit as much as possible (429 error)
+    function wait(ms: number) {
+        const start = Date.now();
+        while (Date.now() - start < ms) { }
+    }
 
     async function performSearch() {
         try {
-            setGameList([])
+            // Empties the game list and sets searching to true when the search button is pressed
             setSearching(true)
-            const data = await ipcRenderer.invoke('product-search', searchInput);
-            console.log(data)
 
-            if (data.length === 0) {
-                console.log('No data')
+            // If this particular search has already been performed before, use the cache
+            if (searchCache[searchInput]) {
+                console.log('Using cached result for: ', searchInput)
+                setGameList(searchCache[searchInput])
             }
             else {
-                const updatedGameList = await Promise.all(
-                data.map(async (game: { id: any; }) => {
-                    const coverData = await ipcRenderer.invoke('get-covers', game.id)
-                    console.log(coverData)
+                // Starts the API call process in main.ts
+                const data = await ipcRenderer.invoke('product-search', searchInput);
 
-                    if (Array.isArray(coverData) && coverData.length > 0) {
-                        return {
-                            ...game,
-                            image_id: coverData[0].imageId,
-                        };
-                    }
-                    else {
-                        return game;
-                    }
-                })
-            )
+                // If the call returns no results, do nothing
+                if (data.length === 0) {
+                    console.log('No data')
+                    setGameList(data)
+                }
 
-                setGameList(updatedGameList)
+                // Implements a wait period so that API request limits are avoided as 
+                // much as possible
+                else {
+                    wait(3000)
+
+                    // Retrieves the cover images for the games retrieved in data and maps
+                    // them accordingly
+                    const updatedGameList = await Promise.all(
+                        data.map(async (game: { id: any; }) => {
+                            const coverData = await ipcRenderer.invoke('get-covers', game.id)
+
+                            if (Array.isArray(coverData) && coverData.length > 0) {
+                                return {
+                                    ...game,
+                                    image_id: coverData[0].imageId,
+                                };
+                            }
+                            else {
+                                return game;
+                            }
+                        })
+                    )
+
+                    // Adds final search results to cache, and updates the game list accordingly
+                    searchCache[searchInput] = updatedGameList
+                    setGameList(updatedGameList)
+                }
             }
-
         }
         catch (error) {
             console.error(error)
         }
         finally {
             setSearching(false)
+            setButtonPressed(true)
         }
     }
 
     useEffect(() => {
-        if (searchInput !== "" && gameList.length > 0) {
+        if (buttonPressed) {
             console.log(gameList)
-            navigate('/search-results', {state: { gameList }})
+            navigate('/search-results', {state: { gameList, searching }})
         }
-    }, [gameList, searchInput, navigate]);
+    }, [gameList, searchInput, searching]);
 
     return (
         <>
@@ -80,7 +109,6 @@ const SearchBar = () => {
                 </button>
             </div>
 
-            {searching && <SearchResults/>}
         </>
     )
 }

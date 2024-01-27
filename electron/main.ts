@@ -4,6 +4,10 @@ import path from 'node:path'
 var ACCESS_KEY = "";
 var ACCESS_TOKEN = "";
 
+function delay(ms: number | undefined) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
+
 /* 
 Retrieves required data to be able to make an API call from database file
 
@@ -378,7 +382,6 @@ ipcMain.handle('product-search', async (_event, userSearch) => {
                 cover: game.cover
             }));
 
-        console.log(data)
         return Promise.resolve(gameList);
         }
         catch (error) {
@@ -400,12 +403,8 @@ ipcMain.handle('genre-search', async (_event, selectedGenre) => {
                     'Authorization': 'Bearer ' + ACCESS_TOKEN,
                 },
                 body: `fields *;
-                where total_rating > 85 & genres = (${selectedGenre}) & version_parent = null & platforms = (6) & keywords != (413, 24124, 27185, 1603, 2004) & themes != (42); limit 50;`
+                where total_rating > 85 & genres = (${selectedGenre}) & version_parent = null & platforms = (6) & keywords != (413, 24124, 27185, 1603, 2004) & themes != (42); limit 40;`
             })
-
-            if (!response.ok) {
-                throw new Error('Error Status: ' + response.status)
-            }
 
             const retrievedData = await response.json();
 
@@ -418,7 +417,6 @@ ipcMain.handle('genre-search', async (_event, selectedGenre) => {
                 cover: game.cover
             }));
         
-        console.log(retrievedData)
         return Promise.resolve(gameList)
     }
     catch (error) {
@@ -429,6 +427,8 @@ ipcMain.handle('genre-search', async (_event, selectedGenre) => {
 ipcMain.handle('get-covers', async (_event, game) => {
     try {
         console.log(game)
+
+        delay(1000)
 
         const response = await fetch(
             "https://api.igdb.com/v4/covers", {
@@ -444,13 +444,17 @@ ipcMain.handle('get-covers', async (_event, game) => {
 
             const coverData = await response.json();
 
-            const imageList = coverData.map((imageData: {
+            const imageList = await Promise.all(coverData.map(async (imageData: {
                 image_id: any;
-            }) => ({
-                    imageId: imageData.image_id
-                }));
+            }) => {
+                await delay(2500);
+
+                return {
+                imageId: imageData.image_id
+                }}));
 
             console.log(imageList)
+
             return Promise.resolve(imageList)
     }
     catch (error) {
