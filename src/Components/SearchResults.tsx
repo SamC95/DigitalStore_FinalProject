@@ -5,12 +5,42 @@ import '../Styles/SearchResults.css'
 import '../Styles/Loading.css'
 import { useLocation } from 'react-router-dom';
 import LoadingBar from './LoadingBar';
+import { useEffect, useState } from 'react';
 
 function SearchResults() {
     const location = useLocation();
+    const [hasError, setError] = useState(location.state?.hasError)
     // const navigate = useNavigate();
-    const gameList = location.state?.gameList || [];
-    const searching = location.state?.searching;
+    const [gameList, setGameList] = useState(location.state?.gameList)
+    var [searching, setSearching] = useState(location.state?.searching)
+
+    useEffect(() => {
+        const pollInterval = setInterval(() => {
+            try {
+                const storedGameList = JSON.parse(localStorage.getItem('gameList') || '[]');
+                setGameList(storedGameList);
+
+                if (!localStorage.getItem('gameList')) {
+                    setSearching(true)
+                }
+
+                else if (storedGameList !== '[]') {
+                    setSearching(false)
+                    setError(false)
+                }
+            }
+            catch (error) {
+                console.error("Invalid JSON format: ", error);
+                setError(true)
+                setSearching(false);
+            }
+        }, 500); // Adjust the interval as needed
+
+        if (hasError) {
+            clearInterval(pollInterval)
+        }
+
+    }, []);
 
     // Two images, one main image and one that displays blurred behind it on mouseover for a mouseover effect
     return (
@@ -30,11 +60,15 @@ function SearchResults() {
 
                     {searching && <LoadingBar />}
 
-                    {!searching && gameList.length === 0 && (
+                    {!searching && !hasError && gameList.length == 0 && localStorage.getItem('gameList') && (
                         <h4 className='customh4'>Sorry, we couldn't find what you're looking for!</h4>
                     )}
 
-                    {!searching && (
+                    {!searching && hasError && (
+                        <h4 className='customh4'>Oops, an error occurred whilst retrieving data!</h4>
+                    )}
+
+                    {!searching && !hasError && gameList.length > 0 && (
                         <ul key={gameList.length}>
                             {gameList.map((game: any) => (
                                 <li key={game.id}>

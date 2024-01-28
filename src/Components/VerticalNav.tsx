@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import '../Styles/VerticalNav.css'
-import { SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ipcRenderer } from 'electron';
 
 // Interface for a game object
@@ -20,6 +20,7 @@ const VerticalNav = () => {
     const [searching, setSearching] = useState(false)
     const [gameList, setGameList] = useState<Game[]>([]);
     const [buttonPressed, setButtonPressed] = useState(false);
+    const [hasError, setError] = useState(false)
     
     function updateGenre(genre: string) {
         setSelectedGenre(genre)
@@ -32,17 +33,22 @@ const VerticalNav = () => {
 
     async function retrieveData() {
         try {
+            // Empties the game list and sets searching to true when the search button is pressed
+            localStorage.removeItem('gameList')
+            setError(false)
             setSearching(true)
 
             if (genreCache[selectedGenre]) {
                 console.log('Using cached result for: ', selectedGenre)
                 setGameList(genreCache[selectedGenre])
+                localStorage.setItem('gameList', JSON.stringify(genreCache[selectedGenre]))
             }
             else {
                 const data = await ipcRenderer.invoke('genre-search', selectedGenre)
 
                 if (data.length === 0) {
                     console.log('No data')
+                    localStorage.setItem('gameList', JSON.stringify(data))
                 }
 
                 wait(3000)
@@ -63,9 +69,13 @@ const VerticalNav = () => {
                     })
                 )
 
+                // Filters the results in the event that any specific games were unable to load
+                // important details due to hitting API request limits
                 const filteredGameList = updatedGameList.filter((game) => game !== null)
                 genreCache[selectedGenre] = filteredGameList
                 setGameList(filteredGameList)
+
+                localStorage.setItem('gameList', JSON.stringify(filteredGameList));
             }
         }
         catch (error) {
@@ -90,11 +100,11 @@ const VerticalNav = () => {
     }, [selectedGenre]);
 
     useEffect(() => {
-        if (buttonPressed) {
+        if (searching) {
             console.log(gameList)
-            navigate('/search-results', { state: { gameList, searching } })
+            navigate('/search-results', { state: { gameList, searching, hasError } })
         }
-    }, [gameList, selectedGenre, searching]);
+    }, [gameList, selectedGenre, searching, buttonPressed, navigate]);
 
     return (
         <>

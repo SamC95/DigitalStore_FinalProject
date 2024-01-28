@@ -11,6 +11,7 @@ import '../Styles/igdb-logo.css'
 import { ipcRenderer } from 'electron'
 
 function Start() {
+    localStorage.setItem('hasResized', "false")
     const navigate = useNavigate()
 
     // Resizes the window using the ipcMain function in main.ts

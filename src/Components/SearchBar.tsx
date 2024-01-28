@@ -23,6 +23,7 @@ const SearchBar = () => {
     const [gameList, setGameList] = useState<Game[]>([]);
     const [searching, setSearching] = useState(false)
     const [buttonPressed, setButtonPressed] = useState(false)
+    const [hasError, setError] = useState(false)
 
     // Wait function used for implementing delays in the search process so that the
     // API is not reaching a request limit as much as possible (429 error)
@@ -34,12 +35,15 @@ const SearchBar = () => {
     async function performSearch() {
         try {
             // Empties the game list and sets searching to true when the search button is pressed
+            localStorage.removeItem('gameList')
+            setError(false)
             setSearching(true)
 
             // If this particular search has already been performed before, use the cache
             if (searchCache[searchInput]) {
                 console.log('Using cached result for: ', searchInput)
                 setGameList(searchCache[searchInput])
+                localStorage.setItem('gameList', JSON.stringify(searchCache[searchInput]))
             }
             else {
                 // Starts the API call process in main.ts
@@ -49,6 +53,7 @@ const SearchBar = () => {
                 if (data.length === 0) {
                     console.log('No data')
                     setGameList(data)
+                    localStorage.setItem('gameList', JSON.stringify(data))
                 }
 
                 // Implements a wait period so that API request limits are avoided as 
@@ -77,6 +82,8 @@ const SearchBar = () => {
                     // Adds final search results to cache, and updates the game list accordingly
                     searchCache[searchInput] = updatedGameList
                     setGameList(updatedGameList)
+
+                    localStorage.setItem('gameList', JSON.stringify(updatedGameList));
                 }
             }
         }
@@ -90,11 +97,11 @@ const SearchBar = () => {
     }
 
     useEffect(() => {
-        if (buttonPressed) {
+        if (searching) {
             console.log(gameList)
-            navigate('/search-results', {state: { gameList, searching }})
+            navigate('/search-results', {state: { gameList, searching, hasError }})
         }
-    }, [gameList, searchInput, searching]);
+    }, [gameList, searchInput, searching, buttonPressed, navigate]);
 
     return (
         <>
