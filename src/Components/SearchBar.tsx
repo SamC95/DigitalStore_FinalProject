@@ -13,7 +13,7 @@ interface Game {
     image_id: string;
 }
 
-// caches that is used to more easily retrieve data for
+// Cache that is used to more easily retrieve data for
 // searches that have already been performed, without the need recalling the API
 const searchCache: Record<string, Game[]> = {};
 
@@ -96,6 +96,8 @@ const SearchBar = () => {
         }
     }
 
+    // When user starts search, navigate to SearchResults.tsx to show loading bar
+    // and results when they have loaded.
     useEffect(() => {
         if (searching) {
             console.log(gameList)

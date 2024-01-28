@@ -3,7 +3,7 @@ import NavBar from './NavBar.tsx'
 import VerticalNav from './VerticalNav.tsx';
 import SearchBar from './SearchBar.tsx';
 import { ipcRenderer } from 'electron';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 function StoreMainPage() {
     const hasResizedBefore = localStorage.getItem('hasResized')

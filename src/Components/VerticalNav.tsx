@@ -12,6 +12,8 @@ interface Game {
     image_id: string;
 }
 
+// Cache that is used to more easily retrieve data for
+// searches that have already been performed, without the need recalling the API
 const genreCache: Record<string, Game[]> = {};
 
 const VerticalNav = () => {
@@ -21,36 +23,43 @@ const VerticalNav = () => {
     const [gameList, setGameList] = useState<Game[]>([]);
     const [buttonPressed, setButtonPressed] = useState(false);
     const [hasError, setError] = useState(false)
-    
+
     function updateGenre(genre: string) {
         setSelectedGenre(genre)
     }
 
     function wait(ms: number) {
         const start = Date.now();
-        while (Date.now() - start < ms) {}
-     }
+        while (Date.now() - start < ms) { }
+    }
 
     async function retrieveData() {
         try {
-            // Empties the game list and sets searching to true when the search button is pressed
+            // Empties the game list and sets searching to true/error to false when the search button is pressed
             localStorage.removeItem('gameList')
             setError(false)
             setSearching(true)
 
+            // If the user has already clicked this genre button, results will be received from the cache
+            // rather than re-calling the API and will then be stored in localStorage to be used in SearchResults.tsx
             if (genreCache[selectedGenre]) {
                 console.log('Using cached result for: ', selectedGenre)
                 setGameList(genreCache[selectedGenre])
                 localStorage.setItem('gameList', JSON.stringify(genreCache[selectedGenre]))
             }
             else {
+                // Performs API call to receive data for specified genre
                 const data = await ipcRenderer.invoke('genre-search', selectedGenre)
 
+                // If no results are received, store empty data in localStorage for SearchResults.tsx
                 if (data.length === 0) {
                     console.log('No data')
                     localStorage.setItem('gameList', JSON.stringify(data))
                 }
 
+                // If results are received, pause for a period of time to allow the API requests
+                // to not be overloaded causing 429 errors. Afterwards gets cover images for each
+                // of the products received in the prior API call.
                 wait(3000)
                 const updatedGameList = await Promise.all(
                     data.map(async (game: { id: any; }) => {
@@ -75,6 +84,7 @@ const VerticalNav = () => {
                 genreCache[selectedGenre] = filteredGameList
                 setGameList(filteredGameList)
 
+                // Stores list of products into localStorage for SearchResults.tsx
                 localStorage.setItem('gameList', JSON.stringify(filteredGameList));
             }
         }
@@ -99,6 +109,8 @@ const VerticalNav = () => {
         }
     }, [selectedGenre]);
 
+    // When the search begins, navigates to SearchResults.tsx to show the loading icon
+    // until results are received, then those will be displayed instead
     useEffect(() => {
         if (searching) {
             console.log(gameList)
@@ -106,6 +118,8 @@ const VerticalNav = () => {
         }
     }, [gameList, selectedGenre, searching, buttonPressed, navigate]);
 
+    
+    // updateGenre number refers to the IGDB id of a specific genre for API calls
     return (
         <>
             <nav className='verticalNav'>
