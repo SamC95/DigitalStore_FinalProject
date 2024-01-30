@@ -2,23 +2,153 @@ import './App.tsx'
 import NavBar from './NavBar.tsx'
 import VerticalNav from './VerticalNav.tsx';
 import SearchBar from './SearchBar.tsx';
+import '../Styles/FeaturedSection.css'
 import { ipcRenderer } from 'electron';
-import { useEffect } from 'react';
+import { SetStateAction, useEffect, useRef, useState } from 'react';
+import LoadingBar from './LoadingBar.tsx';
+
+// Interface for a game object
+interface Game {
+    id: number;
+    name: string;
+    releaseDate: string;
+    cover: string;
+    image_id: string;
+    artwork_id: string;
+}
+
+function wait(ms: number) {
+    const start = Date.now();
+    while (Date.now() - start < ms) { }
+}
+
+let featuredCache: Record<string, Game[]> = {};
 
 function StoreMainPage() {
     const hasResizedBefore = localStorage.getItem('hasResized')
+    const [searching, setSearching] = useState(false)
+
+    const [currentDate, setCurrentDate] = useState<number>(0);
+    const [monthAgoDate, setMonthAgoDate] = useState<number>(0);
+
+    const [featuredData, setFeaturedData] = useState<Game[]>([])
+    const [imageIds, setImageIds] = useState<string[]>([])
+
+    const [activeButton, setActiveButton] = useState<number>(0);
+    const intervalIdRef = useRef<NodeJS.Timeout | null>(null)
+
+    useEffect(() => {
+        // Gets current date and converts it to unix format
+        const tempCurrentDate = Math.floor(Date.now() / 1000);
+        setCurrentDate(tempCurrentDate)
+
+        // Gets date one month ago and converts it to unix format
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1)
+        const tempMonthAgo = Math.floor((oneMonthAgo.getTime() as number) / 1000);
+        setMonthAgoDate(tempMonthAgo)
+    }, [])
+
+    useEffect(() => {
+        if (currentDate !== null && monthAgoDate !== null) {
+            getFeaturedProducts()
+        }
+    }, [currentDate, monthAgoDate])
+
+    async function getFeaturedProducts() {
+        try {
+            setSearching(true)
+            setImageIds([])
+
+            if (Object.keys(featuredCache).length > 0) {
+                console.log('Using cached result for featured data')
+                const cachedData = Object.values(featuredCache)[0];
+                setFeaturedData(cachedData)
+                setSearching(false)
+            }
+            else {
+                const data = await ipcRenderer.invoke('get-featured', currentDate, monthAgoDate)
+
+                const featuredProducts = await Promise.all(
+                    data.map(async (game: { id: any; }) => {
+                        const imageData = await ipcRenderer.invoke('get-artwork-or-screenshot', game.id)
+
+                        if (Array.isArray(imageData) && imageData.length > 0) {
+                            const imageIds = imageData.map((image) => image.image_id)
+                            setImageIds((prevImageIds) => [...prevImageIds, ...imageIds])
+
+                            return {
+                                ...game,
+                                image_id: imageData[0].imageId
+                            }
+                        }
+                        else {
+                            return game;
+                        }
+                    })
+                )
+
+                featuredCache = {
+                    cachedKey: featuredProducts,
+                };
+
+                setFeaturedData(featuredProducts)
+                console.log(featuredProducts)
+            }
+
+            setSearching(false)
+        }
+        catch (error) {
+            console.error(error)
+
+            setSearching(false)
+        }
+    }
 
     // Resizes the window and centers it using the ipcMain functions in main.ts
     useEffect(() => {
-        // This effect will run once when the component is mounted
+        // This effect will run once when the component is mounted for the first time
         if (hasResizedBefore === "false") {
-          ipcRenderer.send('resizeWindow', { width: 1850, height: 1150 });
-          ipcRenderer.send('defineMinSize', { width: 1600, height: 900 });
-          ipcRenderer.send('centerWindow');
-          
-          localStorage.setItem('hasResized', "true")
+            ipcRenderer.send('resizeWindow', { width: 1850, height: 1150 });
+            ipcRenderer.send('defineMinSize', { width: 1600, height: 900 });
+            ipcRenderer.send('centerWindow');
+
+            localStorage.setItem('hasResized', "true")
         }
-      }, []);
+    }, []);
+
+    useEffect(() => {
+        intervalIdRef.current = setInterval(() => {
+            // Update activeButton, cycling back to 0 when reaching the last index
+            setActiveButton((prevActiveButton) => {
+                const nextActiveButton = (prevActiveButton + 1) % featuredData.length;
+                console.log('Before Update:', prevActiveButton);
+                console.log('After Update:', nextActiveButton);
+                return nextActiveButton;
+            });
+        }, 5000);
+
+        return () => {
+            if (intervalIdRef.current) {
+                clearInterval(intervalIdRef.current)
+            }
+        }; // Cleanup on component unmount
+    }, [featuredData.length]); // Dependency on the length of featuredData
+
+    const handleButtonClick = (index: SetStateAction<number>) => {
+        if (intervalIdRef.current) {
+            clearInterval(intervalIdRef.current) // Clear the interval when a button is clicked
+        }
+        console.log('Clicked Button:', index);
+        setActiveButton(index);
+
+        // Restart the interval after clicking a button
+        intervalIdRef.current = setInterval(() => {
+            // Update activeButton, cycling back to 0 when reaching the last index
+            setActiveButton((prevActiveButton) => (prevActiveButton + 1) % featuredData.length);
+        }, 5000);
+    };
+
 
     return (
         <>
@@ -26,13 +156,51 @@ function StoreMainPage() {
                 <NavBar />
             </div>
 
-            <div>
-                <SearchBar />
-            </div>
+            {searching && <LoadingBar />}
 
-            <div className='mainContainer'>
-                <VerticalNav />
-            </div>
+            {!searching && (
+                <>
+                    <div>
+                        <SearchBar />
+                    </div>
+
+                    <div className='mainContainer'>
+                        <VerticalNav />
+
+
+                        <div className='imageContainer'>
+                            <div className='imageWrapper'>
+                                {featuredData[activeButton]?.image_id && (
+                                    <img className='featuredImage' src={`//images.igdb.com/igdb/image/upload/t_original/${decodeURIComponent(featuredData[activeButton]?.image_id)}.jpg`}
+                                        alt={`Artwork for ${featuredData[activeButton]?.name}`}
+                                        style={{ paddingTop: '20px' }}
+                                    />
+                                )}
+                            </div>
+                        </div>
+
+                        <div className='titleContainer'>
+                            <h2 className='featuredTitle'>{featuredData[activeButton]?.name}</h2>
+                        </div>
+
+                        <div className='buttonsContainer'>
+                            {featuredData.map((game, index) => (
+                                <button
+                                    className={`featuredButton ${activeButton === index ? 'active' : ''}`}
+                                    key={index}
+                                    onClick={() => {
+                                        handleButtonClick(index)
+                                        console.log('Clicked Button:', index);
+                                    }
+                                    }
+                                >
+                                    {index + 1}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </>
+            )}
         </>
     );
 }

@@ -12,6 +12,7 @@ import { ipcRenderer } from 'electron'
 
 function Start() {
     localStorage.setItem('hasResized', "false")
+    localStorage.removeItem('gameList')
     const navigate = useNavigate()
 
     // Resizes the window using the ipcMain function in main.ts

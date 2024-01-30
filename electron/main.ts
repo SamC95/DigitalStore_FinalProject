@@ -376,53 +376,92 @@ ipcMain.handle('product-search', async (_event, userSearch) => {
         const gameList = data.map((game: {
             cover: any; first_release_date: any; id: any; name: any;
         }) => ({
-                id: game.id,
-                name: game.name,
-                releaseDate: game.first_release_date,
-                cover: game.cover
-            }));
+            id: game.id,
+            name: game.name,
+            releaseDate: game.first_release_date,
+            cover: game.cover
+        }));
 
         return Promise.resolve(gameList);
-        }
-        catch (error) {
-            console.error(error);
-        }
-    })
+    }
+    catch (error) {
+        console.error(error);
+    }
+})
 
 ipcMain.handle('genre-search', async (_event, selectedGenre) => {
     try {
-        await retrieveAccess() 
+        await retrieveAccess()
         console.log(selectedGenre)
 
         const response = await fetch(
             "https://api.igdb.com/v4/games", {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Client-ID': ACCESS_KEY,
-                    'Authorization': 'Bearer ' + ACCESS_TOKEN,
-                },
-                body: `fields *;
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Client-ID': ACCESS_KEY,
+                'Authorization': 'Bearer ' + ACCESS_TOKEN,
+            },
+            body: `fields *;
                 where total_rating > 85 & genres = (${selectedGenre}) & version_parent = null & platforms = (6) & keywords != (413, 24124, 27185, 1603, 2004) & themes != (42); limit 40;`
-            })
+        })
 
-            const retrievedData = await response.json();
+        const retrievedData = await response.json();
 
-            const gameList = retrievedData.map((game: {
-                cover: any; first_release_date: any; id: any; name: any;
-            }) => ({
-                id: game.id,
-                name: game.name,
-                releaseDate: game.first_release_date,
-                cover: game.cover
-            }));
-        
+        const gameList = retrievedData.map((game: {
+            cover: any; first_release_date: any; id: any; name: any;
+        }) => ({
+            id: game.id,
+            name: game.name,
+            releaseDate: game.first_release_date,
+            cover: game.cover
+        }));
+
         return Promise.resolve(gameList)
     }
     catch (error) {
         console.error(error)
     }
-}) 
+})
+
+ipcMain.handle('get-featured', async (_event, currentDate, monthAgoDate) => {
+    try {
+        await retrieveAccess()
+        console.log(currentDate)
+        console.log(monthAgoDate)
+
+        const response = await fetch(
+            "https://api.igdb.com/v4/games", {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Client-ID': ACCESS_KEY,
+                'Authorization': 'Bearer ' + ACCESS_TOKEN,
+            },
+            body: `fields *;
+                where total_rating > 80 & total_rating_count > 2 & first_release_date < ${currentDate} & first_release_date > ${monthAgoDate} & platforms = (6) & version_parent = null & 
+                keywords != (413, 24124, 27185, 1603, 2004) & themes != (42); limit 5;`
+        })
+
+        const featuredData = await response.json();
+
+        const gameList = featuredData.map((game: {
+            cover: any, id: any, name: any, artworks: any, screenshots: any;
+        }) => ({
+            id: game.id,
+            name: game.name,
+            cover: game.cover,
+            artwork: game.artworks,
+            screenshot: game.screenshots
+        }));
+
+        return Promise.resolve(gameList)
+        
+    }
+    catch (error) {
+        console.error(error)
+    }
+})
 
 ipcMain.handle('get-covers', async (_event, game) => {
     try {
@@ -432,30 +471,89 @@ ipcMain.handle('get-covers', async (_event, game) => {
 
         const response = await fetch(
             "https://api.igdb.com/v4/covers", {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Client-ID': ACCESS_KEY,
-                    'Authorization': 'Bearer ' + ACCESS_TOKEN,
-                },
-                body: "fields image_id;" +
-                "where game = " + game + ";" 
-            })
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Client-ID': ACCESS_KEY,
+                'Authorization': 'Bearer ' + ACCESS_TOKEN,
+            },
+            body: "fields image_id;" +
+                "where game = " + game + ";"
+        })
 
-            const coverData = await response.json();
+        const coverData = await response.json();
 
-            const imageList = await Promise.all(coverData.map(async (imageData: {
-                image_id: any;
-            }) => {
-                await delay(2500);
+        const imageList = await Promise.all(coverData.map(async (imageData: {
+            image_id: any;
+        }) => {
+            await delay(2500);
 
-                return {
+            return {
                 imageId: imageData.image_id
-                }}));
+            }
+        }));
 
-            console.log(imageList)
+        console.log(imageList)
 
-            return Promise.resolve(imageList)
+        return Promise.resolve(imageList)
+    }
+    catch (error) {
+        console.error(error)
+    }
+})
+
+ipcMain.handle('get-artwork-or-screenshot', async (_event, game) => {
+    try {
+        delay(1000)
+
+        const artworkResponse = await fetch(
+            'https://api.igdb.com/v4/screenshots', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Client-ID': ACCESS_KEY,
+                'Authorization': 'Bearer ' + ACCESS_TOKEN,
+            },
+            body: "fields image_id;" +
+                "where game = " + game + ";"
+        });
+
+        const artworkData = await artworkResponse.json()
+
+        const imageList = await Promise.all(artworkData.map(async (artworkData: { image_id: any; }) => {
+            await delay(2500)
+
+            if (artworkData.image_id !== undefined) {
+                console.log(artworkData)
+                return {
+                    imageId: artworkData.image_id,
+                };
+            }
+            else {
+                const screenshotResponse = await fetch(
+                    'https://api.igdb.com/v4/screenshots', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Client-ID': ACCESS_KEY,
+                        'Authorization': 'Bearer ' + ACCESS_TOKEN,
+                    },
+                    body: "fields image_id;" +
+                        "where game = " + game + ";"
+                });
+
+                const screenshotData = await screenshotResponse.json();
+                console.log(screenshotData)
+
+                if (screenshotData.length > 0) {
+                    return {
+                        imageId: screenshotData.image_id
+                    };
+                }
+            }
+        }))
+
+        return imageList;
     }
     catch (error) {
         console.error(error)
