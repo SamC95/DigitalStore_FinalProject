@@ -439,7 +439,7 @@ ipcMain.handle('get-featured', async (_event, currentDate, monthAgoDate) => {
                 'Authorization': 'Bearer ' + ACCESS_TOKEN,
             },
             body: `fields *;
-                where total_rating > 80 & total_rating_count > 2 & first_release_date < ${currentDate} & first_release_date > ${monthAgoDate} & platforms = (6) & version_parent = null & 
+                where total_rating > 70 & total_rating_count > 2 & first_release_date < ${currentDate} & first_release_date > ${monthAgoDate} & platforms = (6) & version_parent = null & 
                 keywords != (413, 24124, 27185, 1603, 2004) & themes != (42); limit 5;`
         })
 
@@ -456,7 +456,7 @@ ipcMain.handle('get-featured', async (_event, currentDate, monthAgoDate) => {
         }));
 
         return Promise.resolve(gameList)
-        
+
     }
     catch (error) {
         console.error(error)
@@ -467,7 +467,7 @@ ipcMain.handle('get-covers', async (_event, game) => {
     try {
         console.log(game)
 
-        delay(1000)
+        delay(500)
 
         const response = await fetch(
             "https://api.igdb.com/v4/covers", {
@@ -483,16 +483,25 @@ ipcMain.handle('get-covers', async (_event, game) => {
 
         const coverData = await response.json();
 
-        const imageList = await Promise.all(coverData.map(async (imageData: {
-            image_id: any;
-        }) => {
-            await delay(2500);
+        if (!response.ok) {
+            throw new Error('Failed to fetch covers: ' + response.status);
+        }
 
-            return {
-                imageId: imageData.image_id
+        const imageList = [];
+
+        if (Array.isArray(coverData)) {
+            for (const imageData of coverData) {
+                await delay(500); // Delay before fetching data for each game
+                if (imageData.image_id !== undefined) {
+                    imageList.push({
+                        imageId: imageData.image_id
+                    });
+                }
             }
-        }));
-
+        } else {
+            // Gives error message if the data format is not an array as expected
+            console.error('Cover data is not an array:', coverData);
+        }
         console.log(imageList)
 
         return Promise.resolve(imageList)
@@ -520,38 +529,27 @@ ipcMain.handle('get-artwork-or-screenshot', async (_event, game) => {
 
         const artworkData = await artworkResponse.json()
 
-        const imageList = await Promise.all(artworkData.map(async (artworkData: { image_id: any; }) => {
-            await delay(2500)
+        // Displays the response from the API if it is an error
+        if (!artworkResponse.ok) {
+            throw new Error('Failed to fetch artwork: ' + artworkResponse.status);
+        }
 
-            if (artworkData.image_id !== undefined) {
-                console.log(artworkData)
-                return {
-                    imageId: artworkData.image_id,
-                };
-            }
-            else {
-                const screenshotResponse = await fetch(
-                    'https://api.igdb.com/v4/screenshots', {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Client-ID': ACCESS_KEY,
-                        'Authorization': 'Bearer ' + ACCESS_TOKEN,
-                    },
-                    body: "fields image_id;" +
-                        "where game = " + game + ";"
-                });
+        const imageList = [];
 
-                const screenshotData = await screenshotResponse.json();
-                console.log(screenshotData)
-
-                if (screenshotData.length > 0) {
-                    return {
-                        imageId: screenshotData.image_id
-                    };
+        if (Array.isArray(artworkData)) {
+            for (const artworkItem of artworkData) {
+                await delay(100); // Delay before fetching data for each game
+                if (artworkItem.image_id !== undefined) {
+                    console.log(artworkItem);
+                    imageList.push({
+                        imageId: artworkItem.image_id,
+                    });
                 }
             }
-        }))
+        } else {
+            // Gives error message if the data format is not an array as expected
+            console.error('Artwork data is not an array:', artworkData);
+        }
 
         return imageList;
     }

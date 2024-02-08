@@ -71,11 +71,14 @@ ul li {
     position: flex;
     min-height: 250px;
     justify-content: flex-start;
-    border: 3px solid #6F2DA8;
-    border-radius: 30px;
+    border-bottom: 3px solid #6F2DA8;
     padding: 10px;
     margin-bottom: 10px;
     cursor: pointer;
+}
+
+ul li:hover {
+    background-color: rgba(111, 45, 168, 0.2);
 }
 
 ul li:hover .backgroundImage {
