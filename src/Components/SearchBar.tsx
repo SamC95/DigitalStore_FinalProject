@@ -14,15 +14,16 @@ interface Game {
 }
 
 // Cache that is used to more easily retrieve data for
-// searches that have already been performed, without the need recalling the API
+// searches that have already been performed, without the need to recall the API
 const searchCache: Record<string, Game[]> = {};
 
 const SearchBar = () => {
     const navigate = useNavigate();
     const [searchInput, setSearchInput] = useState("")
     const [gameList, setGameList] = useState<Game[]>([]);
-    const [searching, setSearching] = useState(false)
-    const [buttonPressed, setButtonPressed] = useState(false)
+    const [searching, setSearching] = useState(false);
+    const [buttonPressed, setButtonPressed] = useState(false);
+    const [cacheRetrieved, setCacheRetrieved] = useState(false);
     const [hasError, setError] = useState(false)
 
     // Wait function used for implementing delays in the search process so that the
@@ -44,6 +45,7 @@ const SearchBar = () => {
                 console.log('Using cached result for: ', searchInput)
                 setGameList(searchCache[searchInput])
                 localStorage.setItem('gameList', JSON.stringify(searchCache[searchInput]))
+                setCacheRetrieved(true)
             }
             else {
                 // Starts the API call process in main.ts
@@ -99,7 +101,7 @@ const SearchBar = () => {
     // When user starts search, navigate to SearchResults.tsx to show loading bar
     // and results when they have loaded.
     useEffect(() => {
-        if (searching) {
+        if (searching || cacheRetrieved) {
             console.log(gameList)
             navigate('/search-results', {state: { gameList, searching, hasError }})
         }

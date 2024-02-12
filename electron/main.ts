@@ -467,7 +467,7 @@ ipcMain.handle('get-covers', async (_event, game) => {
     try {
         console.log(game)
 
-        delay(500)
+        delay(1000)
 
         const response = await fetch(
             "https://api.igdb.com/v4/covers", {
@@ -491,7 +491,7 @@ ipcMain.handle('get-covers', async (_event, game) => {
 
         if (Array.isArray(coverData)) {
             for (const imageData of coverData) {
-                await delay(500); // Delay before fetching data for each game
+                await delay(250); // Delay before fetching data for each game
                 if (imageData.image_id !== undefined) {
                     imageList.push({
                         imageId: imageData.image_id
@@ -511,7 +511,7 @@ ipcMain.handle('get-covers', async (_event, game) => {
     }
 })
 
-ipcMain.handle('get-artwork-or-screenshot', async (_event, game) => {
+ipcMain.handle('get-featured-screenshots', async (_event, game) => {
     try {
         delay(1000)
 
@@ -538,7 +538,7 @@ ipcMain.handle('get-artwork-or-screenshot', async (_event, game) => {
 
         if (Array.isArray(artworkData)) {
             for (const artworkItem of artworkData) {
-                await delay(100); // Delay before fetching data for each game
+                await delay(250); // Delay before fetching data for each game
                 if (artworkItem.image_id !== undefined) {
                     console.log(artworkItem);
                     imageList.push({

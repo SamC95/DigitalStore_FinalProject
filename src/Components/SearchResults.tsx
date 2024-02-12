@@ -48,6 +48,10 @@ function SearchResults() {
             clearInterval(pollInterval)
         }
 
+        return () => {
+            clearInterval(pollInterval)
+        }
+
     }, []);
 
     // Two images, one main image and one that displays blurred behind it on mouseover for a mouseover effect

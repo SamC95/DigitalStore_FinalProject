@@ -22,6 +22,7 @@ const VerticalNav = () => {
     const [searching, setSearching] = useState(false)
     const [gameList, setGameList] = useState<Game[]>([]);
     const [buttonPressed, setButtonPressed] = useState(false);
+    const [cacheRetrieved, setCacheRetrieved] = useState(false);
     const [hasError, setError] = useState(false)
 
     function updateGenre(genre: string) {
@@ -46,6 +47,7 @@ const VerticalNav = () => {
                 console.log('Using cached result for: ', selectedGenre)
                 setGameList(genreCache[selectedGenre])
                 localStorage.setItem('gameList', JSON.stringify(genreCache[selectedGenre]))
+                setCacheRetrieved(true);
             }
             else {
                 // Performs API call to receive data for specified genre
@@ -98,7 +100,7 @@ const VerticalNav = () => {
     }
 
     // Waits for a change in selectedGenre, if it occurs then it resets the gamelist to empty,
-    // pauses briefly to minimise risk of 429 request errors and then calls the retrieveData function
+    // pauses briefly to reduce 429 request errors and then calls the retrieveData function
     // After this it will reset selected genre back to empty so that it is ready for the next button click
     useEffect(() => {
         if (selectedGenre !== "") {
@@ -112,7 +114,7 @@ const VerticalNav = () => {
     // When the search begins, navigates to SearchResults.tsx to show the loading icon
     // until results are received, then those will be displayed instead
     useEffect(() => {
-        if (searching) {
+        if (searching || cacheRetrieved) {
             console.log(gameList)
             navigate('/search-results', { state: { gameList, searching, hasError } })
         }
