@@ -15,6 +15,8 @@ interface Game {
 // Cache that is used to more easily retrieve data for
 // searches that have already been performed, without the need recalling the API
 const genreCache: Record<string, Game[]> = {};
+let newReleaseCache: Record<string, Game[]> = {};
+let upcomingCache: Record<string, Game[]> = {};
 
 const VerticalNav = () => {
     const navigate = useNavigate()
@@ -32,6 +34,48 @@ const VerticalNav = () => {
     function wait(ms: number) {
         const start = Date.now();
         while (Date.now() - start < ms) { }
+    }
+
+    async function setDates() {
+        // Gets current date and converts it to unix format
+        const currentDate = Math.floor(Date.now() / 1000);
+        
+
+        // Gets date one month ago and converts it to unix format
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1)
+        const monthAgoDate = Math.floor((oneMonthAgo.getTime() as number) / 1000);
+
+        const twoMonthsAhead = new Date();
+        twoMonthsAhead.setMonth(twoMonthsAhead.getMonth() + 2)
+        const upcomingDate = Math.floor((twoMonthsAhead.getTime() as number) / 1000);
+
+        return [currentDate, monthAgoDate, upcomingDate]
+    }
+
+    // Gets cover images for each of the products received in the prior API call.
+    async function getCovers(data: { id: any; }[]): Promise<Game[]> {
+        const updatedGameList = await Promise.all(
+            data.map(async (game: { id: any; }) => {
+                const coverData = await ipcRenderer.invoke('get-covers', game.id)
+                console.log(coverData)
+
+                if (Array.isArray(coverData) && coverData.length > 0) {
+                    return {
+                        ...game,
+                        image_id: coverData[0].imageId
+                    } as Game;
+                }
+                else {
+                    return null
+                }
+            })
+        )
+
+        // Filters the results in the event that any specific games were unable to load
+        // important details due to hitting API request limits
+        const filteredGameList = updatedGameList.filter((game) => game !== null) as Game[]
+        return filteredGameList;
     }
 
     async function retrieveData() {
@@ -62,32 +106,16 @@ const VerticalNav = () => {
                 // If results are received, pause for a period of time to allow the API requests
                 // to not be overloaded causing 429 errors. Afterwards gets cover images for each
                 // of the products received in the prior API call.
-                wait(3000)
-                const updatedGameList = await Promise.all(
-                    data.map(async (game: { id: any; }) => {
-                        const coverData = await ipcRenderer.invoke('get-covers', game.id)
-                        console.log(coverData)
+                wait(2000)
+                const updatedGameList = await getCovers(data);
 
-                        if (Array.isArray(coverData) && coverData.length > 0) {
-                            return {
-                                ...game,
-                                image_id: coverData[0].imageId
-                            };
-                        }
-                        else {
-                            return null
-                        }
-                    })
-                )
-
-                // Filters the results in the event that any specific games were unable to load
-                // important details due to hitting API request limits
-                const filteredGameList = updatedGameList.filter((game) => game !== null)
-                genreCache[selectedGenre] = filteredGameList
-                setGameList(filteredGameList)
+                // Caches the results of the search so that the data will load rapidly on repeated
+                // presses of that genre option during the run of the application.
+                genreCache[selectedGenre] = updatedGameList
+                setGameList(updatedGameList)
 
                 // Stores list of products into localStorage for SearchResults.tsx
-                localStorage.setItem('gameList', JSON.stringify(filteredGameList));
+                localStorage.setItem('gameList', JSON.stringify(updatedGameList));
             }
         }
         catch (error) {
@@ -96,6 +124,109 @@ const VerticalNav = () => {
         finally {
             setSearching(false)
             setButtonPressed(true)
+        }
+    }
+
+    // Retrieves results for the New Releases button, getting products that have released in the past month
+    async function getNewReleases() {
+        try {
+            localStorage.removeItem('gameList');
+            setError(false);
+            setSearching(true);
+            setCacheRetrieved(false);
+
+
+            if (Object.keys(newReleaseCache).length !== 0) {
+                console.log('Using cached results for new releases')
+                const cachedData = Object.values(newReleaseCache)[0];
+                setGameList(cachedData);
+                localStorage.setItem('gameList', JSON.stringify(cachedData))
+                setSearching(false);
+                setCacheRetrieved(true);
+            }
+            else {
+                const [ currentDate, monthAgoDate ] = await setDates();
+
+                const data = await ipcRenderer.invoke('get-new-releases', currentDate, monthAgoDate)
+
+                // Handles case where there is no data retrieved
+                if (data.length === 0) {
+                    console.log('No data')
+                    localStorage.setItem('gameList', JSON.stringify(data))
+                }
+
+                else {
+                    wait(3000)
+
+                    const updatedGameList = await getCovers(data)
+
+                    newReleaseCache = {
+                        cachedKey: updatedGameList
+                    }
+
+                    setGameList(updatedGameList)
+
+                    localStorage.setItem('gameList', JSON.stringify(updatedGameList))
+                }
+            }
+        }
+        catch (error) {
+            console.error(error)
+        }
+        finally {
+            setSearching(false);
+            setButtonPressed(true);
+        }
+    }
+
+    async function getUpcoming() {
+        try {
+            localStorage.removeItem('gameList');
+            setError(false);
+            setSearching(true);
+            setCacheRetrieved(false);
+
+            // Retrieves cached results if the search has been performed before
+            if (Object.keys(upcomingCache).length !== 0) {
+                console.log('Using cached results for upcoming releases');
+                const cachedData = Object.values(upcomingCache)[0];
+                setGameList(cachedData);
+                localStorage.setItem('gameList', JSON.stringify(cachedData));
+                setSearching(false);
+                setCacheRetrieved(true);
+            }
+            else {
+                // Retrives current date, month ago date is unused in this search
+                const [ currentDate, _monthAgoDate, upcomingDate ] = await setDates();
+
+                const data = await ipcRenderer.invoke('get-upcoming', currentDate, upcomingDate)
+
+                if (data.length === 0) {
+                    console.log('No data');
+                    localStorage.setItem('gameList', JSON.stringify(data))
+                }
+
+                else {
+                    wait(3000)
+
+                    const updatedGameList = await getCovers(data)
+
+                    upcomingCache = {
+                        cachedKey: updatedGameList
+                    }
+
+                    setGameList(updatedGameList)
+
+                    localStorage.setItem('gameList', JSON.stringify(updatedGameList))
+                }
+            }
+        }
+        catch (error) {
+            console.error(error)
+        }
+        finally {
+            setSearching(false);
+            setButtonPressed(true);
         }
     }
 
@@ -154,9 +285,9 @@ const VerticalNav = () => {
                 <br></br>
 
                 <h4>Categories</h4>
-                <Link className='verticalNav_li' to="/store-main-page">New Releases</Link>
+                <button className='verticalNav_li' onClick={() => getNewReleases()}>New Releases</button>
                 <br></br>
-                <Link className='verticalNav_li' to="/store-main-page">Upcoming</Link>
+                <button className='verticalNav_li' onClick={() => getUpcoming()}>Upcoming</button>
                 <br></br>
 
                 <h4>Recently Viewed</h4>

@@ -346,15 +346,17 @@ ipcMain.handle('api-test', async (_event) => {
 // Handles API request for when the user provides a search request on the store page
 /*
 NOTE : version_parent = null - Removes any separate editions of the same product
-       platforns = (6) - Only retrieve results that are available on PC (Microsoft Windows)
-       keywords != (413) - Removes unofficial games from the retrieved results
+       platforms = (6) - Only retrieve results that are available on PC (Microsoft Windows)
+       keywords - Removes unofficial or unwanted tags from the retrieved results
        themes != (42) - Removes explicit material from the retrieved results
-       limit 20 - Limits the amount of retrieved results to 20
+       limit 50 - Limits the amount of retrieved results to 50
 */
 ipcMain.handle('product-search', async (_event, userSearch) => {
     try {
+        // Retrives the api key from the database
         await retrieveAccess()
 
+        // Performs the API request
         const response = await fetch(
             "https://api.igdb.com/v4/games", {
             method: 'POST',
@@ -367,12 +369,14 @@ ipcMain.handle('product-search', async (_event, userSearch) => {
                 "where version_parent = null & platforms = (6) & keywords != (413, 24124, 27185, 1603, 2004) & themes != (42); limit 50;"
         })
 
+        // If the response is an error, display that error
         if (!response.ok) {
             throw new Error('Error Status: ' + response.status)
         }
 
         const data = await response.json();
 
+        // Takes the retrieved data and maps it to game objects
         const gameList = data.map((game: {
             cover: any; first_release_date: any; id: any; name: any;
         }) => ({
@@ -389,6 +393,7 @@ ipcMain.handle('product-search', async (_event, userSearch) => {
     }
 })
 
+// Handles the API search when the user selects a genre from the vertical navigation bar
 ipcMain.handle('genre-search', async (_event, selectedGenre) => {
     try {
         await retrieveAccess()
@@ -418,6 +423,79 @@ ipcMain.handle('genre-search', async (_event, selectedGenre) => {
         }));
 
         return Promise.resolve(gameList)
+    }
+    catch (error) {
+        console.error(error)
+    }
+})
+
+// Handles the new releases option of the vertical navigation bar
+ipcMain.handle('get-new-releases', async(_event, currentDate, monthAgoDate) => {
+    try {
+        await retrieveAccess()
+
+        const response = await fetch(
+            "https://api.igdb.com/v4/games", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Client-ID': ACCESS_KEY,
+                    'Authorization': 'Bearer ' + ACCESS_TOKEN,
+                },
+                body: `fields *;
+                    where total_rating_count > 2 & first_release_date < ${currentDate} & first_release_date > ${monthAgoDate} & platforms = (6) & version_parent = null &
+                    keywords != (413, 24124, 27185, 1603, 2004) & themes != (42); limit 30;`
+            })
+
+            const newReleaseData = await response.json(); 
+
+            const gameList = newReleaseData.map((game: {
+                cover: any; first_release_date: any; id: any; name: any;
+            }) => ({
+                id: game.id,
+                name: game.name,
+                releaseDate: game.first_release_date,
+                cover: game.cover
+            }));
+
+            return Promise.resolve(gameList)
+    }
+    catch (error) {
+        console.error(error)
+    }
+})
+
+ipcMain.handle('get-upcoming', async(_event, currentDate, upcomingDate) => {
+    try {
+        await retrieveAccess()
+        console.log(currentDate)
+        console.log(upcomingDate)
+        
+        const response = await fetch(
+            "https://api.igdb.com/v4/games", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Client-ID': ACCESS_KEY,
+                    'Authorization': 'Bearer ' + ACCESS_TOKEN,
+                },
+                body: `fields *;
+                    where hypes > 2 & first_release_date > ${currentDate} & first_release_date < ${upcomingDate} & platforms = (6) & version_parent = null &
+                    keywords != (413, 24124, 27185, 1603, 2004) & themes != (42); limit 30;`
+            })
+
+            const upcomingData = await response.json();
+
+            const gameList = upcomingData.map((game: {
+                cover: any; first_release_date: any; id: any; name: any;
+            }) => ({
+                id: game.id,
+                name: game.name,
+                releaseDate: game.first_release_date,
+                cover: game.cover
+            }));
+
+            return Promise.resolve(gameList)
     }
     catch (error) {
         console.error(error)

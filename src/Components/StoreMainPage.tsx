@@ -92,16 +92,16 @@ function StoreMainPage() {
                     cachedKey: featuredProducts,
                 };
 
-                setFeaturedData(featuredProducts)
+                if (featuredProducts.length !== 0) {
+                    setFeaturedData(featuredProducts)
+                    setSearching(false)
+                }
+
                 console.log(featuredProducts)
             }
-
-            setSearching(false)
         }
         catch (error) {
             console.error(error)
-
-            setSearching(false)
         }
     }
 
@@ -148,7 +148,6 @@ function StoreMainPage() {
             setActiveButton((prevActiveButton) => (prevActiveButton + 1) % featuredData.length);
         }, 5000);
     };
-
 
     return (
         <>
