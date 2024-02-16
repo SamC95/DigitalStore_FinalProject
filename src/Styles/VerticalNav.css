@@ -24,6 +24,7 @@
     -webkit-app-region: no-drag;
     transform: translate(-50%);
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    z-index: -1;
 }
 
 .verticalNav_li {

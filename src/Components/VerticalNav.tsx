@@ -95,7 +95,7 @@ const VerticalNav = () => {
             }
             else {
                 // Performs API call to receive data for specified genre
-                const data = await ipcRenderer.invoke('genre-search', selectedGenre)
+                const data = await ipcRenderer.invoke('genre-search', selectedGenre, 40)
 
                 // If no results are received, store empty data in localStorage for SearchResults.tsx
                 if (data.length === 0) {
@@ -281,7 +281,7 @@ const VerticalNav = () => {
                 <br></br>
                 <button className='verticalNav_li' onClick={() => updateGenre('13')}>Simulator</button>
                 <br></br>
-                <button className='verticalNav_li' onClick={() => updateGenre('16')}>Turn-based strategy</button>
+                <button className='verticalNav_li' onClick={() => updateGenre('16')}>Turn-based Strategy</button>
                 <br></br>
 
                 <h4>Categories</h4>

@@ -16,6 +16,9 @@ NOTE - If project has been downloaded from Github, Access.db is NOT included.
         of the same name to gain access to required data.
 
         This does NOT apply to final project submission where Access.db will be included.
+
+        TODO - IMPLEMENT DYNAMIC RETRIEVAL OF ACCESS TOKEN SO THAT THE PROGRAM CAN DYNAMICALLY
+               RETRIEVE A NEW TOKEN WHEN THE PRIOR ONE EXPIRES
 */
 async function retrieveAccess() {
     const sqlite3 = require('sqlite3').verbose();
@@ -394,7 +397,7 @@ ipcMain.handle('product-search', async (_event, userSearch) => {
 })
 
 // Handles the API search when the user selects a genre from the vertical navigation bar
-ipcMain.handle('genre-search', async (_event, selectedGenre) => {
+ipcMain.handle('genre-search', async (_event, selectedGenre, numOfResults) => {
     try {
         await retrieveAccess()
         console.log(selectedGenre)
@@ -408,7 +411,7 @@ ipcMain.handle('genre-search', async (_event, selectedGenre) => {
                 'Authorization': 'Bearer ' + ACCESS_TOKEN,
             },
             body: `fields *;
-                where total_rating > 85 & genres = (${selectedGenre}) & version_parent = null & platforms = (6) & keywords != (413, 24124, 27185, 1603, 2004) & themes != (42); limit 40;`
+                where total_rating > 85 & genres = (${selectedGenre}) & version_parent = null & platforms = (6) & keywords != (413, 24124, 27185, 1603, 2004) & themes != (42); limit ${numOfResults};`
         })
 
         const retrievedData = await response.json();
@@ -465,6 +468,12 @@ ipcMain.handle('get-new-releases', async(_event, currentDate, monthAgoDate) => {
     }
 })
 
+/* 
+Gets search results for products with a release date between the current date and two months ahead
+Search conditions are similar to other search functions, however we use the "hypes" modifier to ensure
+that we are receiving results that are products with a reasonable level of popularity/awareness amongst
+consumers rather than receiving entirely unknown products
+ */
 ipcMain.handle('get-upcoming', async(_event, currentDate, upcomingDate) => {
     try {
         await retrieveAccess()

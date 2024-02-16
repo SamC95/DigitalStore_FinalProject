@@ -30,8 +30,8 @@ function AccountCreate() {
     const validUsernameLength = username.length >= 3;
     const usernameNotEmpty = username.length > 0;
 
-    // Ensures that the username cannot include numbers or special characters -- DEVNOTE: Maybe change to allow numbers?
-    const validUsername =  /^[a-zA-Z-]+$/.test(username);
+    // Ensures that the username cannot include special characters
+    const validUsername =  /^[a-zA-Z0-9-]+$/.test(username);
 
     // Checks that the password is long enough and that the Password and Confirm Password fields match
     const validPassLength = password.length >= 8;

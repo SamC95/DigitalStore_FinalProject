@@ -1,0 +1,52 @@
+.horizontalListContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+}
+
+.horizontalListWrapper #horizontalList {
+    display: flex;
+    overflow-x: hidden;
+    max-width: 80vw;
+}
+
+.horizontalListItem {
+    width: 200px;
+    height: 250px;
+    margin: 0 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.horizontalListWrapper {
+    display: flex;
+    align-items: center;
+    user-select: none;
+}
+
+.horizontalListImage {
+    display: inline-block;
+    height: 250px;
+    width: 188px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    transition: transform 0.3s ease;
+}
+
+.horizontalListImage:hover {
+    transform: scale(1.05); /* Increase size on hover */
+    cursor: pointer;
+}
+
+.horizontalListButton {
+    transition: transform 0.3s ease;
+}
+
+.horizontalListButton:hover {
+    transform: scale(1.5);
+    cursor: pointer;
+}

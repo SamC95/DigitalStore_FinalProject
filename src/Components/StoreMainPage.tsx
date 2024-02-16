@@ -6,6 +6,22 @@ import '../Styles/FeaturedSection.css'
 import { ipcRenderer } from 'electron';
 import { SetStateAction, useEffect, useRef, useState } from 'react';
 import LoadingBar from './LoadingBar.tsx';
+import HorizontalList from './HorizontalList.tsx';
+
+/* 
+Gets random numbers that are used to define the genres that will appear
+on the horizontal lists section of the main page.
+We use three separate calls to ensure that each list will only
+retrieve from a certain range of numbers, this prevents duplicates between 
+the separate horizontal lists, but retains some degree of randomness
+*/
+const getRandomNumber = (min: number, max: number) => {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function assignRandomNumbers(min: number, max: number) {
+    return getRandomNumber(min, max)
+}
 
 // Interface for a game object
 interface Game {
@@ -17,16 +33,15 @@ interface Game {
     artwork_id: string;
 }
 
-function wait(ms: number) {
-    const start = Date.now();
-    while (Date.now() - start < ms) { }
-}
-
-let featuredCache: Record<string, Game[]> = {};
+let featuredCache: Record<string, Game[]> = {}; 
 
 function StoreMainPage() {
     const hasResizedBefore = localStorage.getItem('hasResized')
     const [searching, setSearching] = useState(false)
+
+    const [featuredLoaded, setFeaturedLoaded] = useState(false);
+    const [firstListLoaded, setFirstListLoaded] = useState(false);
+    const [secondListLoaded, setSecondListLoaded] = useState(false);
 
     const [currentDate, setCurrentDate] = useState<number>(0);
     const [monthAgoDate, setMonthAgoDate] = useState<number>(0);
@@ -36,6 +51,10 @@ function StoreMainPage() {
 
     const [activeButton, setActiveButton] = useState<number>(0);
     const intervalIdRef = useRef<NodeJS.Timeout | null>(null)
+
+    const [firstGenre, setFirstGenre] = useState(-1);
+    const [secondGenre, setSecondGenre] = useState(-1); 
+    const [thirdGenre, setThirdGenre] = useState(-1);
 
     useEffect(() => {
         // Gets current date and converts it to unix format
@@ -149,6 +168,37 @@ function StoreMainPage() {
         }, 5000);
     };
 
+
+    // Used to control the flow of loading page elements to ensure API is not overloaded
+    useEffect(() => {
+        if (featuredData.length !== 0) {
+            setFirstGenre(assignRandomNumbers(0, 4))
+            setSecondGenre(assignRandomNumbers(5, 8))
+            setThirdGenre(assignRandomNumbers(9, 12))
+
+            setTimeout(() => {
+                setFeaturedLoaded(true)
+            }, 2000)
+        }
+    }, [featuredData])
+    
+    useEffect(() => {
+        if (featuredLoaded) {
+            setTimeout(() => {
+                setFirstListLoaded(true)
+            }, 3000)
+        }
+    }, [featuredLoaded])
+    
+    useEffect(() => {
+        if (firstListLoaded) {
+            setTimeout(() => {
+                setSecondListLoaded(true)
+            }, 4000)
+        }
+    }, [firstListLoaded])
+    
+
     return (
         <>
             <div>
@@ -165,7 +215,6 @@ function StoreMainPage() {
 
                     <div className='mainContainer'>
                         <VerticalNav />
-
 
                         <div className='imageContainer'>
                             <div className='imageWrapper'>
@@ -197,6 +246,25 @@ function StoreMainPage() {
                                 </button>
                             ))}
                         </div>
+                        
+                        {featuredLoaded && (
+                        <>
+                        <HorizontalList randomNum={firstGenre} />
+                        </>
+                        )}
+
+                        {firstListLoaded && (
+                        <>
+                        <HorizontalList randomNum={secondGenre} />
+                        </>
+                        )}
+
+                        {secondListLoaded && (
+                        <>
+                        <HorizontalList randomNum={thirdGenre} />
+                        </>
+                        )}
+                        <br></br>
                     </div>
                 </>
             )}
