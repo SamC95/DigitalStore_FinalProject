@@ -6,7 +6,7 @@ import LoadingBar from './LoadingBar.tsx';
 import '../Styles/HorizontalList.css'
 import '../Styles/igdb-logo.css'
 
-function wait(ms: number) {
+async function wait(ms: number) {
     const start = Date.now();
     while (Date.now() - start < ms) { }
 }
@@ -23,6 +23,8 @@ interface Game {
     cover: string;
     image_id: string;
 }
+
+const horizontalListCache: Record<string, Game[]> = {};
 
 // The appropriate IDs and names of each genre, which are used based on the list number variable
 const GenreIDs = [4, 8, 9, 10, 11, 12, 13, 14, 16, 31, 32, 33, 35]
@@ -75,14 +77,21 @@ function HorizontalList({ randomNum }: HorizontalListProps) {
     useEffect(() => {
         async function retrieveData() {
             setSearching(true)
-            wait(1000)
+            if (horizontalListCache[listNumber]) {
+                console.log('Using cached result for: ', GenreNames[listNumber])
+                setDataList(horizontalListCache[listNumber])
+                setSearching(false)
+            }
+            else {
             const data = await ipcRenderer.invoke('genre-search', GenreIDs[listNumber], 12)
 
-            wait(500)
+            wait(1000)
             const updatedList = await getCovers(data);
 
+            horizontalListCache[listNumber] = updatedList
             setDataList(updatedList)
             setSearching(false)
+            }
         }
         retrieveData()
     }, [listNumber])

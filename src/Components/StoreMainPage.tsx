@@ -141,8 +141,6 @@ function StoreMainPage() {
             // Update activeButton, cycling back to 0 when reaching the last index
             setActiveButton((prevActiveButton) => {
                 const nextActiveButton = (prevActiveButton + 1) % featuredData.length;
-                console.log('Before Update:', prevActiveButton);
-                console.log('After Update:', nextActiveButton);
                 return nextActiveButton;
             });
         }, 5000);

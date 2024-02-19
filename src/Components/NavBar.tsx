@@ -7,7 +7,7 @@ const NavBar = () => {
     // ApplicationButtons is used to ensure that the close, minimise and maximise buttons are included as part of the NavBar
     return (
         <>
-        <nav>
+        <nav className='topNav'>
             <ApplicationButtons/>
             <Link className='NavLink' to="/store-main-page">Store</Link>
             <Link className='NavLink' to="/store-main-page">Library</Link>

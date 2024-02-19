@@ -415,8 +415,6 @@ ipcMain.handle('genre-search', async (_event, selectedGenre, numOfResults) => {
             body: `fields *;
                 where total_rating > 85 & genres = (${selectedGenre}) & version_parent = null & platforms = (6) & keywords != (413, 24124, 27185, 1603, 2004) & themes != (42); limit ${numOfResults};`
         })
-
-        delay(1000)
         
         const retrievedData = await response.json();
 
