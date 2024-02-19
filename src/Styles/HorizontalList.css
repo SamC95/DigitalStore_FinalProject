@@ -2,13 +2,14 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 50px;
+    margin-top: 75px;
+    position: relative;
 }
 
 .horizontalListWrapper #horizontalList {
     display: flex;
-    overflow-x: hidden;
-    max-width: 80vw;
+    overflow-x: auto;
+    max-width: calc(100vw - 40px);
 }
 
 .horizontalListItem {
@@ -38,7 +39,7 @@
 }
 
 .horizontalListImage:hover {
-    transform: scale(1.05); /* Increase size on hover */
+    transform: scale(1.05); 
     cursor: pointer;
 }
 
@@ -49,4 +50,8 @@
 .horizontalListButton:hover {
     transform: scale(1.5);
     cursor: pointer;
+}
+
+.horizontalListContainer:not(:first-child) {
+    margin-top: 20px;
 }

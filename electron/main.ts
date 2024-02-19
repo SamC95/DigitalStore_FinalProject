@@ -402,6 +402,8 @@ ipcMain.handle('genre-search', async (_event, selectedGenre, numOfResults) => {
         await retrieveAccess()
         console.log(selectedGenre)
 
+        delay(1000)
+
         const response = await fetch(
             "https://api.igdb.com/v4/games", {
             method: 'POST',
@@ -414,6 +416,8 @@ ipcMain.handle('genre-search', async (_event, selectedGenre, numOfResults) => {
                 where total_rating > 85 & genres = (${selectedGenre}) & version_parent = null & platforms = (6) & keywords != (413, 24124, 27185, 1603, 2004) & themes != (42); limit ${numOfResults};`
         })
 
+        delay(1000)
+        
         const retrievedData = await response.json();
 
         const gameList = retrievedData.map((game: {
@@ -568,6 +572,7 @@ ipcMain.handle('get-covers', async (_event, game) => {
                 "where game = " + game + ";"
         })
 
+        delay(1000)
         const coverData = await response.json();
 
         if (!response.ok) {
@@ -578,7 +583,7 @@ ipcMain.handle('get-covers', async (_event, game) => {
 
         if (Array.isArray(coverData)) {
             for (const imageData of coverData) {
-                await delay(250); // Delay before fetching data for each game
+                await delay(1000); // Delay before fetching data for each game
                 if (imageData.image_id !== undefined) {
                     imageList.push({
                         imageId: imageData.image_id

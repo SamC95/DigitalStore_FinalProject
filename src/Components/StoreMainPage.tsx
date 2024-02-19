@@ -151,25 +151,24 @@ function StoreMainPage() {
             if (intervalIdRef.current) {
                 clearInterval(intervalIdRef.current)
             }
-        }; // Cleanup on component unmount
+        }; 
     }, [featuredData.length]); // Dependency on the length of featuredData
 
     const handleButtonClick = (index: SetStateAction<number>) => {
         if (intervalIdRef.current) {
-            clearInterval(intervalIdRef.current) // Clear the interval when a button is clicked
+            clearInterval(intervalIdRef.current) // Clears the interval when a button is clicked
         }
         console.log('Clicked Button:', index);
         setActiveButton(index);
 
-        // Restart the interval after clicking a button
+        // Restarts interval after clicking a button
         intervalIdRef.current = setInterval(() => {
-            // Update activeButton, cycling back to 0 when reaching the last index
             setActiveButton((prevActiveButton) => (prevActiveButton + 1) % featuredData.length);
         }, 5000);
     };
 
 
-    // Used to control the flow of loading page elements to ensure API is not overloaded
+    // Assigns a genre for each of the horizontal lists without duplicates
     useEffect(() => {
         if (featuredData.length !== 0) {
             setFirstGenre(assignRandomNumbers(0, 4))
@@ -185,7 +184,7 @@ function StoreMainPage() {
     useEffect(() => {
         if (featuredLoaded) {
             setTimeout(() => {
-                setFirstListLoaded(true)
+                setFirstListLoaded(true) // Delays the loading of the first list until featured section has been loaded
             }, 3000)
         }
     }, [featuredLoaded])
@@ -193,11 +192,11 @@ function StoreMainPage() {
     useEffect(() => {
         if (firstListLoaded) {
             setTimeout(() => {
-                setSecondListLoaded(true)
+                setSecondListLoaded(true) // Delays the loading of the second list until after the first list has loaded
             }, 4000)
         }
     }, [firstListLoaded])
-    
+    // Delays are done to prevent API overload from too many requests too quickly
 
     return (
         <>
@@ -246,7 +245,6 @@ function StoreMainPage() {
                                 </button>
                             ))}
                         </div>
-                        
                         {featuredLoaded && (
                         <>
                         <HorizontalList randomNum={firstGenre} />

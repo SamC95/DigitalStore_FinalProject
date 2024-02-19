@@ -13,9 +13,14 @@
     cursor: pointer;
 }
 
+.imageWrapper {
+    position: relative;
+    display: inline-block;
+}
+
 .buttonsContainer {
     position: absolute;
-    margin-top: 600px;
+    margin-top: 620px;
 }
 
 .featuredImage {
