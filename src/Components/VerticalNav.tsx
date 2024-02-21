@@ -39,7 +39,7 @@ const VerticalNav = () => {
     async function setDates() {
         // Gets current date and converts it to unix format
         const currentDate = Math.floor(Date.now() / 1000);
-        
+
 
         // Gets date one month ago and converts it to unix format
         const oneMonthAgo = new Date();
@@ -145,7 +145,7 @@ const VerticalNav = () => {
                 setCacheRetrieved(true);
             }
             else {
-                const [ currentDate, monthAgoDate ] = await setDates();
+                const [currentDate, monthAgoDate] = await setDates();
 
                 const data = await ipcRenderer.invoke('get-new-releases', currentDate, monthAgoDate)
 
@@ -197,27 +197,29 @@ const VerticalNav = () => {
             }
             else {
                 // Retrives current date, month ago date is unused in this search
-                const [ currentDate, _monthAgoDate, upcomingDate ] = await setDates();
+                const [currentDate, _monthAgoDate, upcomingDate] = await setDates();
 
                 const data = await ipcRenderer.invoke('get-upcoming', currentDate, upcomingDate)
 
-                if (data.length === 0) {
-                    console.log('No data');
-                    localStorage.setItem('gameList', JSON.stringify(data))
-                }
-
-                else {
-                    wait(3000)
-
-                    const updatedGameList = await getCovers(data)
-
-                    upcomingCache = {
-                        cachedKey: updatedGameList
+                if (data !== undefined) {
+                    if (data.length === 0) {
+                        console.log('No data');
+                        localStorage.setItem('gameList', JSON.stringify(data))
                     }
 
-                    setGameList(updatedGameList)
+                    else {
+                        wait(3000)
 
-                    localStorage.setItem('gameList', JSON.stringify(updatedGameList))
+                        const updatedGameList = await getCovers(data)
+
+                        upcomingCache = {
+                            cachedKey: updatedGameList
+                        }
+
+                        setGameList(updatedGameList)
+
+                        localStorage.setItem('gameList', JSON.stringify(updatedGameList))
+                    }
                 }
             }
         }
@@ -251,7 +253,7 @@ const VerticalNav = () => {
         }
     }, [gameList, selectedGenre, searching, buttonPressed, navigate]);
 
-    
+
     // updateGenre number refers to the IGDB id of a specific genre for API calls
     return (
         <>

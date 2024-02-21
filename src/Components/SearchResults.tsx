@@ -88,7 +88,7 @@ function SearchResults() {
                                     <img className='gameImage' src={`//images.igdb.com/igdb/image/upload/t_cover_big/${game.image_id}.jpg`} alt={`Cover for ${game.name}`} />
                                     <p className='gameTitle'>{game.name}</p>
                                     <p className='gameReleaseDate'>{game.releaseDate ? `Release Date: ${new Intl.DateTimeFormat('default', { year: 'numeric', month: '2-digit', day: '2-digit' })
-                                        .format(new Date(game.releaseDate * 1000))}` : "Release Date: TBA"}</p>
+                                        .format(new Date(game.releaseDate * 1000))}` : "Release Date: " + " TBA"}</p>
                                 </li>
                             ))}
                         </ul>

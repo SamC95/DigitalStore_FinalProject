@@ -99,6 +99,7 @@ async function generateUserID(accountDatabase: { get: (arg0: string, arg1: numbe
     // DEVNOTE -- In a scenario where there are a lot of users (i.e. in the 7 digit amount) then
     // this could potentially be a bottleneck on the application if the loop were to get stuck
     // checking values repeatedly for a long period of time until it finds a unique one
+    // Should not be an issue for this program's use case however
     while (isUnique == false) {
         newId = Math.floor(Math.random() * (9999999 - 1000000 + 1)) + 1000000;
 
@@ -193,6 +194,146 @@ async function checkLoginDetails(username: any, password: any) {
                 }
 
                 accountDatabase.close()
+            })
+        })
+    })
+}
+
+// Retrieves a product's details from the database if it already exists there
+async function getGameById(productId: any) {
+    const sqlite3 = require('sqlite3').verbose();
+
+    interface GameData {
+        id: number,
+        name: string,
+        releaseDate: string,
+        cover: string;
+    }
+
+    return new Promise((resolve, reject) => {
+        let productDatabase = new sqlite3.Database('./ProductDatabase.db', sqlite3.OPEN_READWRITE, (error: { message: any; }) => {
+            if (error) {
+                console.error(error.message)
+            }
+
+            const sqlQuery = 'SELECT id, name, releaseDate, cover FROM Products WHERE id = ?';
+
+            productDatabase.get(sqlQuery, [productId], (error: { message: any; }, row: GameData) => {
+                if (error) {
+                    console.error(error.message)
+                    reject(error);
+                }
+                else {
+                    if (row) {
+                        productDatabase.close()
+                        resolve(row)
+                    }
+                    else {
+                        productDatabase.close()
+                        resolve(null)
+                    }
+                }
+            });
+        });
+    });
+}
+
+// Inserts or Updates product details into an SQL database, for a specific product based on its ID
+async function saveProductDetails(productDetails: any) {
+    const sqlite3 = require('sqlite3').verbose();
+    const { id, name, releaseDate, cover } = productDetails;
+
+    return new Promise((resolve, reject) => {
+        let productDatabase = new sqlite3.Database('./ProductDatabase.db', sqlite3.OPEN_READWRITE, (error: { message: any; }) => {
+            if (error) {
+                console.error(error.message)
+            }
+
+            const newProductQuery = 'INSERT INTO Products (id, name, releaseDate, cover) VALUES (?, ?, ?, ?)';
+
+            const existingProductQuery = 'UPDATE Products SET name = ?, releaseDate = ?, cover = ? WHERE id = ?'
+
+            productDatabase.get('SELECT id FROM Products WHERE id = ?', [id], (error: any, row: any) => {
+                if (error) {
+                    console.error(error);
+                }
+                else if (row) {
+                    productDatabase.run(existingProductQuery, [name, releaseDate, cover, id], function (error: any) {
+
+                        if (error) {
+                            reject(error)
+                        }
+                        else {
+                            resolve(id);
+                        }
+                    });
+                }
+                else {
+                    productDatabase.run(newProductQuery, [id, name, releaseDate, cover], function (error: any) {
+                        if (error) {
+                            reject(error);
+                        }
+                        else {
+                            resolve(id)
+                        }
+                    })
+                }
+            })
+        })
+    })
+}
+
+// Gets the cover data for a product from the database
+async function getImageIdFromDatabase(productId: any) {
+    const sqlite3 = require('sqlite3').verbose();
+    
+    return new Promise((resolve, reject) => {
+        let productDatabase = new sqlite3.Database('./ProductDatabase.db', sqlite3.OPEN_READWRITE, (error: { message: any;}) => {
+            if (error) {
+                console.error(error.message)
+            }
+            
+            const sqlQuery = 'SELECT image_id FROM Products WHERE id = ?';
+
+            productDatabase.get(sqlQuery, [productId], (error: { message: any; }, row: any) => {
+                if (error) {
+                    console.error(error.message)
+                    reject(error)
+                }
+                else {
+                    if (row) {
+                        productDatabase.close()
+                        resolve(row.image_id)
+                    }
+                    else {
+                        productDatabase.close()
+                        resolve(null)
+                    }
+                }
+            });
+        });
+    });
+}
+
+// Saves cover images for each product into their respective rows in the database
+async function saveImageIdToDatabase(productId: any, imageId: any) {
+    const sqlite3 = require('sqlite3').verbose();
+
+    return new Promise((resolve, reject) => {
+        let productDatabase = new sqlite3.Database('./ProductDatabase.db', sqlite3.OPEN_READWRITE, (error: { message: any }) => {
+            if (error) {
+                console.error(error.message)
+            }
+
+            const newIdQuery = 'UPDATE Products SET image_id = ? WHERE id = ?';
+
+            productDatabase.run(newIdQuery, [imageId, productId], function (error: any) {
+                if (error) {
+                    reject(error)
+                }
+                else {
+                    resolve(productId)
+                }
             })
         })
     })
@@ -379,15 +520,24 @@ ipcMain.handle('product-search', async (_event, userSearch) => {
 
         const data = await response.json();
 
-        // Takes the retrieved data and maps it to game objects
-        const gameList = data.map((game: {
-            cover: any; first_release_date: any; id: any; name: any;
-        }) => ({
-            id: game.id,
-            name: game.name,
-            releaseDate: game.first_release_date,
-            cover: game.cover
-        }));
+        const gameList = [];
+
+        for (const game of data) {
+            let gameInfo = await getGameById(game.id) 
+
+            if (!gameInfo) {
+                gameInfo = {
+                    id: game.id,
+                    name: game.name,
+                    releaseDate: game.first_release_date,
+                    cover: game.cover
+                }
+
+                await saveProductDetails(gameInfo)
+            }
+
+            gameList.push(gameInfo)
+        }
 
         return Promise.resolve(gameList);
     }
@@ -415,17 +565,36 @@ ipcMain.handle('genre-search', async (_event, selectedGenre, numOfResults) => {
             body: `fields *;
                 where total_rating > 85 & genres = (${selectedGenre}) & version_parent = null & platforms = (6) & keywords != (413, 24124, 27185, 1603, 2004) & themes != (42); limit ${numOfResults};`
         })
-        
+
         const retrievedData = await response.json();
 
-        const gameList = retrievedData.map((game: {
+        const gameList = [];
+
+        for (const game of retrievedData) {
+            let gameInfo = await getGameById(game.id)
+
+            if (!gameInfo) {
+                gameInfo = {
+                    id: game.id,
+                    name: game.name,
+                    releaseDate: game.first_release_date,
+                    cover: game.cover
+                }
+
+                await saveProductDetails(gameInfo)
+            }
+
+            gameList.push(gameInfo)
+        }
+
+        /* const gameList = retrievedData.map((game: {
             cover: any; first_release_date: any; id: any; name: any;
         }) => ({
             id: game.id,
             name: game.name,
             releaseDate: game.first_release_date,
             cover: game.cover
-        }));
+        })); */
 
         return Promise.resolve(gameList)
     }
@@ -435,35 +604,53 @@ ipcMain.handle('genre-search', async (_event, selectedGenre, numOfResults) => {
 })
 
 // Handles the new releases option of the vertical navigation bar
-ipcMain.handle('get-new-releases', async(_event, currentDate, monthAgoDate) => {
+ipcMain.handle('get-new-releases', async (_event, currentDate, monthAgoDate) => {
     try {
         await retrieveAccess()
 
         const response = await fetch(
             "https://api.igdb.com/v4/games", {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Client-ID': ACCESS_KEY,
-                    'Authorization': 'Bearer ' + ACCESS_TOKEN,
-                },
-                body: `fields *;
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Client-ID': ACCESS_KEY,
+                'Authorization': 'Bearer ' + ACCESS_TOKEN,
+            },
+            body: `fields *;
                     where total_rating_count > 2 & first_release_date < ${currentDate} & first_release_date > ${monthAgoDate} & platforms = (6) & version_parent = null &
                     keywords != (413, 24124, 27185, 1603, 2004) & themes != (42); limit 30;`
-            })
+        })
+        const newReleaseData = await response.json();
 
-            const newReleaseData = await response.json(); 
+        const gameList = [];
 
-            const gameList = newReleaseData.map((game: {
-                cover: any; first_release_date: any; id: any; name: any;
-            }) => ({
-                id: game.id,
-                name: game.name,
-                releaseDate: game.first_release_date,
-                cover: game.cover
-            }));
+        for (const game of newReleaseData) {
+            let gameInfo = await getGameById(game.id)
 
-            return Promise.resolve(gameList)
+            if (!gameInfo) {
+                gameInfo = {
+                    id: game.id,
+                    name: game.name,
+                    releaseDate: game.first_release_date,
+                    cover: game.cover
+                }
+
+                await saveProductDetails(gameInfo)
+            }
+
+            gameList.push(gameInfo)
+        }
+
+        /* const gameList = newReleaseData.map((game: {
+            cover: any; first_release_date: any; id: any; name: any;
+        }) => ({
+            id: game.id,
+            name: game.name,
+            releaseDate: game.first_release_date,
+            cover: game.cover
+        })); */
+
+        return Promise.resolve(gameList)
     }
     catch (error) {
         console.error(error)
@@ -476,37 +663,48 @@ Search conditions are similar to other search functions, however we use the "hyp
 that we are receiving results that are products with a reasonable level of popularity/awareness amongst
 consumers rather than receiving entirely unknown products
  */
-ipcMain.handle('get-upcoming', async(_event, currentDate, upcomingDate) => {
+ipcMain.handle('get-upcoming', async (_event, currentDate, upcomingDate) => {
     try {
         await retrieveAccess()
-        console.log(currentDate)
-        console.log(upcomingDate)
-        
+
         const response = await fetch(
             "https://api.igdb.com/v4/games", {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Client-ID': ACCESS_KEY,
-                    'Authorization': 'Bearer ' + ACCESS_TOKEN,
-                },
-                body: `fields *;
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Client-ID': ACCESS_KEY,
+                'Authorization': 'Bearer ' + ACCESS_TOKEN,
+            },
+            body: `fields *;
                     where hypes > 2 & first_release_date > ${currentDate} & first_release_date < ${upcomingDate} & platforms = (6) & version_parent = null &
                     keywords != (413, 24124, 27185, 1603, 2004) & themes != (42); limit 30;`
-            })
+        })
+        const upcomingData = await response.json();
 
-            const upcomingData = await response.json();
+        const gameList = [];
 
-            const gameList = upcomingData.map((game: {
-                cover: any; first_release_date: any; id: any; name: any;
-            }) => ({
-                id: game.id,
-                name: game.name,
-                releaseDate: game.first_release_date,
-                cover: game.cover
-            }));
+        // After initial data has been retrieved from the API, we check if data with this ID already
+        // exists in ProductDatabase, if it does then we use it to create the product object, if it doesn't
+        // we make the object as normally by using the API data we retrieved and then saving the appropriate
+        // data points that are relevant to the application into the database.
+        for (const game of upcomingData) {
+            let gameInfo = await getGameById(game.id)
 
-            return Promise.resolve(gameList)
+            if (!gameInfo) {
+                gameInfo = {
+                    id: game.id,
+                    name: game.name,
+                    releaseDate: game.first_release_date,
+                    cover: game.cover
+                }
+
+                console.log(gameInfo)
+                await saveProductDetails(gameInfo) // Saving the data should help us reduce load on the API in other components
+            }
+
+            gameList.push(gameInfo)
+        }
+        return Promise.resolve(gameList)
     }
     catch (error) {
         console.error(error)
@@ -516,8 +714,6 @@ ipcMain.handle('get-upcoming', async(_event, currentDate, upcomingDate) => {
 ipcMain.handle('get-featured', async (_event, currentDate, monthAgoDate) => {
     try {
         await retrieveAccess()
-        console.log(currentDate)
-        console.log(monthAgoDate)
 
         const response = await fetch(
             "https://api.igdb.com/v4/games", {
@@ -554,7 +750,13 @@ ipcMain.handle('get-featured', async (_event, currentDate, monthAgoDate) => {
 
 ipcMain.handle('get-covers', async (_event, game) => {
     try {
-        console.log(game)
+        
+        const imageIdFromDatabase = await getImageIdFromDatabase(game)
+
+        if (imageIdFromDatabase) {
+            console.log("Retrieved Image ID from database: ", imageIdFromDatabase)
+            return Promise.resolve([{ imageId: imageIdFromDatabase }])
+        }
 
         delay(1000)
 
@@ -573,19 +775,22 @@ ipcMain.handle('get-covers', async (_event, game) => {
         delay(1000)
         const coverData = await response.json();
 
+        const imageList = [];
+
         if (!response.ok) {
             throw new Error('Failed to fetch covers: ' + response.status);
         }
 
-        const imageList = [];
-
         if (Array.isArray(coverData)) {
             for (const imageData of coverData) {
-                await delay(1000); // Delay before fetching data for each game
-                if (imageData.image_id !== undefined) {
+                const imageId = imageData.image_id
+
+                if (imageData.image_id !== undefined && imageId !== null) {
                     imageList.push({
                         imageId: imageData.image_id
                     });
+
+                    await saveImageIdToDatabase(game, imageId);
                 }
             }
         } else {
@@ -619,12 +824,12 @@ ipcMain.handle('get-featured-screenshots', async (_event, game) => {
 
         const artworkData = await artworkResponse.json()
 
+        const imageList = [];
+
         // Displays the response from the API if it is an error
         if (!artworkResponse.ok) {
             throw new Error('Failed to fetch artwork: ' + artworkResponse.status);
         }
-
-        const imageList = [];
 
         if (Array.isArray(artworkData)) {
             for (const artworkItem of artworkData) {
