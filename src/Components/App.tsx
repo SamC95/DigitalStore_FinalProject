@@ -3,6 +3,7 @@ import Start from '../Components/Start.tsx'
 import Login from '../Components/Login.tsx'
 import AccountCreate from '../Components/AccountCreate.tsx'
 import StoreMainPage from '../Components/StoreMainPage.tsx'
+import ProductPage from '../Components/ProductPage.tsx'
 import SearchResults from './SearchResults.tsx'
 import '../Styles/App.css'
 import '../Styles/index.css'
@@ -17,6 +18,7 @@ function App() {
                     <Route path="/account-create" element={<AccountCreate />}> </Route>
                     <Route path="/store-main-page" element={<StoreMainPage/>}> </Route>
                     <Route path="/search-results" element={<SearchResults/>}> </Route>
+                    <Route path="/product-page/:gameId" element={<ProductPage/>}> </Route>
                 </Routes>
             </BrowserRouter>
         </div>

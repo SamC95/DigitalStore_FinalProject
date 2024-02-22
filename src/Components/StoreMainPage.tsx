@@ -7,6 +7,7 @@ import { ipcRenderer } from 'electron';
 import { SetStateAction, useEffect, useRef, useState } from 'react';
 import LoadingBar from './LoadingBar.tsx';
 import HorizontalList from './HorizontalList.tsx';
+import { Link } from 'react-router-dom';
 
 /* 
 Gets random numbers that are used to define the genres that will appear
@@ -33,7 +34,7 @@ interface Game {
     artwork_id: string;
 }
 
-let featuredCache: Record<string, Game[]> = {}; 
+let featuredCache: Record<string, Game[]> = {};
 
 function StoreMainPage() {
     const hasResizedBefore = localStorage.getItem('hasResized')
@@ -53,7 +54,7 @@ function StoreMainPage() {
     const intervalIdRef = useRef<NodeJS.Timeout | null>(null)
 
     const [firstGenre, setFirstGenre] = useState(-1);
-    const [secondGenre, setSecondGenre] = useState(-1); 
+    const [secondGenre, setSecondGenre] = useState(-1);
     const [thirdGenre, setThirdGenre] = useState(-1);
 
     useEffect(() => {
@@ -149,7 +150,7 @@ function StoreMainPage() {
             if (intervalIdRef.current) {
                 clearInterval(intervalIdRef.current)
             }
-        }; 
+        };
     }, [featuredData.length]); // Dependency on the length of featuredData
 
     const handleButtonClick = (index: SetStateAction<number>) => {
@@ -178,7 +179,7 @@ function StoreMainPage() {
             }, 2000)
         }
     }, [featuredData])
-    
+
     useEffect(() => {
         if (featuredLoaded) {
             setTimeout(() => {
@@ -186,7 +187,7 @@ function StoreMainPage() {
             }, 3000)
         }
     }, [featuredLoaded])
-    
+
     useEffect(() => {
         if (firstListLoaded) {
             setTimeout(() => {
@@ -216,10 +217,12 @@ function StoreMainPage() {
                         <div className='imageContainer'>
                             <div className='imageWrapper'>
                                 {featuredData[activeButton]?.image_id && (
-                                    <img className='featuredImage' src={`//images.igdb.com/igdb/image/upload/t_original/${decodeURIComponent(featuredData[activeButton]?.image_id)}.jpg`}
-                                        alt={`Artwork for ${featuredData[activeButton]?.name}`}
-                                        style={{ paddingTop: '20px' }}
-                                    />
+                                    <Link to={`/product-page/${featuredData[activeButton].id}`} style={{ textDecoration: 'none', color: 'white' }}>
+                                        <img className='featuredImage' src={`//images.igdb.com/igdb/image/upload/t_original/${decodeURIComponent(featuredData[activeButton]?.image_id)}.jpg`}
+                                            alt={`Artwork for ${featuredData[activeButton]?.name}`}
+                                            style={{ paddingTop: '20px' }}
+                                        />
+                                    </Link>
                                 )}
                             </div>
                         </div>
@@ -244,21 +247,21 @@ function StoreMainPage() {
                             ))}
                         </div>
                         {featuredLoaded && (
-                        <>
-                        <HorizontalList randomNum={firstGenre} />
-                        </>
+                            <>
+                                <HorizontalList randomNum={firstGenre} />
+                            </>
                         )}
 
                         {firstListLoaded && (
-                        <>
-                        <HorizontalList randomNum={secondGenre} />
-                        </>
+                            <>
+                                <HorizontalList randomNum={secondGenre} />
+                            </>
                         )}
 
                         {secondListLoaded && (
-                        <>
-                        <HorizontalList randomNum={thirdGenre} />
-                        </>
+                            <>
+                                <HorizontalList randomNum={thirdGenre} />
+                            </>
                         )}
                         <br></br>
                     </div>

@@ -3,7 +3,7 @@ import VerticalNav from './VerticalNav';
 import SearchBar from './SearchBar';
 import '../Styles/SearchResults.css'
 import '../Styles/Loading.css'
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import LoadingBar from './LoadingBar';
 import { useEffect, useState } from 'react';
 
@@ -83,13 +83,15 @@ function SearchResults() {
                     {!searching && !hasError && gameList.length > 0 && (
                         <ul key={gameList.length}>
                             {gameList.map((game: any) => (
-                                <li key={game.id}>
-                                    <img className='backgroundImage' src={`//images.igdb.com/igdb/image/upload/t_cover_big/${game.image_id}.jpg`} alt={`Cover for ${game.name}`} />
-                                    <img className='gameImage' src={`//images.igdb.com/igdb/image/upload/t_cover_big/${game.image_id}.jpg`} alt={`Cover for ${game.name}`} />
-                                    <p className='gameTitle'>{game.name}</p>
-                                    <p className='gameReleaseDate'>{game.releaseDate ? `Release Date: ${new Intl.DateTimeFormat('default', { year: 'numeric', month: '2-digit', day: '2-digit' })
-                                        .format(new Date(game.releaseDate * 1000))}` : "Release Date: " + " TBA"}</p>
-                                </li>
+                                <Link to={`/product-page/${game.id}`} style={{ textDecoration: 'none', color: 'white' }}>
+                                    <li key={game.id}>
+                                        <img className='backgroundImage' src={`//images.igdb.com/igdb/image/upload/t_cover_big/${game.image_id}.jpg`} alt={`Cover for ${game.name}`} />
+                                        <img className='gameImage' src={`//images.igdb.com/igdb/image/upload/t_cover_big/${game.image_id}.jpg`} alt={`Cover for ${game.name}`} />
+                                        <p className='gameTitle'>{game.name}</p>
+                                        <p className='gameReleaseDate'>{game.releaseDate ? `Release Date: ${new Intl.DateTimeFormat('default', { year: 'numeric', month: '2-digit', day: '2-digit' })
+                                            .format(new Date(game.releaseDate * 1000))}` : "Release Date: " + " TBA"}</p>
+                                    </li>
+                                </Link>
                             ))}
                         </ul>
                     )}

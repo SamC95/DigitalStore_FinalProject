@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import LoadingBar from './LoadingBar.tsx';
 import '../Styles/HorizontalList.css'
 import '../Styles/igdb-logo.css'
+import { Link } from 'react-router-dom';
 
 async function wait(ms: number) {
     const start = Date.now();
@@ -83,14 +84,14 @@ function HorizontalList({ randomNum }: HorizontalListProps) {
                 setSearching(false)
             }
             else {
-            const data = await ipcRenderer.invoke('genre-search', GenreIDs[listNumber], 12)
+                const data = await ipcRenderer.invoke('genre-search', GenreIDs[listNumber], 12)
 
-            wait(1000)
-            const updatedList = await getCovers(data);
+                wait(1000)
+                const updatedList = await getCovers(data);
 
-            horizontalListCache[listNumber] = updatedList
-            setDataList(updatedList)
-            setSearching(false)
+                horizontalListCache[listNumber] = updatedList
+                setDataList(updatedList)
+                setSearching(false)
             }
         }
         retrieveData()
@@ -98,34 +99,36 @@ function HorizontalList({ randomNum }: HorizontalListProps) {
 
     return (
         <>
-        {searching && <LoadingBar />}
+            {searching && <LoadingBar />}
 
-        {!searching && (
-            <div className='horizontalListContainer'>
-                <div className='horizontalListGenre'>
-                    <h2>{GenreNames[listNumber]} Games</h2>
+            {!searching && (
+                <div className='horizontalListContainer'>
+                    <div className='horizontalListGenre'>
+                        <h2>{GenreNames[listNumber]} Games</h2>
+                    </div>
+                    <div className='horizontalListWrapper'>
+                        <div className='horizontalListButton'>
+                            <MdChevronLeft onClick={() => handleScroll(-1)} size={40} />
+                        </div>
+                        <div id='horizontalList'>
+                            {dataList.map((game, index) => {
+                                const isVisible = index >= scrollPosition && index < scrollPosition + maxVisibleItems;
+                                return (
+                                    isVisible && // Check if item is within visible range
+                                    <div key={index} className='horizontalListItem'>
+                                        <Link to={`/product-page/${game.id}`} style={{ textDecoration: 'none', color: 'white' }}>
+                                            {<img className='horizontalListImage' src={`//images.igdb.com/igdb/image/upload/t_cover_big/${game.image_id}.jpg`} alt={`Cover for ${game.name}`} />}
+                                        </Link>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        <div className='horizontalListButton'>
+                            <MdChevronRight onClick={() => handleScroll(1)} size={40} />
+                        </div>
+                    </div>
                 </div>
-                <div className='horizontalListWrapper'>
-                    <div className='horizontalListButton'>
-                        <MdChevronLeft onClick={() => handleScroll(-1)} size={40} />
-                    </div>
-                    <div id='horizontalList'>
-                        {dataList.map((game, index) => {
-                            const isVisible = index >= scrollPosition && index < scrollPosition + maxVisibleItems;
-                            return (
-                                isVisible && // Check if item is within visible range
-                                <div key={index} className='horizontalListItem'>
-                                    {<img className='horizontalListImage' src={`//images.igdb.com/igdb/image/upload/t_cover_big/${game.image_id}.jpg`} alt={`Cover for ${game.name}`} />}
-                                </div>
-                            );
-                        })}
-                    </div>
-                    <div className='horizontalListButton'>
-                        <MdChevronRight onClick={() => handleScroll(1)} size={40} />
-                    </div>
-                </div>
-            </div>
-        )}
+            )}
         </>
     );
 }
