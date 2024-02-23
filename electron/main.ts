@@ -458,35 +458,6 @@ ipcMain.on("openLink", (_event, link) => {
     require('electron').shell.openExternal(link)
 })
 
-// API request to IGDB to retrieve data
-ipcMain.handle('api-test', async (_event) => {
-    try {
-        await retrieveAccess()
-
-        fetch(
-            "https://api.igdb.com/v4/games",
-            {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Client-ID': ACCESS_KEY,
-                    'Authorization': 'Bearer ' + ACCESS_TOKEN,
-                },
-                body: "fields *;"
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data)
-            })
-            .catch(error => {
-                console.error(error)
-            });
-    }
-    catch (error) {
-        console.error(error)
-    }
-});
-
 // Handles API request for when the user provides a search request on the store page
 /*
 NOTE : version_parent = null - Removes any separate editions of the same product
@@ -586,15 +557,6 @@ ipcMain.handle('genre-search', async (_event, selectedGenre, numOfResults) => {
 
             gameList.push(gameInfo)
         }
-
-        /* const gameList = retrievedData.map((game: {
-            cover: any; first_release_date: any; id: any; name: any;
-        }) => ({
-            id: game.id,
-            name: game.name,
-            releaseDate: game.first_release_date,
-            cover: game.cover
-        })); */
 
         return Promise.resolve(gameList)
     }
@@ -882,6 +844,7 @@ ipcMain.handle('check-details', async (_event, username, emailAddress) => {
     }
 })
 
+// Used to check that the details being used to attempt to login exist in the database
 ipcMain.handle('login-details', async (_event, username, password) => {
     try {
         const validUser = await checkLoginDetails(username, password)

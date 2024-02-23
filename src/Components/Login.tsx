@@ -72,6 +72,12 @@ function Login() {
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleClick(e)
+                        }
+                    }}
                  />
             </label>
         </div>
@@ -82,6 +88,12 @@ function Login() {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleClick(e)
+                        }
+                    }}
                 />
             </label>
         </div>

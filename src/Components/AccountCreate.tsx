@@ -115,6 +115,12 @@ function AccountCreate() {
                         type="text"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handleClick(e)
+                            }
+                        }}
                     />
                 </label>
             </div>
@@ -125,6 +131,12 @@ function AccountCreate() {
                         type="email"
                         value={emailAddress}
                         onChange={checkEmailInput}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handleClick(e)
+                            }
+                        }}
                     />
                 </label>
             </div>
@@ -135,6 +147,12 @@ function AccountCreate() {
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handleClick(e)
+                            }
+                        }}
                     />
                 </label>
             </div>
@@ -145,6 +163,12 @@ function AccountCreate() {
                         type="password"
                         value={confirmPass}
                         onChange={(e) => setConfirmPass(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handleClick(e)
+                            }
+                        }}
                     />
                 </label>
             </div>

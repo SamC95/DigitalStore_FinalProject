@@ -21,12 +21,6 @@ function Start() {
     ipcRenderer.send('defineMinSize', {width: 450, height: 700})
     ipcRenderer.send('centerWindow')
 
-    /*
-    function apiCall() {
-        ipcRenderer.invoke('api-test');
-    }
-    */
-
     function openLink() {
         ipcRenderer.send('openLink', 'https://www.igdb.com')
     }

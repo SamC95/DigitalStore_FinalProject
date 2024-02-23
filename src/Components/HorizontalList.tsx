@@ -119,6 +119,7 @@ function HorizontalList({ randomNum }: HorizontalListProps) {
                                         <Link to={`/product-page/${game.id}`} style={{ textDecoration: 'none', color: 'white' }}>
                                             {<img className='horizontalListImage' src={`//images.igdb.com/igdb/image/upload/t_cover_big/${game.image_id}.jpg`} alt={`Cover for ${game.name}`} />}
                                         </Link>
+                                        <p className='horizontalListName'>{game.name}</p>
                                     </div>
                                 );
                             })}

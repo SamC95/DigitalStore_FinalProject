@@ -114,6 +114,12 @@ const SearchBar = () => {
                     type="text"
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault()
+                            performSearch()
+                        }
+                    }}
                 />
                 <button onClick={performSearch} className='MagnifyingGlass'>
                     <img src={searchIcon} className='MagnifyingGlass' />
