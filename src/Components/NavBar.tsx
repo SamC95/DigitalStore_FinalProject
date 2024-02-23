@@ -1,9 +1,8 @@
-import {Link, useNavigate} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import ApplicationButtons from './ApplicationButtons';
 import '../Styles/NavBar.css'
 
 const NavBar = () => {
-    const navigate = useNavigate()
 
     // ApplicationButtons is used to ensure that the close, minimise and maximise buttons are included as part of the NavBar
     return (

@@ -1,0 +1,120 @@
+.mainContainer {
+    top: 200px;
+    left: 50%;
+    transform: translate(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.productContainer {
+        margin-top: 80px;
+        position: relative;
+}
+
+.productDetails {
+    position: absolute;
+    height: 100vh;
+    top: 60px;
+    right: -160px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.productDetails p {
+    font-size: 0.800em;
+    color: #fff;
+    margin: 0;
+}
+
+.productTitle {
+    font-size: xx-large;
+    font-weight: bold;
+    display: flex;
+    padding-bottom: 10px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.productBasket {
+    display: flex;
+    align-items: center;
+}
+
+.productPrice {
+    font-size: x-large;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    margin-right: 68%;
+}
+
+.addToBasket {
+    font-size: large;
+    border: transparent;
+    background-color: transparent;
+}
+
+.productNotOwned {
+    background-color: #7F00FF;
+    border: transparent;
+    padding: 20px;
+    border-radius: 1rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: large;
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.productOwned {
+    background-color: #AAAFB4;
+    border: transparent;
+    padding: 20px;
+    border-radius: 1rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: large;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.currentEnlargedMedia {
+        width: 750px;
+        height: 422px;
+        border-width: 5px;
+        border-style: solid;
+        border-image: linear-gradient(to right, white, #7F00FF);
+        border-image-slice: 1;
+        margin-bottom: 25px;
+        padding: 0;
+}
+
+.currentEnlargedMedia img {
+    width: 750px;
+    height: 422px;
+}
+
+.imageButtons {
+    display: flex;
+}
+
+.imageButtons button {
+    margin-right: 10px;
+    padding: 0;
+    background-color: transparent;
+    border: transparent;
+    cursor: pointer;
+    transition: transform 0.3s ease-in;
+}
+
+.imageButtons button:last-child {
+    margin-right: 0;
+}
+
+.imageButtons button img {
+    width: 200px;
+    height: 112px;
+}
+
+.imageButtons button:hover {
+    transform: scale(1.3)
+}
+
+.productNotOwned:hover {
+    transform: scale(1.3)
+}

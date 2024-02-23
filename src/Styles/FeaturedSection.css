@@ -1,5 +1,5 @@
 .mainContainer {
-    top: 150px;
+    top: 200px;
     left: 50%;
     transform: translate(-50%);
     display: flex;
@@ -8,7 +8,7 @@
 }
 
 .imageContainer {
-    margin-top: 100px;
+    margin-top: 80px;
     position: relative;
     cursor: pointer;
 }
@@ -16,6 +16,9 @@
 .imageWrapper {
     position: relative;
     display: inline-block;
+    height: auto;
+    margin: 0;
+    padding: 0;
 }
 
 .buttonsContainer {
@@ -24,15 +27,21 @@
 }
 
 .featuredImage {
-    width: 750px;
-    border-radius: 5rem;
+    width: 800px;
+    height: auto;
+    border-width: 5px;
+    border-style: solid;
+    border-image: linear-gradient(to right, white, #7F00FF);
+    border-image-slice: 1;
     cursor: pointer;
     margin-bottom: 125px;
+    padding: 0;
+    transition: filter 0.3s ease-in-out;
 }
 
 .titleContainer {
     position: absolute;
-    top: 550px;
+    top: 560px;
     text-align: center;
     width: 100%;
 }
@@ -63,12 +72,17 @@
 }
 
 .featuredButton.active {
-    background-image: linear-gradient(to right, #fff 10%, #6F2DA8 50%, transparent 50%);
+    background-image: linear-gradient(to right, #fff 10%, #7F00FF 50%, transparent 50%);
     background-position: 0% 0%;
     background-size: 200% 100%;
     animation: moveGradient 5s linear infinite;
 }
 
+.featuredImage:hover {
+    filter: 
+        drop-shadow(-2px 0 5px white)
+        drop-shadow(2px 0 5px #7F00FF);
+}
 @keyframes moveGradient {
     0% {
         background-position: 100% 0%

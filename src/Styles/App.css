@@ -21,11 +21,11 @@
 }
 
 ::-webkit-scrollbar-track {
-    background: gray;
+    background: white;
     border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #6F2DA8;
+    background: #7F00FF;
     border-radius: 6px;
 }

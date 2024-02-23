@@ -48,7 +48,7 @@ function StoreMainPage() {
     const [monthAgoDate, setMonthAgoDate] = useState<number>(0);
 
     const [featuredData, setFeaturedData] = useState<Game[]>([])
-    const [imageIds, setImageIds] = useState<string[]>([])
+    const [_imageIds, setImageIds] = useState<string[]>([])
 
     const [activeButton, setActiveButton] = useState<number>(0);
     const intervalIdRef = useRef<NodeJS.Timeout | null>(null)
@@ -157,7 +157,6 @@ function StoreMainPage() {
         if (intervalIdRef.current) {
             clearInterval(intervalIdRef.current) // Clears the interval when a button is clicked
         }
-        console.log('Clicked Button:', index);
         setActiveButton(index);
 
         // Restarts interval after clicking a button
@@ -220,7 +219,6 @@ function StoreMainPage() {
                                     <Link to={`/product-page/${featuredData[activeButton].id}`} style={{ textDecoration: 'none', color: 'white' }}>
                                         <img className='featuredImage' src={`//images.igdb.com/igdb/image/upload/t_original/${decodeURIComponent(featuredData[activeButton]?.image_id)}.jpg`}
                                             alt={`Artwork for ${featuredData[activeButton]?.name}`}
-                                            style={{ paddingTop: '20px' }}
                                         />
                                     </Link>
                                 )}
@@ -232,7 +230,7 @@ function StoreMainPage() {
                         </div>
 
                         <div className='buttonsContainer'>
-                            {featuredData.map((game, index) => (
+                            {featuredData.map((_game, index) => (
                                 <button
                                     className={`featuredButton ${activeButton === index ? 'active' : ''}`}
                                     key={index}
