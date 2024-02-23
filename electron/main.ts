@@ -286,13 +286,13 @@ async function saveProductDetails(productDetails: any) {
 // Gets the cover data for a product from the database
 async function getImageIdFromDatabase(productId: any) {
     const sqlite3 = require('sqlite3').verbose();
-    
+
     return new Promise((resolve, reject) => {
-        let productDatabase = new sqlite3.Database('./ProductDatabase.db', sqlite3.OPEN_READWRITE, (error: { message: any;}) => {
+        let productDatabase = new sqlite3.Database('./ProductDatabase.db', sqlite3.OPEN_READWRITE, (error: { message: any; }) => {
             if (error) {
                 console.error(error.message)
             }
-            
+
             const sqlQuery = 'SELECT image_id FROM Products WHERE id = ?';
 
             productDatabase.get(sqlQuery, [productId], (error: { message: any; }, row: any) => {
@@ -377,7 +377,6 @@ function createWindow() {
         maximizable: false,
         resizable: true,
     })
-
 
     // Test active push message to Renderer-process.
     win.webContents.on('did-finish-load', () => {
@@ -494,7 +493,7 @@ ipcMain.handle('product-search', async (_event, userSearch) => {
         const gameList = [];
 
         for (const game of data) {
-            let gameInfo = await getGameById(game.id) 
+            let gameInfo = await getGameById(game.id)
 
             if (!gameInfo) {
                 gameInfo = {
@@ -658,6 +657,7 @@ ipcMain.handle('get-upcoming', async (_event, currentDate, upcomingDate) => {
                     name: game.name,
                     releaseDate: game.first_release_date,
                     cover: game.cover
+
                 }
 
                 console.log(gameInfo)
@@ -712,7 +712,7 @@ ipcMain.handle('get-featured', async (_event, currentDate, monthAgoDate) => {
 
 ipcMain.handle('get-covers', async (_event, game) => {
     try {
-        
+
         const imageIdFromDatabase = await getImageIdFromDatabase(game)
 
         if (imageIdFromDatabase) {
@@ -815,6 +815,47 @@ ipcMain.handle('get-featured-screenshots', async (_event, game) => {
     }
 })
 
+ipcMain.handle('get-product-by-id', async (_event, productId) => {
+    try {
+        await retrieveAccess()
+
+        const response = await fetch(
+            "https://api.igdb.com/v4/games", {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Client-ID': ACCESS_KEY,
+                'Authorization': 'Bearer ' + ACCESS_TOKEN,
+            },
+            body: "fields *;" + "where id = " + productId + ";"
+        })
+
+        if (!response.ok) {
+            throw new Error('Error Status: ' + response.status)
+        }
+
+        const data = await response.json();
+
+        const productData = data.map((game: {
+            id: any, name: any, screenshots: any, videos: any, genres: any,
+            first_release_date: any, involved_companies: any, similar_games: any;
+        }) => ({
+            id: game.id,
+            name: game.name,
+            screenshots: game.screenshots,
+            videos: game.videos,
+            genres: game.genres,
+            releaseDate: game.first_release_date,
+            companies: game.involved_companies,
+            similarGames: game.similar_games,
+        }))
+
+        return productData
+    }
+    catch (error) {
+        console.error(error);
+    }
+})
 
 // Handles the account creation process
 ipcMain.handle('account-create', async (_event, username, emailAddress, password) => {
