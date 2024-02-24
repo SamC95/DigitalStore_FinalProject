@@ -91,7 +91,7 @@ function StoreMainPage() {
 
                 const featuredProducts = await Promise.all(
                     data.map(async (game: { id: any; }) => {
-                        const imageData = await ipcRenderer.invoke('get-featured-screenshots', game.id)
+                        const imageData = await ipcRenderer.invoke('get-screenshots', game.id)
 
                         if (Array.isArray(imageData) && imageData.length > 0) {
                             const imageIds = imageData.map((image) => image.image_id)

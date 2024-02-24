@@ -768,7 +768,7 @@ ipcMain.handle('get-covers', async (_event, game) => {
     }
 })
 
-ipcMain.handle('get-featured-screenshots', async (_event, game) => {
+ipcMain.handle('get-screenshots', async (_event, game) => {
     try {
         delay(1000)
 

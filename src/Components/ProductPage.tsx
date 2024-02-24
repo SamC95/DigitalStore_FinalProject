@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import '../Styles/ProductPage.css'
 import { ipcRenderer } from 'electron';
 import LoadingBar from './LoadingBar.tsx';
+import imageLoadingFailure from '../assets/image_loading_failure.png'
 
 // Interfaces for the Video Player and the MediaRenderer
 interface VideoPlayerProps {
@@ -28,7 +29,7 @@ interface Game {
     name: string;
     releaseDate: string;
     cover: string;
-    image_id: string;
+    images: string[]
 }
 
 const ProductPage: React.FC = () => {
@@ -37,12 +38,39 @@ const ProductPage: React.FC = () => {
     const [searching, setSearching] = useState(false);
     const [productOwned, setProductOwned] = useState(false);
     const [productInfo, setProductInfo] = useState<Game[]>([]);
-    const [productMedia] = useState<ProductMedia[]>([
-        { type: 'video', content: 'Hg2wKVsGTL8' },
-        { type: 'image', content: 'zrjemcp7ittnbgwki0ao' },
-        { type: 'image', content: 'n19sh5zyco4aflfj91mf' },
-        { type: 'image', content: 'sco19q' }
-    ])
+
+    const [productMedia, setProductMedia] = useState<ProductMedia[]>([]);
+
+    useEffect(() => {
+        console.log(productMedia)
+        console.log(productInfo)
+        if (productInfo.length > 0) {
+            const mediaItems: ProductMedia[] = [
+                { type: 'video', content: 'Hg2wKVsGTL8' }
+            ];
+    
+            // Add image items up to a maximum of 3
+            for (let i = 0; i < Math.min(3, productInfo[0].images.length); i++) {
+                const image = productInfo[0].images[i] as any;
+                mediaItems.push({ type: 'image', content: image.image_id });
+            }
+
+            setProductMedia(mediaItems);
+        } else {
+            // If no product info is available, set placeholder items for all media types
+            setProductMedia([
+                { type: 'video', content: imageLoadingFailure },
+                { type: 'image', content: imageLoadingFailure },
+                { type: 'image', content: imageLoadingFailure },
+                { type: 'image', content: imageLoadingFailure }
+            ]);
+        }
+    }, [productInfo]);
+
+    // Ensures that the page is loaded and displayed from the top of the screen
+    useEffect(() => {
+        window.scrollTo(0, 0)
+    }, [])
 
     // Defines what link is used based on the media type
     const MediaRenderer: React.FC<MediaRendererProps> = ({ media }) => {
@@ -61,7 +89,7 @@ const ProductPage: React.FC = () => {
     const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoId = productMedia[0] }) => (
         <iframe
             title="Embedded Video"
-            loading="eager"
+            loading="lazy"
             width="750" // 16:9 width and height aspect ratio
             height="422"
             src={`https://www.youtube.com/embed/${videoId}`}
@@ -74,14 +102,34 @@ const ProductPage: React.FC = () => {
 
     useEffect(() => {
         async function retrieveProductData() {
-            setSearching(true)
-
-            const productData = await ipcRenderer.invoke('get-product-by-id', gameId)
-
-            setProductInfo(productData)
-
-            setSearching(false)
+            setSearching(true);
+    
+            // Retrieves the initial version of the game object
+            const productData = await ipcRenderer.invoke('get-product-by-id', gameId);
+            
+            // Creates a new temporary variable used to store the updated version with image urls
+            const updatedProductData = await Promise.all(
+                productData.map(async (game: { id: any; }) => {
+                    const imageData = await ipcRenderer.invoke('get-screenshots', game.id); // Retrieves image urls from API
+    
+                    // Maps it to an object of images
+                    const images = imageData.map((image: any) => {
+                        return { image_id: image.imageId };
+                    });
+                    
+                    // Return a new Game object which contains the updated details with images
+                    return {
+                        ...game,
+                        images: images
+                    };
+                })
+            );
+    
+            // Overwrite the old Game object with the updated one
+            setProductInfo(updatedProductData);
+            setSearching(false);
         }
+    
         retrieveProductData();
     }, []);
 
@@ -102,7 +150,9 @@ const ProductPage: React.FC = () => {
 
                     <div>
                         <SearchBar />
-                    </div><div className='mainContainer'>
+                    </div>
+
+                    <div className='mainContainer'>
                         <VerticalNav />
 
                         <div className='productDetails'>
@@ -124,10 +174,9 @@ const ProductPage: React.FC = () => {
                             <p>01/02/2024</p>
                         </div>
 
-
                         <div className='productContainer'>
                             <div className='currentEnlargedMedia'>
-                                <MediaRenderer media={productMedia[currentIndex]} />
+                                {productMedia.length > 0 && <MediaRenderer media={productMedia[currentIndex]} />}
                             </div>
 
                             <div className='productTitle'>
@@ -177,3 +226,6 @@ const ProductPage: React.FC = () => {
 }
 
 export default ProductPage;
+
+
+// Image Load Failure Icon from: https://www.veryicon.com/icons/education-technology/alibaba-big-data-oneui/image-loading-failed-02.html
