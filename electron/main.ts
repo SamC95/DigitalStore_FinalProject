@@ -815,9 +815,57 @@ ipcMain.handle('get-screenshots', async (_event, game) => {
     }
 })
 
+ipcMain.handle('get-videos', async (_event, productId) => {
+    try {
+        delay(1000)
+
+        const videoResponse = await fetch(
+            'https://api.igdb.com/v4/game_videos', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Client-ID': ACCESS_KEY,
+                'Authorization': 'Bearer ' + ACCESS_TOKEN,
+            },
+            body: "fields video_id;" +
+                "where game = " + productId + ";"
+        });
+
+        const videoData = await videoResponse.json()
+
+        const videoList = [];
+
+        // Displays the response from the API if it is an error
+        if (!videoResponse.ok) {
+            throw new Error('Failed to fetch artwork: ' + videoResponse.status);
+        }
+
+        if (Array.isArray(videoData)) {
+            for (const video of videoData) {
+                await delay(250); // Delay before fetching data for each game
+                if (video.video_id !== undefined) {
+                    console.log(video);
+                    videoList.push({
+                        videoId: video.video_id,
+                    });
+                }
+            }
+        } else {
+            // Gives error message if the data format is not an array as expected
+            console.error('Video data is not an array:', videoData);
+        }
+
+        return videoList;
+    }
+    catch (error) {
+        console.error(error)
+    }
+})
+
 ipcMain.handle('get-product-by-id', async (_event, productId) => {
     try {
         await retrieveAccess()
+        console.log(productId)
 
         const response = await fetch(
             "https://api.igdb.com/v4/games", {
@@ -838,7 +886,7 @@ ipcMain.handle('get-product-by-id', async (_event, productId) => {
 
         const productData = data.map((game: {
             id: any, name: any, screenshots: any, videos: any, genres: any,
-            first_release_date: any, involved_companies: any, similar_games: any;
+            first_release_date: any, involved_companies: any, similar_games: any, summary: any;
         }) => ({
             id: game.id,
             name: game.name,
@@ -848,6 +896,7 @@ ipcMain.handle('get-product-by-id', async (_event, productId) => {
             releaseDate: game.first_release_date,
             companies: game.involved_companies,
             similarGames: game.similar_games,
+            summary: game.summary
         }))
 
         return productData

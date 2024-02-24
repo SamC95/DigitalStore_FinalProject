@@ -29,7 +29,9 @@ interface Game {
     name: string;
     releaseDate: string;
     cover: string;
-    images: string[]
+    images: string[];
+    videos: string[]
+    summary: string;
 }
 
 const ProductPage: React.FC = () => {
@@ -42,28 +44,46 @@ const ProductPage: React.FC = () => {
     const [productMedia, setProductMedia] = useState<ProductMedia[]>([]);
 
     useEffect(() => {
-        console.log(productMedia)
-        console.log(productInfo)
         if (productInfo.length > 0) {
-            const mediaItems: ProductMedia[] = [
-                { type: 'video', content: 'Hg2wKVsGTL8' }
-            ];
-    
-            // Add image items up to a maximum of 3
-            for (let i = 0; i < Math.min(3, productInfo[0].images.length); i++) {
-                const image = productInfo[0].images[i] as any;
-                mediaItems.push({ type: 'image', content: image.image_id });
-            }
+            const mediaItems: ProductMedia[] = []
 
-            setProductMedia(mediaItems);
-        } else {
-            // If no product info is available, set placeholder items for all media types
-            setProductMedia([
-                { type: 'video', content: imageLoadingFailure },
-                { type: 'image', content: imageLoadingFailure },
-                { type: 'image', content: imageLoadingFailure },
-                { type: 'image', content: imageLoadingFailure }
-            ]);
+            // Checks that the list of videos is not empty
+            if (productInfo[0].videos && productInfo[0].videos.length > 0) {
+                let index = -1
+
+                // Iterates through the list of videos beginning at the end of the list
+                // to retrieve the most recent video
+                for (let i = productInfo[0].videos.length - 1; i >= 0; i--) {
+                    if (productInfo[0].videos[i]) { // If video exists by this index
+                        index = i; // Set index to this value
+                        break; // Break out of loop
+                    }
+                }
+
+                // Use the index from the for loop to determine which video is retrieved
+                if (index !== -1) {
+                    const recentVideo = productInfo[0].videos[index] as any;
+                    mediaItems.push({ type: 'video', content: recentVideo.video_id });
+                }
+
+                // Add image items up to a maximum of 3
+                for (let i = 0; i < Math.min(3, productInfo[0].images.length); i++) {
+                    const image = productInfo[0].images[i] as any;
+                    mediaItems.push({ type: 'image', content: image.image_id });
+                }
+
+                console.log(mediaItems)
+
+                setProductMedia(mediaItems);
+            } else {
+                // If no product info is available, set placeholder items for all media types
+                setProductMedia([
+                    { type: 'video', content: imageLoadingFailure },
+                    { type: 'image', content: imageLoadingFailure },
+                    { type: 'image', content: imageLoadingFailure },
+                    { type: 'image', content: imageLoadingFailure }
+                ]);
+            }
         }
     }, [productInfo]);
 
@@ -103,33 +123,44 @@ const ProductPage: React.FC = () => {
     useEffect(() => {
         async function retrieveProductData() {
             setSearching(true);
-    
+
             // Retrieves the initial version of the game object
             const productData = await ipcRenderer.invoke('get-product-by-id', gameId);
-            
+
+
             // Creates a new temporary variable used to store the updated version with image urls
             const updatedProductData = await Promise.all(
                 productData.map(async (game: { id: any; }) => {
                     const imageData = await ipcRenderer.invoke('get-screenshots', game.id); // Retrieves image urls from API
-    
+
                     // Maps it to an object of images
                     const images = imageData.map((image: any) => {
                         return { image_id: image.imageId };
                     });
-                    
+
+                    console.log(gameId)
+                    const videoData = await ipcRenderer.invoke('get-videos', game.id)
+
+                    const videos = videoData.map((video: any) => {
+                        return { video_id: video.videoId }
+                    })
+
                     // Return a new Game object which contains the updated details with images
                     return {
                         ...game,
-                        images: images
+                        images: images,
+                        videos: videos
                     };
                 })
             );
-    
+
+            console.log(updatedProductData)
+
             // Overwrite the old Game object with the updated one
             setProductInfo(updatedProductData);
             setSearching(false);
         }
-    
+
         retrieveProductData();
     }, []);
 
@@ -140,14 +171,14 @@ const ProductPage: React.FC = () => {
 
     return (
         <>
+            <div>
+                <NavBar />
+            </div>
+            
             {searching && <LoadingBar />}
 
             {!searching && (
                 <>
-                    <div>
-                        <NavBar />
-                    </div>
-
                     <div>
                         <SearchBar />
                     </div>
@@ -193,13 +224,19 @@ const ProductPage: React.FC = () => {
                                         className={index === currentIndex ? 'active' : ''}
                                         onClick={() => handleImageClick(index)}
                                     >
-                                        {index === 0 ? (
+                                        {/* Youtube thumbnail image can sometimes return a grey placeholder if there is no high resolution image available
+                                            This is not a bug with the program but simply by design of the youtube thumbnail system. */}
+                                        {index === 0 && media.type === 'video' ? (
                                             <img src={`https://img.youtube.com/vi/${media.content}/maxresdefault.jpg`} />
                                         ) : (
                                             <img src={`//images.igdb.com/igdb/image/upload/t_original/${media.content}.jpg`} />
                                         )}
                                     </button>
                                 ))}
+                            </div>
+
+                            <div className='productSummary'>
+                                <p>{productInfo[0]?.summary || "No Description Available"}</p>
                             </div>
 
                             <div className='productBasket'>
