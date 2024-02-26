@@ -520,7 +520,6 @@ ipcMain.handle('product-search', async (_event, userSearch) => {
 ipcMain.handle('genre-search', async (_event, selectedGenre, numOfResults) => {
     try {
         await retrieveAccess()
-        console.log(selectedGenre)
 
         delay(1000)
 
@@ -660,7 +659,6 @@ ipcMain.handle('get-upcoming', async (_event, currentDate, upcomingDate) => {
 
                 }
 
-                console.log(gameInfo)
                 await saveProductDetails(gameInfo) // Saving the data should help us reduce load on the API in other components
             }
 
@@ -796,7 +794,6 @@ ipcMain.handle('get-screenshots', async (_event, game) => {
             for (const artworkItem of artworkData) {
                 await delay(250); // Delay before fetching data for each game
                 if (artworkItem.image_id !== undefined) {
-                    console.log(artworkItem);
                     imageList.push({
                         imageId: artworkItem.image_id,
                     });
@@ -837,14 +834,13 @@ ipcMain.handle('get-videos', async (_event, productId) => {
 
         // Displays the response from the API if it is an error
         if (!videoResponse.ok) {
-            throw new Error('Failed to fetch artwork: ' + videoResponse.status);
+            throw new Error('Failed to fetch video: ' + videoResponse.status);
         }
 
         if (Array.isArray(videoData)) {
             for (const video of videoData) {
                 await delay(250); // Delay before fetching data for each game
                 if (video.video_id !== undefined) {
-                    console.log(video);
                     videoList.push({
                         videoId: video.video_id,
                     });
@@ -891,7 +887,6 @@ ipcMain.handle('get-genres', async (_event, genreIds) => {
             for (const genre of genreData) {
                 await delay(250); // Delay before fetching data for each game
                 if (genre.name !== undefined) {
-                    console.log(genre);
                     genreList.push({
                         genre: genre.name,
                     });
@@ -909,10 +904,74 @@ ipcMain.handle('get-genres', async (_event, genreIds) => {
     }   
 })
 
+ipcMain.handle('get-involved-companies', async (_event, productId) => {
+    try {
+        delay(1000)
+
+        const involvedCompanies = await fetch(
+            'https://api.igdb.com/v4/involved_companies', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Client-ID': ACCESS_KEY,
+                'Authorization': 'Bearer ' + ACCESS_TOKEN,
+            },
+            body: "fields company, developer, publisher;" +
+                "where game = " + productId + ";"
+        });
+
+        const involvedData = await involvedCompanies.json()
+
+        const companiesList = [];
+
+        // Displays the response from the API if it is an error
+        if (!involvedCompanies.ok) {
+            throw new Error('Failed to fetch involved companies: ' + involvedCompanies.status);
+        }
+
+        if (Array.isArray(involvedData)) {
+            for (const data of involvedData) {
+                await delay(250); // Delay before fetching data for each game
+
+                if (data.company !== undefined) {
+                    const companyResponse = await fetch(
+                        'https://api.igdb.com/v4/companies', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Client-ID': ACCESS_KEY,
+                            'Authorization': 'Bearer ' + ACCESS_TOKEN,
+                        },
+                        body: "fields name;" +
+                            "where id = " + data.company + ";"
+                    });
+
+                    const companyName = await companyResponse.json();
+
+                    companiesList.push({
+                        company: companyName[0].name,
+                        developer: data.developer,
+                        publisher: data.publisher
+                    });
+
+                }
+            }
+        } 
+        else {
+            // Gives error message if the data format is not an array as expected
+            console.error('Company data is not an array:', involvedData);
+        }
+
+        return companiesList;
+    }
+    catch (error) {
+        console.error(error)
+    }   
+})
+
 ipcMain.handle('get-product-by-id', async (_event, productId) => {
     try {
         await retrieveAccess()
-        console.log(productId)
 
         const response = await fetch(
             "https://api.igdb.com/v4/games", {

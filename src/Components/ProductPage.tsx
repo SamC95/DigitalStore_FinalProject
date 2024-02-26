@@ -32,17 +32,65 @@ interface Game {
     images: string[];
     videos: string[];
     genres: { genre: string }[];
+    companies: string[];
+    involvedCompanies: any;
     summary: string;
 }
+
+// Retrieves data from here if the user has already looked at this product before (in this session)
+const productCache: Record<string, Game[]> = {};
 
 const ProductPage: React.FC = () => {
     const { gameId } = useParams();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [searching, setSearching] = useState(false);
     const [productOwned, setProductOwned] = useState(false);
+    const [productReleased, setProductReleased] = useState(false);
     const [productInfo, setProductInfo] = useState<Game[]>([]);
 
     const [productMedia, setProductMedia] = useState<ProductMedia[]>([]);
+    const [productPrice, setProductPrice] = useState<string | null>(null);
+
+    // Function for determining the price of the product based on its release date
+    useEffect(() => {
+        if (productInfo.length === 0) {
+            return; // If product has not been retrieved yet, do nothing
+        }
+
+        const currentDate = new Date(); // Get the current date
+        const convertedReleaseDate = new Date(productInfo[0].releaseDate * 1000); // Converts the release date from unix format
+        let calculatedPrice;
+
+        setProductReleased(convertedReleaseDate && convertedReleaseDate <= currentDate)
+
+        // Checks if the product contains the "Indie" genre, as it is common for these types of games to be of cheaper price
+        const isIndie = productInfo[0].genres.some((genreDetails: { genre: string; }) => genreDetails.genre === 'Indie')
+
+        if (!productInfo[0].releaseDate || convertedReleaseDate > currentDate) {
+            calculatedPrice = isIndie ? "29.99" : "£59.99" // If the release date is undefined or after the current date, returns the given value
+            setProductPrice(calculatedPrice)
+            return;
+        }
+
+        // Calculate difference between current year and release date year
+        const yearDiff = currentDate.getFullYear() - convertedReleaseDate.getFullYear()
+
+        if (yearDiff < 1) { // Determines the price based on the age of the product and if it is an indie game or not
+            calculatedPrice = isIndie ? "£29.99" : "£59.99"
+        }
+        else if (yearDiff <= 3) {
+            calculatedPrice = isIndie ? "£22.99" : "£44.99"
+        }
+        else if (yearDiff <= 5) {
+            calculatedPrice = isIndie ? "£15.99" : "£29.99"
+        }
+        else {
+            calculatedPrice = isIndie ? "£9.99" : "£19.99"
+        }
+
+        setProductPrice(calculatedPrice)
+    }, [productInfo])
+
 
     useEffect(() => {
         if (productInfo.length > 0) {
@@ -123,51 +171,70 @@ const ProductPage: React.FC = () => {
         async function retrieveProductData() {
             setSearching(true);
 
-            // Retrieves the initial version of the game object
-            const productData = await ipcRenderer.invoke('get-product-by-id', gameId);
+            if (gameId !== undefined) {
+                if (productCache[gameId]) {
+                    console.log('Using cached result for: ', gameId)
+                    setProductInfo(productCache[gameId])
+                    setSearching(false)
+                }
+                else {
+                    // Retrieves the initial version of the game object
+                    const productData = await ipcRenderer.invoke('get-product-by-id', gameId);
 
-            // Creates a new temporary variable used to store the updated version with image urls
-            const updatedProductData = await Promise.all(
-                productData.map(async (game: { id: any; genres: any; }) => {
-                    const imageData = await ipcRenderer.invoke('get-screenshots', game.id); // Retrieves image urls from API
+                    // Creates a new temporary variable used to store the updated version with image urls
+                    const updatedProductData = await Promise.all(
+                        productData.map(async (game: { id: any; genres: any; }) => {
+                            const imageData = await ipcRenderer.invoke('get-screenshots', game.id); // Retrieves image urls from API
 
-                    // Maps urls to an object of images
-                    const images = imageData.map((image: any) => {
-                        return { image_id: image.imageId };
-                    });
+                            // Maps urls to an object of images
+                            const images = imageData.map((image: any) => {
+                                return { image_id: image.imageId };
+                            });
 
-                    const videoData = await ipcRenderer.invoke('get-videos', game.id)
+                            const videoData = await ipcRenderer.invoke('get-videos', game.id)
 
-                    // Maps urls to an object of videos
-                    const videos = videoData.map((video: any) => {
-                        return { video_id: video.videoId }
-                    })
+                            // Maps urls to an object of videos
+                            const videos = videoData.map((video: any) => {
+                                return { video_id: video.videoId }
+                            })
 
-                    const genreData = await ipcRenderer.invoke('get-genres', game.genres)
+                            const genreData = await ipcRenderer.invoke('get-genres', game.genres)
 
-                    const genres = genreData.map((genre: any) => {
-                        return genre;
-                    })
+                            const genres = genreData.map((genre: any) => {
+                                return genre;
+                            })
 
-                    // Return a new Game object which contains the updated details with images
-                    return {
-                        ...game,
-                        images: images,
-                        videos: videos,
-                        genres: genres
-                    };
-                })
-            );
+                            const companiesData = await ipcRenderer.invoke('get-involved-companies', game.id)
 
-            console.log(updatedProductData)
+                            const involvedCompanies = companiesData.map((company: any) => {
+                                return company;
+                            })
 
-            // Overwrite the old Game object with the updated one
-            setProductInfo(updatedProductData);
-            setSearching(false);
+                            console.log(involvedCompanies)
+
+                            // Return a new Game object which contains the updated details with images
+                            return {
+                                ...game,
+                                images: images,
+                                videos: videos,
+                                genres: genres,
+                                involvedCompanies: involvedCompanies
+                            };
+                        })
+                    );
+
+                    // Overwrite the old Game object with the updated one
+                    setProductInfo(updatedProductData);
+
+                    if (gameId !== undefined) {
+                        productCache[gameId] = updatedProductData
+                    }
+                    setSearching(false);
+                }
+            }
         }
-
-        retrieveProductData();
-    }, []);
+            retrieveProductData();
+        }, []);
 
     // Updates the index of the main image based on the image pressed in the horizontal list
     function handleImageClick(index: number) {
@@ -179,7 +246,7 @@ const ProductPage: React.FC = () => {
             <div>
                 <NavBar />
             </div>
-            
+
             {searching && <LoadingBar />}
 
             {!searching && (
@@ -193,18 +260,32 @@ const ProductPage: React.FC = () => {
 
                         <div className='productDetails'>
                             <h4>Developers</h4>
-                            <p>Cygames</p>
-                            <p>Cygames Osaka</p>
-                            <p>PlatinumGames Inc</p>
+                            {productInfo.length > 0 && (
+                                <div>
+                                    {productInfo[0].involvedCompanies
+                                        .filter((company: { developer: any; }) => company.developer)
+                                        .map((company: any, index: any) => (
+                                            <p key={index}>{company.company}</p>
+                                        ))
+                                    }
+                                </div>
+                            )}
 
                             <h4>Publishers</h4>
-                            <p>Cygames</p>
-                            <p>XSEED Games</p>
-                            <p>PLAION</p>
+                            {productInfo.length > 0 && (
+                                <div>
+                                    {productInfo[0].involvedCompanies
+                                        .filter((company: { publisher: any; }) => company.publisher)
+                                        .map((company: any, index: any) => (
+                                            <p key={index}>{company.company}</p>
+                                        ))
+                                    }
+                                </div>
+                            )}
 
                             <h4>Genres</h4>
                             {productInfo.length > 0 && (
-                               <div>
+                                <div>
                                     {productInfo[0].genres.map((game, index) => (
                                         <p key={index}>{game.genre}</p>
                                     ))}
@@ -213,7 +294,7 @@ const ProductPage: React.FC = () => {
 
                             <h4>Release Date</h4>
                             <p>{productInfo[0]?.releaseDate ? `${new Intl.DateTimeFormat('default', { year: 'numeric', month: '2-digit', day: '2-digit' })
-                                            .format(new Date(productInfo[0]?.releaseDate * 1000))}` : "TBA"}</p>
+                                .format(new Date(productInfo[0]?.releaseDate * 1000))}` : "TBA"}</p>
                         </div>
 
                         <div className='productContainer'>
@@ -253,15 +334,22 @@ const ProductPage: React.FC = () => {
                             <div className='productBasket'>
                                 {/* TODO - Add dynamic pricing based on some condition about the product (release year, genre?) */}
                                 <div className='productPrice'>
-                                    <h3>£49.99</h3>
+                                    <h3>{productPrice ?? 'N/A'}</h3>
                                 </div>
 
                                 {/*We determine which button is shown and its styling based on whether the current user already owns the product*/}
                                 <div className='addToBasket'>
-                                    {productOwned === false ? (
-                                        <button className='productNotOwned'>Add to Basket</button>
+                                    {productReleased ? (
+                                        <>
+                                            {productOwned === false ? (
+                                                <button className='productNotOwned'>Add to Basket</button>
+                                            ) : (
+                                                <button className='productOwned'>Product Owned</button>
+                                            )}
+
+                                        </>
                                     ) : (
-                                        <button className='productOwned'>Product Owned</button>
+                                        <button className='productNotReleased' disabled>Not Released</button>
                                     )}
                                 </div>
                             </div>
