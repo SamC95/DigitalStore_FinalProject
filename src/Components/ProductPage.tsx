@@ -27,10 +27,11 @@ interface ProductMedia {
 interface Game {
     id: number;
     name: string;
-    releaseDate: string;
+    releaseDate: number;
     cover: string;
     images: string[];
-    videos: string[]
+    videos: string[];
+    genres: { genre: string }[];
     summary: string;
 }
 
@@ -71,8 +72,6 @@ const ProductPage: React.FC = () => {
                     const image = productInfo[0].images[i] as any;
                     mediaItems.push({ type: 'image', content: image.image_id });
                 }
-
-                console.log(mediaItems)
 
                 setProductMedia(mediaItems);
             } else {
@@ -127,29 +126,35 @@ const ProductPage: React.FC = () => {
             // Retrieves the initial version of the game object
             const productData = await ipcRenderer.invoke('get-product-by-id', gameId);
 
-
             // Creates a new temporary variable used to store the updated version with image urls
             const updatedProductData = await Promise.all(
-                productData.map(async (game: { id: any; }) => {
+                productData.map(async (game: { id: any; genres: any; }) => {
                     const imageData = await ipcRenderer.invoke('get-screenshots', game.id); // Retrieves image urls from API
 
-                    // Maps it to an object of images
+                    // Maps urls to an object of images
                     const images = imageData.map((image: any) => {
                         return { image_id: image.imageId };
                     });
 
-                    console.log(gameId)
                     const videoData = await ipcRenderer.invoke('get-videos', game.id)
 
+                    // Maps urls to an object of videos
                     const videos = videoData.map((video: any) => {
                         return { video_id: video.videoId }
+                    })
+
+                    const genreData = await ipcRenderer.invoke('get-genres', game.genres)
+
+                    const genres = genreData.map((genre: any) => {
+                        return genre;
                     })
 
                     // Return a new Game object which contains the updated details with images
                     return {
                         ...game,
                         images: images,
-                        videos: videos
+                        videos: videos,
+                        genres: genres
                     };
                 })
             );
@@ -197,12 +202,18 @@ const ProductPage: React.FC = () => {
                             <p>XSEED Games</p>
                             <p>PLAION</p>
 
-                            <h4>Genre</h4>
-                            <p>Adventure</p>
-                            <p>Role-Playing Game</p>
+                            <h4>Genres</h4>
+                            {productInfo.length > 0 && (
+                               <div>
+                                    {productInfo[0].genres.map((game, index) => (
+                                        <p key={index}>{game.genre}</p>
+                                    ))}
+                                </div>
+                            )}
 
                             <h4>Release Date</h4>
-                            <p>01/02/2024</p>
+                            <p>{productInfo[0]?.releaseDate ? `${new Intl.DateTimeFormat('default', { year: 'numeric', month: '2-digit', day: '2-digit' })
+                                            .format(new Date(productInfo[0]?.releaseDate * 1000))}` : "TBA"}</p>
                         </div>
 
                         <div className='productContainer'>

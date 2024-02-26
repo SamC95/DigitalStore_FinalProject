@@ -759,7 +759,6 @@ ipcMain.handle('get-covers', async (_event, game) => {
             // Gives error message if the data format is not an array as expected
             console.error('Cover data is not an array:', coverData);
         }
-        console.log(imageList)
 
         return Promise.resolve(imageList)
     }
@@ -803,7 +802,8 @@ ipcMain.handle('get-screenshots', async (_event, game) => {
                     });
                 }
             }
-        } else {
+        } 
+        else {
             // Gives error message if the data format is not an array as expected
             console.error('Artwork data is not an array:', artworkData);
         }
@@ -860,6 +860,53 @@ ipcMain.handle('get-videos', async (_event, productId) => {
     catch (error) {
         console.error(error)
     }
+})
+
+ipcMain.handle('get-genres', async (_event, genreIds) => {
+    try {
+        delay(1000)
+
+        const genreResponse = await fetch(
+            'https://api.igdb.com/v4/genres', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Client-ID': ACCESS_KEY,
+                'Authorization': 'Bearer ' + ACCESS_TOKEN,
+            },
+            body: "fields name;" +
+                "where id = " + `(${genreIds.join(',')})` + ";"
+        });
+
+        const genreData = await genreResponse.json()
+
+        const genreList = [];
+
+        // Displays the response from the API if it is an error
+        if (!genreResponse.ok) {
+            throw new Error('Failed to fetch genre: ' + genreResponse.status);
+        }
+
+        if (Array.isArray(genreData)) {
+            for (const genre of genreData) {
+                await delay(250); // Delay before fetching data for each game
+                if (genre.name !== undefined) {
+                    console.log(genre);
+                    genreList.push({
+                        genre: genre.name,
+                    });
+                }
+            }
+        } else {
+            // Gives error message if the data format is not an array as expected
+            console.error('Genre data is not an array:', genreData);
+        }
+
+        return genreList;
+    }
+    catch (error) {
+        console.error(error)
+    }   
 })
 
 ipcMain.handle('get-product-by-id', async (_event, productId) => {

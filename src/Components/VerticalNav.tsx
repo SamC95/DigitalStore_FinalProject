@@ -275,15 +275,15 @@ const VerticalNav = () => {
                 <br></br>
                 <button className='verticalNav_li' onClick={() => updateGenre('10')}>Racing</button>
                 <br></br>
-                <button className='verticalNav_li' onClick={() => updateGenre('11')}>Real-time Strategy</button>
+                <button className='verticalNav_li' onClick={() => updateGenre('11')}>Real-time Strategy (RTS)</button>
                 <br></br>
-                <button className='verticalNav_li' onClick={() => updateGenre('12')}>Role-Playing Game</button>
+                <button className='verticalNav_li' onClick={() => updateGenre('12')}>Role-Playing (RPG)</button>
                 <br></br>
                 <button className='verticalNav_li' onClick={() => updateGenre('14')}>Sport</button>
                 <br></br>
                 <button className='verticalNav_li' onClick={() => updateGenre('13')}>Simulator</button>
                 <br></br>
-                <button className='verticalNav_li' onClick={() => updateGenre('16')}>Turn-based Strategy</button>
+                <button className='verticalNav_li' onClick={() => updateGenre('16')}>Turn-based strategy (TBS)</button>
                 <br></br>
 
                 <h4>Categories</h4>
