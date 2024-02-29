@@ -8,6 +8,7 @@ import '../Styles/ProductPage.css'
 import { ipcRenderer } from 'electron';
 import LoadingBar from './LoadingBar.tsx';
 import imageLoadingFailure from '../assets/image_loading_failure.png'
+import BasketButton from './BasketButton.tsx';
 
 // Interfaces for the Video Player and the MediaRenderer
 interface VideoPlayerProps {
@@ -67,7 +68,7 @@ const ProductPage: React.FC = () => {
         const isIndie = productInfo[0].genres.some((genreDetails: { genre: string; }) => genreDetails.genre === 'Indie')
 
         if (!productInfo[0].releaseDate || convertedReleaseDate > currentDate) {
-            calculatedPrice = isIndie ? "29.99" : "£59.99" // If the release date is undefined or after the current date, returns the given value
+            calculatedPrice = isIndie ? "£" + 29.99 : "£" + 59.99 // If the release date is undefined or in the future, returns the given value
             setProductPrice(calculatedPrice)
             return;
         }
@@ -76,16 +77,16 @@ const ProductPage: React.FC = () => {
         const yearDiff = currentDate.getFullYear() - convertedReleaseDate.getFullYear()
 
         if (yearDiff < 1) { // Determines the price based on the age of the product and if it is an indie game or not
-            calculatedPrice = isIndie ? "£29.99" : "£59.99"
+            calculatedPrice = isIndie ? "£" + 29.99 : "£" + 59.99
         }
         else if (yearDiff <= 3) {
-            calculatedPrice = isIndie ? "£22.99" : "£44.99"
+            calculatedPrice = isIndie ? "£" + 22.99 : "£" + 44.99
         }
         else if (yearDiff <= 5) {
-            calculatedPrice = isIndie ? "£15.99" : "£29.99"
+            calculatedPrice = isIndie ? "£" + 15.99 : "£" + 29.99
         }
         else {
-            calculatedPrice = isIndie ? "£9.99" : "£19.99"
+            calculatedPrice = isIndie ? "£" + 9.99 : "£" + 19.99
         }
 
         setProductPrice(calculatedPrice)
@@ -255,6 +256,10 @@ const ProductPage: React.FC = () => {
                         <SearchBar />
                     </div>
 
+                    <div>
+                        <BasketButton />
+                    </div>
+
                     <div className='mainContainer'>
                         <VerticalNav />
 
@@ -332,7 +337,7 @@ const ProductPage: React.FC = () => {
                             </div>
 
                             <div className='productBasket'>
-                                {/* TODO - Add dynamic pricing based on some condition about the product (release year, genre?) */}
+                                {/* Price based on release date */}
                                 <div className='productPrice'>
                                     <h3>{productPrice ?? 'N/A'}</h3>
                                 </div>

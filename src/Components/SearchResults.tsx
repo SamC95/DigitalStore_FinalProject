@@ -6,6 +6,7 @@ import '../Styles/Loading.css'
 import { Link, useLocation } from 'react-router-dom';
 import LoadingBar from './LoadingBar';
 import { useEffect, useState } from 'react';
+import BasketButton from './BasketButton';
 
 function SearchResults() {
     const location = useLocation();
@@ -63,6 +64,10 @@ function SearchResults() {
 
             <div>
                 <SearchBar />
+            </div>
+
+            <div>
+                <BasketButton />
             </div>
 
             <div className='searchContainer'>

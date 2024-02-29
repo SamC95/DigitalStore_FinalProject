@@ -8,6 +8,7 @@ import { SetStateAction, useEffect, useRef, useState } from 'react';
 import LoadingBar from './LoadingBar.tsx';
 import HorizontalList from './HorizontalList.tsx';
 import { Link } from 'react-router-dom';
+import BasketButton from './BasketButton.tsx';
 
 /* 
 Gets random numbers that are used to define the genres that will appear
@@ -208,6 +209,10 @@ function StoreMainPage() {
                 <>
                     <div>
                         <SearchBar />
+                    </div>
+
+                    <div>
+                        <BasketButton />
                     </div>
 
                     <div className='mainContainer'>
