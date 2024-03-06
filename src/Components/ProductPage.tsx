@@ -123,15 +123,7 @@ const ProductPage: React.FC = () => {
                 }
 
                 setProductMedia(mediaItems);
-            } else {
-                // If no product info is available, set placeholder items for all media types
-                setProductMedia([
-                    { type: 'video', content: imageLoadingFailure },
-                    { type: 'image', content: imageLoadingFailure },
-                    { type: 'image', content: imageLoadingFailure },
-                    { type: 'image', content: imageLoadingFailure }
-                ]);
-            }
+            } 
         }
     }, [productInfo]);
 
@@ -273,6 +265,10 @@ const ProductPage: React.FC = () => {
                                             <p key={index}>{company.company}</p>
                                         ))
                                     }
+                                    {productInfo[0].involvedCompanies
+                                        .filter((company: { developer: any; }) => company.developer)
+                                        .length === 0 && <p>No Data Found</p>
+                                    }
                                 </div>
                             )}
 
@@ -284,6 +280,10 @@ const ProductPage: React.FC = () => {
                                         .map((company: any, index: any) => (
                                             <p key={index}>{company.company}</p>
                                         ))
+                                    }
+                                    {productInfo[0].involvedCompanies
+                                        .filter((company: { publisher: any; }) => company.publisher)
+                                        .length === 0 && <p>No Data Found</p>
                                     }
                                 </div>
                             )}

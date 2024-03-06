@@ -6,6 +6,7 @@
     border-color: transparent;
     background-color: transparent;
     -webkit-app-region: no-drag;
+    z-index: -1;
 }
 
 .basketIcon {
