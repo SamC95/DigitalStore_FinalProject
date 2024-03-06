@@ -21,7 +21,7 @@ function Login() {
 
     const usernameNotEmpty = username.length > 0
     const passwordNotEmpty = password.length > 0
-    
+
     const handleClick = async (event: { preventDefault: () => void; }) => {
         const validUser = ipcRenderer.invoke('login-details', username, password)
 
@@ -35,7 +35,7 @@ function Login() {
         pageChange(event)
     }
 
-    const pageChange = (event: { preventDefault: () => void; }) => {
+    const pageChange = async (event: { preventDefault: () => void; }) => {
         if ((!usernameNotEmpty || !passwordNotEmpty)) {
             event.preventDefault()
             setLoginMsg("Username or Password field is empty")
@@ -47,62 +47,75 @@ function Login() {
         else {
             setLoginMsg("")
 
+            const accountId = ipcRenderer.invoke('getAccountId', username)
+
+            /* 
+            Retrieves the AccountId to store in session storage. Used to retrieve recently viewed products, 
+            check if products are already purchased and retrieve library or for populating the library with purchased products
+
+            SessionStorage would usually not be the optimal way to do this due to developer tools being 
+            accessible in browsers, however Electron has the option to prevent user access to developer tools.
+            */
+            if (accountId) { 
+                sessionStorage.setItem('AccountID', await accountId)
+            }
+
             navigate('/store-main-page')
         }
-    } 
+    }
 
     return (
         <>
-        <ApplicationButtons/>
-        <button className='BackButtonLogin' onClick={() => navigate('/')}>
-            {String.fromCharCode(8592)}
-        </button>
-        <div>
-            <h1 className='LoginTitle'>
-                Welcome Back!
-            </h1>
-            <p className='TextStyle'>
-                Enter your username and password
+            <ApplicationButtons />
+            <button className='BackButtonLogin' onClick={() => navigate('/')}>
+                {String.fromCharCode(8592)}
+            </button>
+            <div>
+                <h1 className='LoginTitle'>
+                    Welcome Back!
+                </h1>
+                <p className='TextStyle'>
+                    Enter your username and password
+                </p>
+            </div>
+            <div className='UserName'>
+                <label className='TextBoxIndicator'>
+                    Username
+                    <input className='InputField'
+                        type="text"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handleClick(e)
+                            }
+                        }}
+                    />
+                </label>
+            </div>
+            <div className='Password'>
+                <label className='TextBoxIndicator'>
+                    Password
+                    <input className='InputField'
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handleClick(e)
+                            }
+                        }}
+                    />
+                </label>
+            </div>
+            <div>
+                <button className='StartButton' onClick={(handleClick)}>Submit</button>
+            </div>
+            <p className='ErrorText'>
+                {loginMsg}
             </p>
-        </div>
-        <div className='UserName'>
-            <label className='TextBoxIndicator'>
-                 Username
-                <input className='InputField'
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            e.preventDefault();
-                            handleClick(e)
-                        }
-                    }}
-                 />
-            </label>
-        </div>
-        <div className='Password'>
-            <label className='TextBoxIndicator'>
-                Password
-                <input className='InputField'
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            e.preventDefault();
-                            handleClick(e)
-                        }
-                    }}
-                />
-            </label>
-        </div>
-        <div>
-            <button className='StartButton' onClick={(handleClick)}>Submit</button>
-        </div>
-        <p className='ErrorText'>
-            {loginMsg}
-        </p>
         </>
     )
 }

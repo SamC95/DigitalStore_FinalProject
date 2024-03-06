@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react';
 import '../Styles/ProductPage.css'
 import { ipcRenderer } from 'electron';
 import LoadingBar from './LoadingBar.tsx';
-import imageLoadingFailure from '../assets/image_loading_failure.png'
 import BasketButton from './BasketButton.tsx';
 
 // Interfaces for the Video Player and the MediaRenderer

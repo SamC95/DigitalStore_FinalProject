@@ -4,6 +4,8 @@ import path from 'node:path'
 var ACCESS_KEY = "";
 var ACCESS_TOKEN = "";
 
+const sqlite3 = require('sqlite3').verbose()
+
 function delay(ms: number | undefined) {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
@@ -799,7 +801,7 @@ ipcMain.handle('get-screenshots', async (_event, game) => {
                     });
                 }
             }
-        } 
+        }
         else {
             // Gives error message if the data format is not an array as expected
             console.error('Artwork data is not an array:', artworkData);
@@ -901,7 +903,7 @@ ipcMain.handle('get-genres', async (_event, genreIds) => {
     }
     catch (error) {
         console.error(error)
-    }   
+    }
 })
 
 ipcMain.handle('get-involved-companies', async (_event, productId) => {
@@ -956,7 +958,7 @@ ipcMain.handle('get-involved-companies', async (_event, productId) => {
 
                 }
             }
-        } 
+        }
         else {
             // Gives error message if the data format is not an array as expected
             console.error('Company data is not an array:', involvedData);
@@ -966,7 +968,7 @@ ipcMain.handle('get-involved-companies', async (_event, productId) => {
     }
     catch (error) {
         console.error(error)
-    }   
+    }
 })
 
 ipcMain.handle('get-product-by-id', async (_event, productId) => {
@@ -1056,4 +1058,35 @@ ipcMain.handle('login-details', async (_event, username, password) => {
     catch (error) {
         console.error(error)
     }
+})
+
+ipcMain.handle('getAccountId', async (_event, username) => {
+    return new Promise((resolve, reject) => {
+        let accountDatabase = new sqlite3.Database('./AccountDatabase.db', sqlite3.OPEN_READWRITE, (error: { message: any; }) => {
+            if (error) {
+                console.error(error.message)
+            }
+
+            let sql = 'SELECT AccountID FROM Users WHERE Username = ?';
+
+            accountDatabase.get(sql, [username], async (error: { message: any; }, row: any) => {
+                if (error) {
+                    console.error(error.message)
+                    reject(error.message)
+                }
+                else {
+                    if (row) {
+                        const retrievedId = row.AccountID
+
+                        resolve(retrievedId)
+                    }
+                    else {
+                        resolve(false)
+                    }
+                }
+
+                accountDatabase.close()
+            })
+        })
+    })
 })
