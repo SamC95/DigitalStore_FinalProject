@@ -240,7 +240,7 @@ const VerticalNav = () => {
     }
 
     useEffect(() => {
-        async function fetchRecentlyViewed() {
+        const intervalId = setInterval(async () => {
             try {
                 const accountId = sessionStorage.getItem('AccountID')
 
@@ -252,9 +252,10 @@ const VerticalNav = () => {
             catch (error) {
                 console.error('Error fetching recently viewed data: ', error)
             }
-        }
-        fetchRecentlyViewed()
-    }, [])
+        }, 1000)
+
+        return () => clearInterval(intervalId);
+    }, []);
 
     // Waits for a change in selectedGenre, if it occurs then it resets the gamelist to empty,
     // pauses briefly to reduce 429 request errors and then calls the retrieveData function
@@ -319,7 +320,7 @@ const VerticalNav = () => {
                 <h4>Recently Viewed</h4>
                 {recentlyViewed.map((product) => (
                     <li className='verticalNav_li' key={product.id}>
-                        <Link to={`/product-page/${product.id}`} className='recentlyViewed'>
+                        <Link to={`/product-page/${product.id}`} className='recentlyViewed' key={product.id}>
                             {product.name}
                         </Link>
                     </li>

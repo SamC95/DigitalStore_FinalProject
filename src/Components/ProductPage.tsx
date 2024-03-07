@@ -54,6 +54,8 @@ const ProductPage: React.FC = () => {
     const accountId = sessionStorage.getItem('AccountID')
     const [storeRecentlyViewed, setStoreRecentlyViewed] = useState(false)
 
+    console.log(gameId)
+
     // Function for determining the price of the product based on its release date
     useEffect(() => {
         if (productInfo.length === 0) {
@@ -172,6 +174,7 @@ const ProductPage: React.FC = () => {
     useEffect(() => {
         async function retrieveProductData() {
             setSearching(true);
+            setStoreRecentlyViewed(false);
 
             console.log(productInfo)
 
@@ -239,7 +242,7 @@ const ProductPage: React.FC = () => {
             }
         }
         retrieveProductData();
-    }, []);
+    }, [gameId]);
 
     // Updates the index of the main image based on the image pressed in the horizontal list
     function handleImageClick(index: number) {
