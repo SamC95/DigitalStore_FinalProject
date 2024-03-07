@@ -165,8 +165,9 @@ const ProductPage: React.FC = () => {
     );
 
     useEffect(() => {
-        if (storeRecentlyViewed == true) {
+        if (storeRecentlyViewed === true) {
             const resolve = ipcRenderer.invoke('addRecentlyViewed', accountId, productInfo[0].id, productInfo[0].name)
+            setStoreRecentlyViewed(false);
             console.log(resolve)
         }
     }, [storeRecentlyViewed])

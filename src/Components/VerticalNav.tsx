@@ -252,7 +252,7 @@ const VerticalNav = () => {
             catch (error) {
                 console.error('Error fetching recently viewed data: ', error)
             }
-        }, 1000)
+        }, 250)
 
         return () => clearInterval(intervalId);
     }, []);
