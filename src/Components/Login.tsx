@@ -58,6 +58,8 @@ function Login() {
             */
             if (accountId) { 
                 sessionStorage.setItem('AccountID', await accountId)
+
+                ipcRenderer.invoke('setupRecentlyViewed', await accountId) // Sets up recently viewed row on table for account on first log in
             }
 
             navigate('/store-main-page')

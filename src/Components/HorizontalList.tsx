@@ -7,11 +7,6 @@ import '../Styles/HorizontalList.css'
 import '../Styles/igdb-logo.css'
 import { Link } from 'react-router-dom';
 
-async function wait(ms: number) {
-    const start = Date.now();
-    while (Date.now() - start < ms) { }
-}
-
 interface HorizontalListProps {
     randomNum: number;
 }
@@ -86,7 +81,6 @@ function HorizontalList({ randomNum }: HorizontalListProps) {
             else {
                 const data = await ipcRenderer.invoke('genre-search', GenreIDs[listNumber], 12)
 
-                wait(1000)
                 const updatedList = await getCovers(data);
 
                 horizontalListCache[listNumber] = updatedList

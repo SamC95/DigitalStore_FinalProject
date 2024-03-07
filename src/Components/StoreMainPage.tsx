@@ -174,9 +174,9 @@ function StoreMainPage() {
             setSecondGenre(assignRandomNumbers(5, 8))
             setThirdGenre(assignRandomNumbers(9, 12))
 
-            setTimeout(() => {
-                setFeaturedLoaded(true)
-            }, 2000)
+            // setTimeout(() => {
+                 setFeaturedLoaded(true)
+            // }, 2000)
         }
     }, [featuredData])
 

@@ -16,14 +16,17 @@
     position: absolute;
     height: 100vh;
     top: 60px;
-    right: -170px;
+    right: -180px;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    text-align: center;
 }
 
 .productDetails p {
     font-size: 0.800em;
     color: #fff;
     margin: 0;
+    max-width: 150px;
+    padding-bottom: 5px;
 }
 
 .productDetails h4 {

@@ -34,6 +34,15 @@
     border-color: transparent;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     cursor: pointer;
+    list-style-type: none;
+}
+
+.recentlyViewed {
+    color: #fff
+}
+
+.recentlyViewed:hover {
+    color: #7F00FF
 }
 
 .verticalNav_li:hover {

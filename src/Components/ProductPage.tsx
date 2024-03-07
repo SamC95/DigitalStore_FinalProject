@@ -51,6 +51,9 @@ const ProductPage: React.FC = () => {
     const [productMedia, setProductMedia] = useState<ProductMedia[]>([]);
     const [productPrice, setProductPrice] = useState<string | null>(null);
 
+    const accountId = sessionStorage.getItem('AccountID')
+    const [storeRecentlyViewed, setStoreRecentlyViewed] = useState(false)
+
     // Function for determining the price of the product based on its release date
     useEffect(() => {
         if (productInfo.length === 0) {
@@ -122,7 +125,7 @@ const ProductPage: React.FC = () => {
                 }
 
                 setProductMedia(mediaItems);
-            } 
+            }
         }
     }, [productInfo]);
 
@@ -160,14 +163,25 @@ const ProductPage: React.FC = () => {
     );
 
     useEffect(() => {
+        if (storeRecentlyViewed == true) {
+            const resolve = ipcRenderer.invoke('addRecentlyViewed', accountId, productInfo[0].id, productInfo[0].name)
+            console.log(resolve)
+        }
+    }, [storeRecentlyViewed])
+
+    useEffect(() => {
         async function retrieveProductData() {
             setSearching(true);
+
+            console.log(productInfo)
 
             if (gameId !== undefined) {
                 if (productCache[gameId]) {
                     console.log('Using cached result for: ', gameId)
                     setProductInfo(productCache[gameId])
+
                     setSearching(false)
+                    setStoreRecentlyViewed(true)
                 }
                 else {
                     // Retrieves the initial version of the game object
@@ -202,8 +216,6 @@ const ProductPage: React.FC = () => {
                                 return company;
                             })
 
-                            console.log(involvedCompanies)
-
                             // Return a new Game object which contains the updated details with images
                             return {
                                 ...game,
@@ -222,11 +234,12 @@ const ProductPage: React.FC = () => {
                         productCache[gameId] = updatedProductData
                     }
                     setSearching(false);
+                    setStoreRecentlyViewed(true)
                 }
             }
         }
-            retrieveProductData();
-        }, []);
+        retrieveProductData();
+    }, []);
 
     // Updates the index of the main image based on the image pressed in the horizontal list
     function handleImageClick(index: number) {
@@ -366,6 +379,3 @@ const ProductPage: React.FC = () => {
 }
 
 export default ProductPage;
-
-
-// Image Load Failure Icon from: https://www.veryicon.com/icons/education-technology/alibaba-big-data-oneui/image-loading-failed-02.html

@@ -12,6 +12,12 @@ interface Game {
     image_id: string;
 }
 
+// Similar to game object, but specifically used for recently viewed list
+interface Product {
+    id: number;
+    name: string;
+}
+
 // Cache that is used to more easily retrieve data for
 // searches that have already been performed, without the need recalling the API
 const genreCache: Record<string, Game[]> = {};
@@ -26,6 +32,7 @@ const VerticalNav = () => {
     const [buttonPressed, setButtonPressed] = useState(false);
     const [cacheRetrieved, setCacheRetrieved] = useState(false);
     const [hasError, setError] = useState(false)
+    const [recentlyViewed, setRecentlyViewed] = useState<Product[]>([]);
 
     function updateGenre(genre: string) {
         setSelectedGenre(genre)
@@ -232,6 +239,23 @@ const VerticalNav = () => {
         }
     }
 
+    useEffect(() => {
+        async function fetchRecentlyViewed() {
+            try {
+                const accountId = sessionStorage.getItem('AccountID')
+
+                if (accountId) {
+                    const recentlyViewedData = await ipcRenderer.invoke('getRecentlyViewed', accountId)
+                    setRecentlyViewed(recentlyViewedData)
+                }
+            }
+            catch (error) {
+                console.error('Error fetching recently viewed data: ', error)
+            }
+        }
+        fetchRecentlyViewed()
+    }, [])
+
     // Waits for a change in selectedGenre, if it occurs then it resets the gamelist to empty,
     // pauses briefly to reduce 429 request errors and then calls the retrieveData function
     // After this it will reset selected genre back to empty so that it is ready for the next button click
@@ -293,15 +317,13 @@ const VerticalNav = () => {
                 <br></br>
 
                 <h4>Recently Viewed</h4>
-                <Link className='verticalNav_li' to="/store-main-page"></Link>
-                <br></br>
-                <Link className='verticalNav_li' to="/store-main-page"></Link>
-                <br></br>
-                <Link className='verticalNav_li' to="/store-main-page"></Link>
-                <br></br>
-                <Link className='verticalNav_li' to="/store-main-page"></Link>
-                <br></br>
-                <Link className='verticalNav_li' to="/store-main-page"></Link>
+                {recentlyViewed.map((product) => (
+                    <li className='verticalNav_li' key={product.id}>
+                        <Link to={`/product-page/${product.id}`} className='recentlyViewed'>
+                            {product.name}
+                        </Link>
+                    </li>
+                ))}
                 <br></br>
             </nav>
         </>
