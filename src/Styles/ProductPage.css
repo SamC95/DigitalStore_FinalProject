@@ -98,6 +98,19 @@
     color: white;
 }
 
+.productInBasket {
+    background-color: #545354;
+    border: transparent;
+    padding: 20px;
+    margin-left: 45px;
+    border-radius: 1rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: large;
+    opacity: 0.5;
+    pointer-events: none;
+    color: white;
+}
+
 .productNotReleased {
     background-color: #545354;
     border: transparent;

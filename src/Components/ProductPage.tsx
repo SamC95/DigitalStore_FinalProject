@@ -45,11 +45,12 @@ const ProductPage: React.FC = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [searching, setSearching] = useState(false);
     const [productOwned, setProductOwned] = useState(false);
+    const [productInBasket, setProductInBasket] = useState(false);
     const [productReleased, setProductReleased] = useState(false);
     const [productInfo, setProductInfo] = useState<Game[]>([]);
 
     const [productMedia, setProductMedia] = useState<ProductMedia[]>([]);
-    const [productPrice, setProductPrice] = useState<string | null>(null);
+    const [productPrice, setProductPrice] = useState<number | null>(null);
 
     const accountId = sessionStorage.getItem('AccountID')
     const [storeRecentlyViewed, setStoreRecentlyViewed] = useState(false)
@@ -64,7 +65,7 @@ const ProductPage: React.FC = () => {
 
         const currentDate = new Date(); // Get the current date
         const convertedReleaseDate = new Date(productInfo[0].releaseDate * 1000); // Converts the release date from unix format
-        let calculatedPrice;
+        let calculatedPrice = 0;
 
         setProductReleased(convertedReleaseDate && convertedReleaseDate <= currentDate)
 
@@ -72,7 +73,7 @@ const ProductPage: React.FC = () => {
         const isIndie = productInfo[0].genres.some((genreDetails: { genre: string; }) => genreDetails.genre === 'Indie')
 
         if (!productInfo[0].releaseDate || convertedReleaseDate > currentDate) {
-            calculatedPrice = isIndie ? "£" + 29.99 : "£" + 59.99 // If the release date is undefined or in the future, returns the given value
+            calculatedPrice = isIndie ? 29.99 : 59.99 // If the release date is undefined or in the future, returns the given value
             setProductPrice(calculatedPrice)
             return;
         }
@@ -81,16 +82,16 @@ const ProductPage: React.FC = () => {
         const yearDiff = currentDate.getFullYear() - convertedReleaseDate.getFullYear()
 
         if (yearDiff < 1) { // Determines the price based on the age of the product and if it is an indie game or not
-            calculatedPrice = isIndie ? "£" + 29.99 : "£" + 59.99
+            calculatedPrice = isIndie ? 29.99 : 59.99
         }
         else if (yearDiff <= 3) {
-            calculatedPrice = isIndie ? "£" + 22.99 : "£" + 44.99
+            calculatedPrice = isIndie ? 22.99 : 44.99
         }
         else if (yearDiff <= 5) {
-            calculatedPrice = isIndie ? "£" + 15.99 : "£" + 29.99
+            calculatedPrice = isIndie ? 15.99 : 29.99
         }
         else {
-            calculatedPrice = isIndie ? "£" + 9.99 : "£" + 19.99
+            calculatedPrice = isIndie ? 9.99 : 19.99
         }
 
         setProductPrice(calculatedPrice)
@@ -184,6 +185,7 @@ const ProductPage: React.FC = () => {
                     console.log('Using cached result for: ', gameId)
                     setProductInfo(productCache[gameId])
 
+                    checkProductInBasket()
                     setSearching(false)
                     setStoreRecentlyViewed(true)
                 }
@@ -233,10 +235,13 @@ const ProductPage: React.FC = () => {
 
                     // Overwrite the old Game object with the updated one
                     setProductInfo(updatedProductData);
+                    console.log(updatedProductData)
 
                     if (gameId !== undefined) {
                         productCache[gameId] = updatedProductData
                     }
+
+                    checkProductInBasket()
                     setSearching(false);
                     setStoreRecentlyViewed(true)
                 }
@@ -244,6 +249,26 @@ const ProductPage: React.FC = () => {
         }
         retrieveProductData();
     }, [gameId]);
+
+    async function addToBasket() {
+        const productCover = await ipcRenderer.invoke('get-covers', gameId)
+
+        await ipcRenderer.invoke('addToBasket', accountId, productInfo[0].id,
+            productInfo[0].name, productCover[0].imageId, productPrice);
+
+        setProductInBasket(true)
+    }
+
+    async function checkProductInBasket() {
+        const inBasket = await ipcRenderer.invoke('checkBasket', accountId, gameId)
+
+        if (inBasket) {
+            setProductInBasket(true)
+        }
+        else {
+            setProductInBasket(false)
+        }
+    }
 
     // Updates the index of the main image based on the image pressed in the horizontal list
     function handleImageClick(index: number) {
@@ -338,7 +363,7 @@ const ProductPage: React.FC = () => {
                                         onClick={() => handleImageClick(index)}
                                     >
                                         {/* Youtube thumbnail image can sometimes return a grey placeholder if there is no high resolution image available
-                                            This is not a bug with the program but simply by design of the youtube thumbnail system. */}
+                                            This is not a bug with the program but simply by design of the youtube thumbnail system. Usually occurs for older videos */}
                                         {index === 0 && media.type === 'video' ? (
                                             <img src={`https://img.youtube.com/vi/${media.content}/maxresdefault.jpg`} />
                                         ) : (
@@ -355,7 +380,7 @@ const ProductPage: React.FC = () => {
                             <div className='productBasket'>
                                 {/* Price based on release date */}
                                 <div className='productPrice'>
-                                    <h3>{productPrice ?? 'N/A'}</h3>
+                                    <h3>{`£${productPrice}` ?? 'N/A'}</h3>
                                 </div>
 
                                 {/*We determine which button is shown and its styling based on whether the current user already owns the product*/}
@@ -363,11 +388,16 @@ const ProductPage: React.FC = () => {
                                     {productReleased ? (
                                         <>
                                             {productOwned === false ? (
-                                                <button className='productNotOwned'>Add to Basket</button>
+                                                <>
+                                                    {productInBasket === false ? (
+                                                        <button className='productNotOwned' onClick={addToBasket}>Add to Basket</button>
+                                                    ) : (
+                                                        <button className='productInBasket'>In Basket</button>
+                                                    )}
+                                                </>
                                             ) : (
                                                 <button className='productOwned'>Product Owned</button>
                                             )}
-
                                         </>
                                     ) : (
                                         <button className='productNotReleased' disabled>Not Released</button>

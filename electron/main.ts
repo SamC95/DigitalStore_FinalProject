@@ -1060,6 +1060,7 @@ ipcMain.handle('login-details', async (_event, username, password) => {
     }
 })
 
+// Gets the account id for a specific user account so it can be stored in sessionStorage to be used for managing certain aspects of the product purchase system
 ipcMain.handle('getAccountId', async (_event, username) => {
     return new Promise((resolve, reject) => {
         let accountDatabase = new sqlite3.Database('./AccountDatabase.db', sqlite3.OPEN_READWRITE, (error: { message: any; }) => {
@@ -1091,6 +1092,7 @@ ipcMain.handle('getAccountId', async (_event, username) => {
     })
 })
 
+// Used to set up a recently viewed row for an account when it logs in for the first time
 ipcMain.handle('setupRecentlyViewed', async (_event, accountId) => {
     return new Promise((resolve, reject) => {
         let accountDatabase = new sqlite3.Database('./AccountDatabase.db', sqlite3.OPEN_READWRITE, (error: { message: any; }) => {
@@ -1209,7 +1211,7 @@ ipcMain.handle('getRecentlyViewed', async(_event, accountId) => {
             if (error) {
                 reject(error.message)
             }
-            else {
+            else { // Get the recently viewed products for the specific user
                 let recentlyViewedSql = 'SELECT * FROM RecentlyViewed WHERE AccountID = ?';
 
                 accountDatabase.get(recentlyViewedSql, [accountId], async (error: { message: any; }, row: any) => {
@@ -1219,7 +1221,7 @@ ipcMain.handle('getRecentlyViewed', async(_event, accountId) => {
                     else {
                         const recentlyViewedProducts = [];
 
-                        for (let i = 1; i <= 5; i++) {
+                        for (let i = 1; i <= 5; i++) { // Push each of the products onto an array based on their database position
                             if (row[`ProductID${i}`]) {
                                 recentlyViewedProducts.push({
                                     id: row[`ProductID${i}`],
@@ -1234,6 +1236,72 @@ ipcMain.handle('getRecentlyViewed', async(_event, accountId) => {
             }
 
             accountDatabase.close()
+        })
+    })
+})
+
+ipcMain.handle('addToBasket', async(_event, accountId, productId, productName, productCover, productPrice) => {
+    return new Promise((resolve, reject) => {
+        let accountDatabase = new sqlite3.Database('./AccountDatabase.db', sqlite3.OPEN_READWRITE, (error: {message: any; }) => {
+            if (error) {
+                reject(error.message)
+            }
+            else { // Check if the product already exists in the basket specifically for this account
+                let checkBasketSql = 'SELECT * FROM BasketProducts WHERE AccountID = ? AND ProductID = ?'
+
+                accountDatabase.get(checkBasketSql, [accountId, productId], async (error: { message: any; }, row: any) => {
+                    if (error) {
+                        reject(error.message)
+                    }
+                    else {
+                        if (!row) { // If there is no match in the database, add the product to the basket for this account
+                            let addToBasketSql = 'INSERT INTO BasketProducts (AccountID, ProductID, ProductName, ' +
+                                                 'ProductCover, ProductPrice) VALUES (?, ?, ?, ?, ?)'
+
+                            let values = [accountId, productId, productName, productCover, productPrice]
+
+                            accountDatabase.run(addToBasketSql, values, function(error: { message: any; }) {
+                                if (error) {
+                                    reject(error.message)
+                                }
+                                else {
+                                    resolve(`Product ${productId} added to basket for this account`)
+                                }
+                            })
+                        }
+                        else {
+                            resolve(`Product ${productId} already exists in basket database for this account`)
+                        }
+                    }
+                })
+            }
+        })
+    })
+}) 
+
+ipcMain.handle('checkBasket', async(_event, accountId, productId) => {
+    return new Promise((resolve, reject) => {
+        let accountDatabase = new sqlite3.Database('./AccountDatabase.db', sqlite3.OPEN_READWRITE, (error: {message: any;}) => {
+            if (error) {
+                reject(error.message)
+            }
+            else {
+                let checkBasketSql = 'SELECT * FROM BasketProducts WHERE AccountID = ? AND ProductID = ?'
+
+                accountDatabase.get(checkBasketSql, [accountId, productId], async (error: { message: any; }, row: any) => {
+                    if (error) {
+                        reject(error.message)
+                    }
+                    else {
+                        if (!row) {
+                            resolve(false)
+                        }
+                        else {
+                            resolve(true)
+                        }
+                    }
+                })
+            }
         })
     })
 })
