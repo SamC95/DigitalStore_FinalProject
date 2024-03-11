@@ -64,9 +64,10 @@ function BasketCheckout() {
                         <SearchBar />
                     </div>
 
-                    <h2 className='basketHeader'>Your Basket</h2>
-
-                    <h4 className='emptyBasket'>Basket is currently empty!</h4>
+                    <div className='basketContainer'>
+                        <h2 className='basketHeader'>Your Basket</h2>
+                        <h4 className='emptyBasket'>Basket is currently empty!</h4>
+                    </div>
                 </>
             )}
 

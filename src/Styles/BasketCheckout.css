@@ -82,11 +82,12 @@
 }
 
 .emptyBasket {
-    position: relative;
+    position: absolute;
     color: #fff;
     font-style: italic;
     font-weight: bold;
-    left: -15%;
+    top: 5rem;
+    left: -14%;
 }
 
 .removeBasketProduct {
