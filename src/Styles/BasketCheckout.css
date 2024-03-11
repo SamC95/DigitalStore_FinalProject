@@ -1,0 +1,110 @@
+.basketContainer {
+    position: absolute;
+    top: 200px;
+    left: 50%;
+    width: 800px;
+    -webkit-app-region: no-drag;
+    z-index: -1;
+}
+
+.basketProductImage {
+    position: absolute;
+    left: 0;
+    margin-top: 25px;
+    display: inline-block;
+    height: 188px;
+    width: 141px;
+    box-sizing: border-box;
+    border-width: 2px;
+    border-style: solid;
+    border-image: linear-gradient(to right, white, #7F00FF);
+    border-image-slice: 1;
+}
+
+.basketProductTitle {
+    position: absolute;
+    left: 23%;
+    margin-top: 75px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: large;
+    padding: 2%;
+    overflow: hidden;
+    width: 45%;
+    word-wrap: break-word;
+    text-align: left;
+}
+
+.basketHeader {
+    position: absolute;
+    top: 10px;
+    left: -10%;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    text-decoration: underline;
+}
+
+.basketProductPrice {
+    position: absolute;
+    left: 80%;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: large;
+    padding: 2%;
+    margin-top: 75px;
+}
+
+.totalBasketPrice {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: x-large;
+    position: relative;
+    left: -18%;
+}
+
+.removeBasketProduct:hover {
+    transform: scale(1.5);
+}
+
+.basketDetails {
+    margin-top: 5rem;
+}
+
+.basketProductItem {
+    left: -50%;
+    width: 700px;
+    position: relative;
+    cursor: default;
+    padding: 0;
+    border-width: 2px;
+    border-style: solid;
+    border-top: transparent;
+    border-right: transparent;
+    border-left: transparent;
+    border-image: linear-gradient(to right, white, #7F00FF);
+    border-image-slice: 1;
+}
+
+.emptyBasket {
+    position: relative;
+    color: #fff;
+    font-style: italic;
+    font-weight: bold;
+    left: -15%;
+}
+
+.removeBasketProduct {
+    position: absolute;
+    left: 95%;
+    margin-top: 25px;
+    background-color: transparent;
+    border-color: transparent;
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.basketProductItem:hover {
+    background-color: transparent;
+}
+
+.basketProductInformation {
+    display: flex;
+    flex-direction: column;
+}

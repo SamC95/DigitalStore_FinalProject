@@ -5,6 +5,7 @@ import AccountCreate from '../Components/AccountCreate.tsx'
 import StoreMainPage from '../Components/StoreMainPage.tsx'
 import ProductPage from '../Components/ProductPage.tsx'
 import SearchResults from './SearchResults.tsx'
+import BasketCheckout from './BasketCheckout.tsx'
 import '../Styles/App.css'
 import '../Styles/index.css'
 
@@ -19,6 +20,7 @@ function App() {
                     <Route path="/store-main-page" element={<StoreMainPage/>}> </Route>
                     <Route path="/search-results" element={<SearchResults/>}> </Route>
                     <Route path="/product-page/:gameId" element={<ProductPage/>}> </Route>
+                    <Route path="/checkout" element={<BasketCheckout/>}> </Route>
                 </Routes>
             </BrowserRouter>
         </div>

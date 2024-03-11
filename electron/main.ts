@@ -1305,3 +1305,60 @@ ipcMain.handle('checkBasket', async(_event, accountId, productId) => {
         })
     })
 })
+
+ipcMain.handle('getUserBasket', async(_event, accountId) => {
+    return new Promise((resolve, reject) => {
+        let accountDatabase = new sqlite3.Database('./AccountDatabase.db', sqlite3.OPEN_READWRITE, (error: {message: any;}) => {
+            if (error) {
+                reject(error.message)
+            }
+            else {
+                let userBasketSql = 'SELECT ProductID, ProductName, ProductCover, ProductPrice FROM BasketProducts WHERE AccountID = ?'
+
+                accountDatabase.all(userBasketSql, [accountId], async(error: { message: any; }, rows: any) => {
+                    if (error) {
+                        reject(error.message)
+                    }
+                    else {
+                        if (!rows) {
+                            resolve(null)
+                        }
+                        else {
+                            const basketList = rows.map((row: { ProductID: any; ProductName: any; 
+                                                                ProductCover: any; ProductPrice: any; }) => ({
+                                ProductID: row.ProductID,
+                                ProductName: row.ProductName,
+                                ProductCover: row.ProductCover,
+                                ProductPrice: row.ProductPrice
+                            }));
+
+                            resolve(basketList)
+                        }
+                    }
+                })
+            }
+        })
+    })
+})
+
+ipcMain.handle('removeFromBasket', async(_event, accountId, productId) => {
+    return new Promise((resolve, reject) => {
+        let accountDatabase = new sqlite3.Database('./AccountDatabase.db', sqlite3.OPEN_READWRITE, (error: {message: any;}) => {
+            if (error) {
+                reject(error.message)
+            }
+            else {
+                let removalSql = 'DELETE FROM BasketProducts WHERE AccountID = ? AND ProductID = ?';
+
+                accountDatabase.run(removalSql, [accountId, productId], function(error: { message: any; }) {
+                    if (error) {
+                        reject(error.message)
+                    }
+                    else {
+                        resolve('Product successfully removed')
+                    }
+                })
+            }
+        })
+    })
+})

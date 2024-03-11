@@ -250,15 +250,17 @@ const ProductPage: React.FC = () => {
         retrieveProductData();
     }, [gameId]);
 
+    // Get the cover for the product, and then add that plus other product details into the basket
     async function addToBasket() {
         const productCover = await ipcRenderer.invoke('get-covers', gameId)
 
         await ipcRenderer.invoke('addToBasket', accountId, productInfo[0].id,
             productInfo[0].name, productCover[0].imageId, productPrice);
 
-        setProductInBasket(true)
+        setProductInBasket(true) // Disables the add to basket button
     }
 
+    // Checks the database to see if there is a match for this account with this product
     async function checkProductInBasket() {
         const inBasket = await ipcRenderer.invoke('checkBasket', accountId, gameId)
 
