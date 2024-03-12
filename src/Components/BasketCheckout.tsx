@@ -18,6 +18,12 @@ function BasketCheckout() {
     const [searching, setSearching] = useState(false);
     const [basketData, setBasketData] = useState<Product[]>([])
     const [totalPrice, setTotalPrice] = useState(0)
+    const [showPurchaseScreen, setPurchaseScreen] = useState(false)
+    const [cardNum, setCardNum] = useState("")
+    const [expiryMonth, setExpiryMonth] = useState("")
+    const [expiryYear, setExpiryYear] = useState("")
+    const [cardName, setCardName] = useState("")
+    const [cardCode, setCardCode] = useState("")
 
     useEffect(() => {
         getData()
@@ -50,6 +56,15 @@ function BasketCheckout() {
         getData() // Re-calls the database to get an up to date basket list
     }
 
+    function handleGoBack() { // Returns to the basket and resets all user input on card details
+        setPurchaseScreen(false)
+        setCardNum("")
+        setExpiryMonth("")
+        setExpiryYear("")
+        setCardName("")
+        setCardCode("")
+    }
+
     return (
         <>
             <div>
@@ -71,7 +86,7 @@ function BasketCheckout() {
                 </>
             )}
 
-            {!searching && basketData.length > 0 && (
+            {!searching && basketData.length > 0 && showPurchaseScreen === false && (
                 <>
                     <div>
                         <SearchBar />
@@ -93,6 +108,117 @@ function BasketCheckout() {
                                 ))}
                             </ul>
                             <p className='totalBasketPrice'>Total: £{totalPrice.toFixed(2)}</p>
+                            <button className='checkoutButton' onClick={() => setPurchaseScreen(true)}>Continue to Purchase</button>
+                        </div>
+                    </div>
+                </>
+            )}
+
+            {!searching && basketData.length > 0 && showPurchaseScreen === true && (
+                <>
+                    <div>
+                        <SearchBar />
+                    </div>
+
+                    <div className='checkoutContainer'>
+                        <h2 className='checkoutHeader'>Payment Information</h2>
+                        <div>
+                            <label className='checkoutText'>
+                                Card Number<br />
+                                <input className='checkoutField'
+                                    type="text"
+                                    placeholder='16-digit card number'
+                                    value={cardNum}
+                                    onChange={(e) => {
+                                        const input = e.target.value
+                                        const maxLength = 16
+
+                                        const regex = /^[0-9]*$/
+
+                                        if (regex.test(input) && input.length <= maxLength) {
+                                            setCardNum(input);
+                                        }
+                                    }}
+                                />
+                            </label>
+
+                            <label className='shortCheckoutText'>
+                                Expiration<br />
+                                <input
+                                    className='dateCheckoutField'
+                                    type="text"
+                                    placeholder='MM'
+                                    maxLength={2}
+                                    value={expiryMonth}
+                                    onChange={(e) => {
+                                        const input = e.target.value
+
+                                        // Allows only numerical values starting with 0 and 1 with the appropriate month restrictions
+                                        const regex = /^(0[1-9]|1[0-2])?$|^[01]$/;
+
+                                        if (regex.test(input)) {
+                                            setExpiryMonth(e.target.value) // Checks the regex condition and ensures max length of 2 digits
+                                        }
+                                    }}
+                                />
+
+                                <span>/</span>
+
+                                <input
+                                    className='dateCheckoutField'
+                                    type="text"
+                                    placeholder='YY'
+                                    maxLength={2}
+                                    value={expiryYear}
+                                    onChange={(e) => setExpiryYear(e.target.value)}
+                                />
+                            </label>
+                        </div>
+
+                        <div>
+                            <label className='checkoutText'>
+                                Name on Card<br />
+                                <input className='checkoutField'
+                                    type="text"
+                                    placeholder='Name as appears on card'
+                                    value={cardName}
+                                    
+                                    onChange={(e) => {
+                                        const input = e.target.value;
+                                        const regex = /^[a-zA-Z\s]*$/; // Allow letters (both uppercase and lowercase) and spaces
+                                        if (regex.test(input)) {
+                                            setCardName(input);
+                                        }
+                                    }}
+                                />
+                            </label>
+
+                            <label className='shortCheckoutText'>
+                                CVV<br />
+                                <input className='shortCheckoutField'
+                                    type="text"
+                                    placeholder='123'
+                                    maxLength={3}
+                                    value={cardCode}
+                                    onChange={(e) => setCardCode(e.target.value)}
+                                />
+                            </label>
+                        </div>
+
+                        <div>
+                            <p className='checkoutTextStyle'>Card details are not checked, stored or charged in this application<br />You do not need to enter any real card details</p>
+                        </div>
+
+                        <div>
+                            <p className='checkoutCostBreakdown'>Order Total ({basketData.length} Items): £{(totalPrice * 0.8).toFixed(2)}</p>
+                            <p className='checkoutCostBreakdown'>VAT: £{(totalPrice * 0.2).toFixed(2)}</p>
+                            <p className='checkoutBasketPrice'>Total: £{totalPrice.toFixed(2)}</p>
+                        </div>
+
+                        <div>
+                            <button onClick={handleGoBack} className='goBackButton'>{String.fromCharCode(8592)} Go Back</button>
+
+                            <button className='purchaseButton'>Purchase</button>
                         </div>
                     </div>
                 </>

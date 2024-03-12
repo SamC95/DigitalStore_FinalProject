@@ -1285,7 +1285,7 @@ ipcMain.handle('checkBasket', async(_event, accountId, productId) => {
             if (error) {
                 reject(error.message)
             }
-            else {
+            else { // Checks if a specific product exists for that user in the basket, used to disable the add to basket button
                 let checkBasketSql = 'SELECT * FROM BasketProducts WHERE AccountID = ? AND ProductID = ?'
 
                 accountDatabase.get(checkBasketSql, [accountId, productId], async (error: { message: any; }, row: any) => {
@@ -1312,7 +1312,7 @@ ipcMain.handle('getUserBasket', async(_event, accountId) => {
             if (error) {
                 reject(error.message)
             }
-            else {
+            else { // Retrieves all rows where the table has the specified account id number
                 let userBasketSql = 'SELECT ProductID, ProductName, ProductCover, ProductPrice FROM BasketProducts WHERE AccountID = ?'
 
                 accountDatabase.all(userBasketSql, [accountId], async(error: { message: any; }, rows: any) => {
@@ -1320,10 +1320,10 @@ ipcMain.handle('getUserBasket', async(_event, accountId) => {
                         reject(error.message)
                     }
                     else {
-                        if (!rows) {
+                        if (!rows) { // If no match then returns null
                             resolve(null)
                         }
-                        else {
+                        else { // If match then we map the data to an object to be passed to the component
                             const basketList = rows.map((row: { ProductID: any; ProductName: any; 
                                                                 ProductCover: any; ProductPrice: any; }) => ({
                                 ProductID: row.ProductID,
@@ -1347,7 +1347,7 @@ ipcMain.handle('removeFromBasket', async(_event, accountId, productId) => {
             if (error) {
                 reject(error.message)
             }
-            else {
+            else { // Deletes the specific product that the user has removed from the basket
                 let removalSql = 'DELETE FROM BasketProducts WHERE AccountID = ? AND ProductID = ?';
 
                 accountDatabase.run(removalSql, [accountId, productId], function(error: { message: any; }) {

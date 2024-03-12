@@ -112,6 +112,7 @@ const SearchBar = () => {
             <div className='SearchDiv'>
                 <input className='SearchBar'
                     type="text"
+                    placeholder='Search'
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
                     onKeyDown={(e) => {

@@ -7,6 +7,15 @@
     z-index: -1;
 }
 
+.checkoutContainer {
+    position: absolute;
+    top: 200px;
+    left: 24.5%;
+    width: 50%;
+    -webkit-app-region: no-drag;
+    z-index: -1;
+}
+
 .basketProductImage {
     position: absolute;
     left: 0;
@@ -42,6 +51,15 @@
     text-decoration: underline;
 }
 
+.checkoutHeader {
+    position: relative;
+    top: 10px;
+    left: 0%;
+    padding-bottom: 50px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    text-decoration: underline;
+}
+
 .basketProductPrice {
     position: absolute;
     left: 80%;
@@ -56,6 +74,38 @@
     font-size: x-large;
     position: relative;
     left: -18%;
+}
+
+.checkoutCostBreakdown {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: large;
+    position: relative;
+    top: 120px;
+    text-align: center;
+    height: 5px;
+    left: 50%;
+    transform: translateX(-2%);
+    width: 300px;
+    text-align: left;
+    line-height: 0.5;
+}
+
+.checkoutBasketPrice {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: x-large;
+    position: absolute;
+    width: 260px;
+    top: 500px;
+    left: 50%;
+    transform: translateX(-3%);
+    border-width: 2px;
+    border-style: solid;
+    border-bottom: transparent;
+    border-right: transparent;
+    border-left: transparent;
+    border-image: linear-gradient(to right, white, #7F00FF);
+    border-image-slice: 1;
+    text-align: left;
 }
 
 .removeBasketProduct:hover {
@@ -88,6 +138,168 @@
     font-weight: bold;
     top: 5rem;
     left: -14%;
+}
+
+.checkoutButton {
+    position: relative;
+    left: -80%;
+    top: -65px;
+    background-color: #7F00FF;
+    border: transparent;
+    padding: 15px;
+    border-radius: 1rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: large;
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.purchaseButton {
+    position: absolute;
+    left: calc(50% + 140px);
+    top: 600px;
+    background-color: #7F00FF;
+    border: transparent;
+    padding: 20px;
+    border-radius: 1rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: large;
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.purchaseButton:hover {
+    transform: scale(1.2);
+}
+
+.goBackButton {
+    position: absolute;
+    left: calc(50% - 250px);
+    top: 600px;
+    background-color: #7F00FF;
+    border: transparent;
+    padding: 20px;
+    border-radius: 1rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: large;
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.goBackButton:hover {
+    transform: scale(1.2);
+}
+
+.checkoutText {
+    display: inline-block;
+    text-align: left;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: large;
+}
+
+.shortCheckoutText {
+    display: inline-block;
+    text-align: center;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: large;
+}
+
+.checkoutField {
+    width: 300px;
+    height: 50px;
+    border-top: transparent;
+    border-left: transparent;
+    border-right: transparent;
+    border-radius: 2px;
+    text-align: center;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: larger;
+    position: relative;
+    background-color: #242424;
+    transition: 0.3s all;
+    margin-bottom: 25px;
+    -webkit-app-region: no-drag;
+    margin-right: 20px;
+    text-transform: capitalize;
+}
+
+.checkoutTextStyle {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    margin-bottom: 50px;
+    position: absolute;
+    width: 490px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 2px;
+    border-style: solid; 
+    border-image: linear-gradient(to right, white, #7F00FF);
+    border-image-slice: 1;
+    border-top: transparent;
+    border-right: transparent;
+    border-left: transparent;
+    padding: 15px;
+    font-weight: bold;
+}
+
+.shortCheckoutField {
+    width: 100px;
+    height: 50px;
+    border-top: transparent;
+    border-left: transparent;
+    border-right: transparent;
+    border-radius: 2px;
+    text-align: center;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: larger;
+    position: relative;
+    background-color: #242424;
+    transition: 0.3s all;
+    margin-bottom: 25px;
+    margin-left: 5px;
+    -webkit-app-region: no-drag;
+}
+
+.dateCheckoutField {
+    width: 40px;
+    height: 50px;
+    border-top: transparent;
+    border-left: transparent;
+    border-right: transparent;
+    border-radius: 2px;
+    text-align: center;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: larger;
+    position: relative;
+    background-color: #242424;
+    transition: 0.3s all;
+    margin-bottom: 25px;
+    margin-left: 5px;
+    margin-right: 5px;
+    -webkit-app-region: no-drag;
+}
+
+.checkoutField:focus {
+    border-color: #7F00FF;
+    outline: none;
+    box-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0);
+}
+
+.shortCheckoutField:focus {
+    border-color: #7F00FF;
+    outline: none;
+    box-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0);
+
+}
+
+.dateCheckoutField:focus {
+    border-color: #7F00FF;
+    outline: none;
+    box-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0);
+
+}
+
+.checkoutButton:hover {
+    transform: scale(1.2);
 }
 
 .removeBasketProduct {
