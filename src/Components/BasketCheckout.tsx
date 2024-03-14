@@ -19,6 +19,7 @@ function BasketCheckout() {
     const [basketData, setBasketData] = useState<Product[]>([])
     const [totalPrice, setTotalPrice] = useState(0)
     const [showPurchaseScreen, setPurchaseScreen] = useState(false)
+    const [showConfirmation, setShowConfirmation] = useState(false)
     const [cardNum, setCardNum] = useState("")
     const [expiryMonth, setExpiryMonth] = useState("")
     const [expiryYear, setExpiryYear] = useState("")
@@ -86,7 +87,7 @@ function BasketCheckout() {
                 </>
             )}
 
-            {!searching && basketData.length > 0 && showPurchaseScreen === false && (
+            {!searching && basketData.length > 0 && showPurchaseScreen === false && showConfirmation === false && (
                 <>
                     <div>
                         <SearchBar />
@@ -114,7 +115,7 @@ function BasketCheckout() {
                 </>
             )}
 
-            {!searching && basketData.length > 0 && showPurchaseScreen === true && (
+            {!searching && basketData.length > 0 && showPurchaseScreen === true && showConfirmation === false && (
                 <>
                     <div>
                         <SearchBar />
@@ -182,7 +183,7 @@ function BasketCheckout() {
                                     type="text"
                                     placeholder='Name as appears on card'
                                     value={cardName}
-                                    
+
                                     onChange={(e) => {
                                         const input = e.target.value;
                                         const regex = /^[a-zA-Z\s]*$/; // Allow letters (both uppercase and lowercase) and spaces
@@ -200,7 +201,15 @@ function BasketCheckout() {
                                     placeholder='123'
                                     maxLength={3}
                                     value={cardCode}
-                                    onChange={(e) => setCardCode(e.target.value)}
+                                    onChange={(e) => {
+                                        const input = e.target.value;
+                                        const regex = /^[0-9]*$/; // Allows only numbers
+
+                                        if (regex.test(input)) {
+                                            setCardCode(e.target.value)
+                                        }
+                                    }
+                                    }
                                 />
                             </label>
                         </div>
@@ -218,7 +227,38 @@ function BasketCheckout() {
                         <div>
                             <button onClick={handleGoBack} className='goBackButton'>{String.fromCharCode(8592)} Go Back</button>
 
-                            <button className='purchaseButton'>Purchase</button>
+                            <button className='purchaseButton' onClick={() => setShowConfirmation(true)}>Purchase</button>
+                        </div>
+                    </div>
+                </>
+            )}
+
+            {/* TODO */}
+            {!searching && basketData.length > 0 && showConfirmation === true && (
+                <>
+                    <div>
+                        <SearchBar />
+                    </div>
+
+                    <div className='basketContainer'>
+                        <h2 className='confirmationHeader'>Product Confirmation</h2>
+                        <div className='basketDetails'>
+                            <ul key={basketData.length}>
+                                {basketData.map((product: any) => (
+                                    <li key={product.ProductID} className='confirmationProductItem'>
+                                        <img className='confirmationProductImage' src={`//images.igdb.com/igdb/image/upload/t_cover_big/${product.ProductCover}.jpg`} alt={`Cover for ${product.ProductName}`} />
+                                        <div className='basketProductInformation'>
+                                            <p className='basketProductTitle'>{product.ProductName}</p>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                            <p className='confirmationTextStyle'>Products successfully purchased</p>
+
+                            <div>
+                                <button className='returnToStoreButton'>Return to Store</button>
+                                <button className='goToLibraryButton'>Go to Library</button>
+                            </div>
                         </div>
                     </div>
                 </>
