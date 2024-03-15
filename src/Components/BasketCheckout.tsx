@@ -66,6 +66,16 @@ function BasketCheckout() {
         setCardCode("")
     }
 
+    function handlePurchase() {
+        basketData.forEach(product => {
+            ipcRenderer.invoke('addPurchase', accountId, product.ProductID, product.ProductName, product.ProductCover);
+
+            ipcRenderer.invoke('removeFromBasket', accountId, product.ProductID)
+        })
+
+        setShowConfirmation(true)
+    }
+
     return (
         <>
             <div>
@@ -219,7 +229,7 @@ function BasketCheckout() {
                         </div>
 
                         <div>
-                            <p className='checkoutCostBreakdown'>Order Total ({basketData.length} Items): £{(totalPrice * 0.8).toFixed(2)}</p>
+                            <p className='checkoutCostBreakdown'>Subtotal ({basketData.length} Items): £{(totalPrice * 0.8).toFixed(2)}</p>
                             <p className='checkoutCostBreakdown'>VAT: £{(totalPrice * 0.2).toFixed(2)}</p>
                             <p className='checkoutBasketPrice'>Total: £{totalPrice.toFixed(2)}</p>
                         </div>
@@ -227,13 +237,12 @@ function BasketCheckout() {
                         <div>
                             <button onClick={handleGoBack} className='goBackButton'>{String.fromCharCode(8592)} Go Back</button>
 
-                            <button className='purchaseButton' onClick={() => setShowConfirmation(true)}>Purchase</button>
+                            <button className='purchaseButton' onClick={handlePurchase}>Purchase</button>
                         </div>
                     </div>
                 </>
             )}
 
-            {/* TODO */}
             {!searching && basketData.length > 0 && showConfirmation === true && (
                 <>
                     <div>

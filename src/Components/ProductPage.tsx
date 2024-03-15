@@ -186,6 +186,7 @@ const ProductPage: React.FC = () => {
                     setProductInfo(productCache[gameId])
 
                     checkProductInBasket()
+                    checkProductPurchased()
                     setSearching(false)
                     setStoreRecentlyViewed(true)
                 }
@@ -242,6 +243,7 @@ const ProductPage: React.FC = () => {
                     }
 
                     checkProductInBasket()
+                    checkProductPurchased()
                     setSearching(false);
                     setStoreRecentlyViewed(true)
                 }
@@ -260,7 +262,7 @@ const ProductPage: React.FC = () => {
         setProductInBasket(true) // Disables the add to basket button
     }
 
-    // Checks the database to see if there is a match for this account with this product
+    // Checks the database to see if there is a match in the basket for this product on this account
     async function checkProductInBasket() {
         const inBasket = await ipcRenderer.invoke('checkBasket', accountId, gameId)
 
@@ -269,6 +271,18 @@ const ProductPage: React.FC = () => {
         }
         else {
             setProductInBasket(false)
+        }
+    }
+
+    // Checks database to see if there is a match in the purchases database for this product on this account
+    async function checkProductPurchased() {
+        const alreadyPurchased = await ipcRenderer.invoke('checkAccountPurchases', accountId, gameId)
+
+        if (alreadyPurchased) {
+            setProductOwned(true)
+        }
+        else {
+            setProductOwned(false)
         }
     }
 

@@ -2,6 +2,7 @@
     position: absolute;
     top: 200px;
     left: 49%;
+    width: 750px;
     -webkit-app-region: no-drag;
     z-index: -1;
 }
