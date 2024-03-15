@@ -1,0 +1,130 @@
+.signOut {
+    position: absolute;
+    top: 250px;
+    width: 500px;
+    height: 150px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-width: 2px;
+    border-style: solid;
+    border-top: transparent;
+    border-right: transparent;
+    border-left: transparent;
+    border-image: linear-gradient(to right, white, #7F00FF);
+    border-image-slice: 1;
+}
+
+.deleteAccount {
+    position: absolute;
+    top: 450px;
+    width: 500px;
+    height: 175px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-width: 2px;
+    border-style: solid;
+    border-top: transparent;
+    border-right: transparent;
+    border-left: transparent;
+    border-image: linear-gradient(to right, white, #7F00FF);
+    border-image-slice: 1;
+}
+
+.settingsHeader {
+    text-align: left;
+    text-decoration: underline;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.settingsText {
+    text-align: left;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.settingsButton {
+    position: relative;
+    top: -50px;
+    left: 200px;
+    background-color: #7F00FF;
+    border: transparent;
+    padding: 15px;
+    border-radius: 1rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: large;
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.deleteAccountText {
+    text-align: left;
+    color: red;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.deleteAccountButton {
+    position: relative;
+    top: -40px;
+    left: 175px;
+    background-color: red;
+    border: transparent;
+    padding: 15px;
+    border-radius: 1rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: large;
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.settingsButton:hover {
+    transform: scale(1.2);
+}
+
+.deleteAccountButton:hover {
+    transform: scale(1.2);
+}
+
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    z-index: 9999; /* Ensure it appears above other content */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modalContent {
+    background-color: #7F00FF; /* Background color of the modal */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Add shadow for depth */
+    max-width: 500px; /* Adjust the maximum width of the modal */
+    text-align: center;
+}
+
+.modalText {
+    text-align: center;
+    font-size: large;
+    font-weight: bold;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.modalButton {
+        position: relative;
+        background-color: #7F00FF;
+        border: transparent;
+        padding: 15px;
+        margin-right: 10px;
+        border-radius: 1rem;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-size: large;
+        transition: transform 0.3s ease-in-out;
+        cursor: pointer;
+}
+
+.modalButton:hover {
+    transform: scale(1.5);
+}
