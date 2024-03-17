@@ -1,5 +1,7 @@
 {
   "name": "digital-store-project",
+  "description": "a digital store application",
+  "author": "Sam Clark",
   "private": true,
   "version": "0.0.0",
   "scripts": {

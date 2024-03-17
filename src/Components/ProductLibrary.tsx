@@ -1,5 +1,5 @@
 import '../Components/App.tsx'
-import { ipcRenderer } from 'electron';
+//import { ipcRenderer } from 'electron';
 import NavBar from './NavBar.tsx';
 
 

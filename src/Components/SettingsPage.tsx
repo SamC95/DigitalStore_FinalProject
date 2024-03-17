@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 function SettingsPage() {
     const [showModal, setShowModal] = useState(false);
-    const accountId = sessionStorage.getItem('AccountID')
+    //const accountId = sessionStorage.getItem('AccountID')
     const navigate = useNavigate();
 
     function confirmDelete() {
