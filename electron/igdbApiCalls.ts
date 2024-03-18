@@ -4,6 +4,8 @@ import { ipcMain } from "electron";
 
 var ACCESS_KEY = "";
 var ACCESS_TOKEN = "";
+var CLIENT_SECRET = "";
+var LAST_UPDATED = "";
 
 function delay(ms: number | undefined) {
     return new Promise(resolve => setTimeout(resolve, ms))
@@ -17,38 +19,88 @@ NOTE - If project has been downloaded from Github, Access.db is NOT included.
         of the same name to gain access to required data.
 
         This does NOT apply to final project submission where Access.db will be included.
-
-        TODO - IMPLEMENT DYNAMIC RETRIEVAL OF ACCESS TOKEN SO THAT THE PROGRAM CAN DYNAMICALLY
-               RETRIEVE A NEW TOKEN WHEN THE PRIOR ONE EXPIRES
 */
 async function retrieveAccess() {
     const sqlite3 = require('sqlite3').verbose();
-    let db = new sqlite3.Database('./Access.db', sqlite3.OPEN_READWRITE, (error: { message: any; }) => {
-        if (error) {
-            console.error(error.message)
-        }
-        console.log('Connected to the Access database')
-    })
+    const currentDate = new Date();
 
-    let sql = 'SELECT ACCESS_KEY, ACCESS_TOKEN FROM AccessData WHERE NAME = "Retrieve_Data"'
+    return new Promise((resolve, reject) => {
+        let db = new sqlite3.Database('./Access.db', sqlite3.OPEN_READWRITE, (error: { message: any; }) => {
+            if (error) {
+                reject(error)
+            }
+            console.log('Connected to the Access database')
+        })
 
-    db.all(sql, [], (error: any, rows: any[]) => {
-        if (error) {
-            throw error;
-        }
-        rows.forEach((row: { ACCESS_KEY: any; ACCESS_TOKEN: any; }) => {
+        let sql = 'SELECT ACCESS_KEY, ACCESS_TOKEN, CLIENT_SECRET, LAST_UPDATED FROM AccessData WHERE NAME = "Retrieve_Data"'
+
+        db.get(sql, [], async (error: any, row: any) => {
+            if (error) {
+                reject(error)
+            }
+
+            if (!row) {
+                reject(new Error('No data found in table'));
+            }
+
             ACCESS_KEY = row.ACCESS_KEY
             ACCESS_TOKEN = row.ACCESS_TOKEN
+            CLIENT_SECRET = row.CLIENT_SECRET
+            LAST_UPDATED = row.LAST_UPDATED
 
+            console.log(row)
+
+            // If the access token has not been updated before (LAST_UPDATED set to null on database) then retrieves a new access token and updates the date appropriately
+            if (!LAST_UPDATED) {
+                try {
+                    const newAccessToken = await refreshAccess(ACCESS_KEY, CLIENT_SECRET);
+                    ACCESS_TOKEN = newAccessToken // Update ACCESS_TOKEN with the new access token from the Twitch.tv authentication request
+
+                    // Updates the database with the new access token and the current date/time
+                    await db.run('UPDATE AccessData SET ACCESS_TOKEN = ?, LAST_UPDATED = ? WHERE NAME = "Retrieve_Data"', [newAccessToken, currentDate.toISOString()])
+
+                    resolve({ ACCESS_KEY, ACCESS_TOKEN }) // Resolves the function
+                }
+                catch (error: any) {
+                    reject(error)
+                }
+            }
+            else {
+                const lastUpdateDate = new Date(LAST_UPDATED)
+
+                // Updates the access token and last updated columns on the database if it has been more than 30 days since the last update
+                // We compare the different between the current time and last update time. (30 days * 24 hours/day * 60 minutes/hour * 60 seconds/minute * 1000 milliseconds/second)
+                if (currentDate.getTime() - lastUpdateDate.getTime() >= 30 * 24 * 60 * 60 * 1000) {
+                    const newAccessToken = await refreshAccess(ACCESS_KEY, CLIENT_SECRET);
+                    ACCESS_TOKEN = newAccessToken // Update ACCESS_TOKEN with the new access token from the Twitch.tv authentication request
+
+                    // Updates the database with the new access token and the current date/time
+                    await db.run('UPDATE AccessData SET ACCESS_TOKEN = ?, LAST_UPDATED = ? WHERE NAME = "Retrieve_Data"', [newAccessToken, currentDate.toISOString()])
+                }
+                resolve({ ACCESS_KEY, ACCESS_TOKEN }) // Resolves the function
+            }
         })
     })
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            ACCESS_KEY != "";
-            ACCESS_TOKEN != "";
-            resolve({ ACCESS_KEY, ACCESS_TOKEN })
-        }, 50)
-    })
+}
+
+async function refreshAccess(accessKey: any, clientSecret: any) {
+    try { // Retrieves a new access token from the Twitch.tv authentication using the access key and client secret in the database
+        const response = await fetch(
+            `https://id.twitch.tv/oauth2/token?client_id=${accessKey}&client_secret=${clientSecret}&grant_type=client_credentials`, {
+            method: 'POST'
+        })
+
+        if (!response.ok) {
+            throw new Error(`Failed to refresh access details: ${response.statusText}`)
+        }
+
+        const responseData = await response.json(); // Await the response from the request
+
+        return responseData.access_token // Returns the access token that has been retrieved
+    }
+    catch (error: any) {
+        throw new Error(`Failed to refresh access: ${error.message}`)
+    }
 }
 
 // Retrieves a product's details from the database if it already exists there
@@ -410,6 +462,7 @@ ipcMain.handle('get-featured', async (_event, currentDate, monthAgoDate) => {
     try {
         await retrieveAccess()
 
+        console.log(ACCESS_KEY, ACCESS_TOKEN)
         const response = await fetch(
             "https://api.igdb.com/v4/games", {
             method: 'POST',
