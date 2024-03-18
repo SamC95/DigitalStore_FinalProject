@@ -324,7 +324,7 @@ const ProductPage: React.FC = () => {
                                     }
                                     {productInfo[0].involvedCompanies
                                         .filter((company: { developer: any; }) => company.developer)
-                                        .length === 0 && <p>No Data Found</p>
+                                        .length === 0 && <p>N/A</p>
                                     }
                                 </div>
                             )}
@@ -340,7 +340,7 @@ const ProductPage: React.FC = () => {
                                     }
                                     {productInfo[0].involvedCompanies
                                         .filter((company: { publisher: any; }) => company.publisher)
-                                        .length === 0 && <p>No Data Found</p>
+                                        .length === 0 && <p>N/A</p>
                                     }
                                 </div>
                             )}
@@ -379,7 +379,7 @@ const ProductPage: React.FC = () => {
                                         onClick={() => handleImageClick(index)}
                                     >
                                         {/* Youtube thumbnail image can sometimes return a grey placeholder if there is no high resolution image available
-                                            This is not a bug with the program but simply by design of the youtube thumbnail system. Usually occurs for older videos */}
+                                            This is not a bug with the program but simply by design of the youtube high-res thumbnail system. Usually occurs for older videos */}
                                         {index === 0 && media.type === 'video' ? (
                                             <img src={`https://img.youtube.com/vi/${media.content}/maxresdefault.jpg`} />
                                         ) : (
@@ -399,7 +399,7 @@ const ProductPage: React.FC = () => {
                                     <h3>{`£${productPrice}` ?? 'N/A'}</h3>
                                 </div>
 
-                                {/*We determine which button is shown and its styling based on whether the current user already owns the product*/}
+                                {/*We determine which button is shown and its styling based on whether the current user already owns the product or if it's in their basket or not*/}
                                 <div className='addToBasket'>
                                     {productReleased ? (
                                         <>

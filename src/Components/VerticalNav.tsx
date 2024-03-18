@@ -163,8 +163,6 @@ const VerticalNav = () => {
                 }
 
                 else {
-                    wait(3000)
-
                     const updatedGameList = await getCovers(data)
 
                     newReleaseCache = {
@@ -215,8 +213,6 @@ const VerticalNav = () => {
                     }
 
                     else {
-                        wait(3000)
-
                         const updatedGameList = await getCovers(data)
 
                         upcomingCache = {
