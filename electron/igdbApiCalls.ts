@@ -48,8 +48,6 @@ async function retrieveAccess() {
             CLIENT_SECRET = row.CLIENT_SECRET
             LAST_UPDATED = row.LAST_UPDATED
 
-            console.log(row)
-
             // If the access token has not been updated before (LAST_UPDATED set to null on database) then retrieves a new access token and updates the date appropriately
             if (!LAST_UPDATED) {
                 try {
@@ -462,7 +460,6 @@ ipcMain.handle('get-featured', async (_event, currentDate, monthAgoDate) => {
     try {
         await retrieveAccess()
 
-        console.log(ACCESS_KEY, ACCESS_TOKEN)
         const response = await fetch(
             "https://api.igdb.com/v4/games", {
             method: 'POST',
