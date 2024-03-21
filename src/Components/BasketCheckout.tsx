@@ -40,7 +40,6 @@ function BasketCheckout() {
 
             setBasketData(data)
             setSearching(false)
-            console.log(basketData)
         }
         catch (error) {
             console.error('Error retrieving basket:', error)

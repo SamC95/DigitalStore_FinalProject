@@ -212,3 +212,44 @@ ipcMain.handle('addPurchase', async (_event, accountId, productId, productName, 
         })
     })
 })
+
+// Receives the products that the user has purchased for the library page
+ipcMain.handle('receivePurchases', async(_event, accountId) => {
+    return new Promise((resolve, reject) => {
+        let accountDatabase = new sqlite3.Database('./AccountDatabase.db', sqlite3.OPEN_READWRITE, async(error: { message: any; }) => {
+            if (error) {
+                reject(error.message)
+            }
+            else {
+                let receiveProductSql = 'SELECT ProductID, ProductName, ProductCover, ProductGenres, OrderID, CostOfPurchase FROM UserPurchases WHERE AccountID = ?'
+
+                accountDatabase.all(receiveProductSql, [accountId], async (error: { message: any; }, rows: any) => {
+                    if (error) {
+                        reject(error.message)
+                    }
+                    else {
+                        if (!rows) {
+                            resolve(null)
+                        }
+                        else {
+                            const productList = rows.map((row: {
+                                ProductID: any; ProductName: any;
+                                ProductCover: any; OrderID: any; ProductGenres: any;
+                                costOfPurchase: any;
+                            }) => ({
+                                ProductID: row.ProductID,
+                                ProductName: row.ProductName,
+                                ProductCover: row.ProductCover,
+                                ProductGenres: JSON.parse(row.ProductGenres),
+                                OrderID: row.OrderID,
+                                costOfPurchase: row.costOfPurchase
+                            }));
+
+                            resolve(productList)
+                        }
+                    }
+                })
+            }
+        })
+    })
+})

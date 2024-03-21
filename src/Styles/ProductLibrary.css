@@ -1,0 +1,71 @@
+.productLibraryContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    row-gap: 10px;
+    column-gap: 20px;
+    width: 70%;
+    -webkit-app-region: no-drag;
+    position: absolute;
+    margin-left: -45%;
+    top: 15vh;
+    border-width: 2px;
+    border-style: solid;
+    border-image: linear-gradient(to bottom, white, #7F00FF);
+    border-image-slice: 1;
+    border-left: transparent;
+    border-top: transparent;
+    border-bottom: transparent;
+    z-index: -1;
+  }
+
+  .productFilterList {
+    position: fixed;
+    top: 20%;
+    right: 0;
+    width: 30%; 
+    height: 100vh; 
+  }
+  
+  .productLibraryCover {
+    width: calc((100% / 3) - 10px); 
+    height: auto;
+    background-color: transparent;
+    transition: transform 0.3s ease-in-out;
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: 100px;
+  }
+
+  .productLibraryCover:hover {
+    transform: scale(1.05);
+  }
+
+  .productLibraryName {
+    margin-top: 0;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    overflow: hidden;
+    white-space: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .filterListHeader {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  }
+
+  .filterListText {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    line-height: 0.5;
+    background-color: transparent;
+    border-color: transparent;
+    font-size: medium;
+
+  }
+
+  .filterListText:hover {
+    color: #7F00FF;
+    cursor: pointer;
+  }
