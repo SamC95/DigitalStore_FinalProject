@@ -4,6 +4,7 @@ import NavBar from './NavBar.tsx';
 import { ipcRenderer } from 'electron';
 import LoadingBar from './LoadingBar.tsx';
 import '../Styles/ProductLibrary.css'
+import { useNavigate } from 'react-router';
 
 interface Product { // Sets up the interface for the product with fields used in this component
     ProductID: number;
@@ -14,6 +15,7 @@ interface Product { // Sets up the interface for the product with fields used in
 
 function ProductLibrary() {
     const accountId = sessionStorage.getItem('AccountID')
+    const navigate = useNavigate()
     const [productData, setProductData] = useState<Product[]>([])
     const [loading, setLoading] = useState(false)
     const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
@@ -85,6 +87,10 @@ function ProductLibrary() {
 
     const sortedProducts = sortProducts(filteredProducts); // Triggers the sortProducts functionality
 
+    function linkToStorePage(productId: any) {
+        navigate(`/product-page/${productId}`)
+    }
+
     return (
         <>
             <div>
@@ -105,7 +111,7 @@ function ProductLibrary() {
                 <>
                     <div className='productLibraryContainer'>
                         {sortedProducts.map(product => (
-                            <div key={product.ProductID} className='productLibraryCover'>
+                            <div key={product.ProductID} className='productLibraryCover' onClick={() => linkToStorePage(product.ProductID)}>
                                 <img src={`//images.igdb.com/igdb/image/upload/t_cover_big/${product.ProductCover}.jpg`} alt={`Cover for ${product.ProductName}`} />
                                 <p className='productLibraryName'>{product.ProductName}</p>
                             </div>
