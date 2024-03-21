@@ -130,7 +130,7 @@ function StoreMainPage() {
     useEffect(() => {
         // This effect will run once when the component is mounted for the first time
         if (hasResizedBefore === "false") {
-            ipcRenderer.send('resizeWindow', { width: 1600, height: 900 });
+            ipcRenderer.send('resizeWindow', { width: 1620, height: 900 });
             ipcRenderer.send('defineMinSize', { width: 1600, height: 900 });
             ipcRenderer.send('centerWindow');
 
@@ -174,9 +174,9 @@ function StoreMainPage() {
             setSecondGenre(assignRandomNumbers(5, 8))
             setThirdGenre(assignRandomNumbers(9, 12))
 
-            // setTimeout(() => {
-                 setFeaturedLoaded(true)
-            // }, 2000)
+            
+            setFeaturedLoaded(true)
+            
         }
     }, [featuredData])
 

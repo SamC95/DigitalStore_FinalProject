@@ -254,7 +254,7 @@ const ProductPage: React.FC = () => {
         console.log(productInfo[0].genres)
 
         await ipcRenderer.invoke('addToBasket', accountId, productInfo[0].id,
-            productInfo[0].name, productCover[0].imageId, productPrice, JSON.stringify(productInfo[0].genres));
+            productInfo[0].name, productCover[0]?.imageId, productPrice, JSON.stringify(productInfo[0].genres));
 
         setProductInBasket(true) // Disables the add to basket button
     }

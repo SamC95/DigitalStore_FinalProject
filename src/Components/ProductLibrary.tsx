@@ -126,7 +126,7 @@ function ProductLibrary() {
                                         className={`filterListText ${selectedGenres.includes(genre.toString()) ? 'selected' : ''}`}
                                         onClick={() => handleGenreToggle(genre.toString())}
                                     >
-                                        {genre} {selectedGenres.includes(genre.toString()) && '✔️'} {/* Displays a tick mark if selected */}
+                                        {genre} {selectedGenres.includes(genre.toString()) && ' ✔️'} {/* Displays a tick mark if toggled */}
                                     </button>
                                 </div>
                             ))}
