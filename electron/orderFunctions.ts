@@ -33,7 +33,7 @@ async function generateOrderID(accountDatabase: { get: (arg0: string, arg1: numb
     return newId;
 }
 
-ipcMain.handle('addToBasket', async (_event, accountId, productId, productName, productCover, productPrice) => {
+ipcMain.handle('addToBasket', async (_event, accountId, productId, productName, productCover, productPrice, productGenres) => {
     return new Promise((resolve, reject) => {
         let accountDatabase = new sqlite3.Database('./AccountDatabase.db', sqlite3.OPEN_READWRITE, (error: { message: any; }) => {
             if (error) {
@@ -49,9 +49,9 @@ ipcMain.handle('addToBasket', async (_event, accountId, productId, productName, 
                     else {
                         if (!row) { // If there is no match in the database, add the product to the basket for this account
                             let addToBasketSql = 'INSERT INTO BasketProducts (AccountID, ProductID, ProductName, ' +
-                                'ProductCover, ProductPrice) VALUES (?, ?, ?, ?, ?)'
+                                'ProductCover, ProductPrice, ProductGenres) VALUES (?, ?, ?, ?, ?, ?)'
 
-                            let values = [accountId, productId, productName, productCover, productPrice]
+                            let values = [accountId, productId, productName, productCover, productPrice, productGenres]
 
                             accountDatabase.run(addToBasketSql, values, function (error: { message: any; }) {
                                 if (error) {
@@ -133,7 +133,7 @@ ipcMain.handle('getUserBasket', async (_event, accountId) => {
                 reject(error.message)
             }
             else { // Retrieves all rows where the table has the specified account id number
-                let userBasketSql = 'SELECT ProductID, ProductName, ProductCover, ProductPrice FROM BasketProducts WHERE AccountID = ?'
+                let userBasketSql = 'SELECT ProductID, ProductName, ProductCover, ProductPrice, ProductGenres FROM BasketProducts WHERE AccountID = ?'
 
                 accountDatabase.all(userBasketSql, [accountId], async (error: { message: any; }, rows: any) => {
                     if (error) {
@@ -146,12 +146,13 @@ ipcMain.handle('getUserBasket', async (_event, accountId) => {
                         else { // If match then we map the data to an object to be passed to the component
                             const basketList = rows.map((row: {
                                 ProductID: any; ProductName: any;
-                                ProductCover: any; ProductPrice: any;
+                                ProductCover: any; ProductPrice: any; ProductGenres: any;
                             }) => ({
                                 ProductID: row.ProductID,
                                 ProductName: row.ProductName,
                                 ProductCover: row.ProductCover,
-                                ProductPrice: row.ProductPrice
+                                ProductPrice: row.ProductPrice,
+                                ProductGenres: JSON.parse(row.ProductGenres)
                             }));
 
                             resolve(basketList)
@@ -185,22 +186,21 @@ ipcMain.handle('removeFromBasket', async (_event, accountId, productId) => {
     })
 })
 
-ipcMain.handle('addPurchase', async (_event, accountId, productId, productName, productCover) => {
+ipcMain.handle('addPurchase', async (_event, accountId, productId, productName, productCover, productGenres, costOfPurchase) => {
     return new Promise((resolve, reject) => {
         let accountDatabase = new sqlite3.Database('./AccountDatabase.db', sqlite3.OPEN_READWRITE, async (error: { message: any; }) => {
             if (error) {
                 reject(error.message)
             }
             else {
-                const orderId = await generateOrderID(accountDatabase)
-                console.log(orderId)
+                const orderId = await generateOrderID(accountDatabase) // Creates an order number for each purchased product
 
                 let addPurchaseSql = 'INSERT INTO UserPurchases (AccountID, ProductID, ProductName, ' +
-                    'ProductCover, OrderID) VALUES (?, ?, ?, ?, ?)'
+                    'ProductCover, ProductGenres, OrderID, CostOfPurchase) VALUES (?, ?, ?, ?, ?, ?, ?)'
 
-                let values = [accountId, productId, productName, productCover, orderId]
+                let values = [accountId, productId, productName, productCover, productGenres, orderId, costOfPurchase]
 
-                accountDatabase.run(addPurchaseSql, values, function (error: { message: any; }) {
+                accountDatabase.run(addPurchaseSql, values, function (error: { message: any; }) { // Inserts the product details into the UserPurchases table of the database
                     if (error) {
                         reject(error.message)
                     }

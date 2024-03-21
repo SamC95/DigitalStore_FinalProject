@@ -5,16 +5,19 @@ import SearchBar from './SearchBar.tsx';
 import { useEffect, useState } from 'react';
 import NavBar from './NavBar';
 import '../Styles/BasketCheckout.css'
+import { useNavigate } from 'react-router';
 
 interface Product {
     ProductID: number;
     ProductName: string;
     ProductCover: string;
     ProductPrice: number;
+    ProductGenres: string[];
 }
 
 function BasketCheckout() {
     const accountId = sessionStorage.getItem('AccountID');
+    const navigate = useNavigate()
     const [searching, setSearching] = useState(false);
     const [basketData, setBasketData] = useState<Product[]>([])
     const [totalPrice, setTotalPrice] = useState(0)
@@ -68,12 +71,20 @@ function BasketCheckout() {
 
     function handlePurchase() {
         basketData.forEach(product => {
-            ipcRenderer.invoke('addPurchase', accountId, product.ProductID, product.ProductName, product.ProductCover);
+            ipcRenderer.invoke('addPurchase', accountId, product.ProductID, product.ProductName, product.ProductCover, JSON.stringify(product.ProductGenres), product.ProductPrice);
 
             ipcRenderer.invoke('removeFromBasket', accountId, product.ProductID)
         })
 
         setShowConfirmation(true)
+    }
+
+    function returnToStore() {
+        navigate('/store-main-page')
+    }
+
+    function goToLibrary() {
+        navigate('/library-page')
     }
 
     return (
@@ -265,8 +276,8 @@ function BasketCheckout() {
                             <p className='confirmationTextStyle'>Products successfully purchased</p>
 
                             <div>
-                                <button className='returnToStoreButton'>Return to Store</button>
-                                <button className='goToLibraryButton'>Go to Library</button>
+                                <button className='returnToStoreButton' onClick={returnToStore}>Return to Store</button>
+                                <button className='goToLibraryButton' onClick={(goToLibrary)}>Go to Library</button>
                             </div>
                         </div>
                     </div>

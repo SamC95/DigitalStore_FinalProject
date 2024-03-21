@@ -55,8 +55,6 @@ const ProductPage: React.FC = () => {
     const accountId = sessionStorage.getItem('AccountID')
     const [storeRecentlyViewed, setStoreRecentlyViewed] = useState(false)
 
-    console.log(gameId)
-
     // Function for determining the price of the product based on its release date
     useEffect(() => {
         if (productInfo.length === 0) {
@@ -178,8 +176,6 @@ const ProductPage: React.FC = () => {
             setSearching(true);
             setStoreRecentlyViewed(false);
 
-            console.log(productInfo)
-
             if (gameId !== undefined) {
                 if (productCache[gameId]) {
                     console.log('Using cached result for: ', gameId)
@@ -236,7 +232,6 @@ const ProductPage: React.FC = () => {
 
                     // Overwrite the old Game object with the updated one
                     setProductInfo(updatedProductData);
-                    console.log(updatedProductData)
 
                     if (gameId !== undefined) {
                         productCache[gameId] = updatedProductData
@@ -256,8 +251,10 @@ const ProductPage: React.FC = () => {
     async function addToBasket() {
         const productCover = await ipcRenderer.invoke('get-covers', gameId)
 
+        console.log(productInfo[0].genres)
+
         await ipcRenderer.invoke('addToBasket', accountId, productInfo[0].id,
-            productInfo[0].name, productCover[0].imageId, productPrice);
+            productInfo[0].name, productCover[0].imageId, productPrice, JSON.stringify(productInfo[0].genres));
 
         setProductInBasket(true) // Disables the add to basket button
     }

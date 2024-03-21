@@ -67,7 +67,7 @@ async function retrieveAccess() {
                 const lastUpdateDate = new Date(LAST_UPDATED)
 
                 // Updates the access token and last updated columns on the database if it has been more than 30 days since the last update
-                // We compare the different between the current time and last update time. (30 days * 24 hours/day * 60 minutes/hour * 60 seconds/minute * 1000 milliseconds/second)
+                // We compare the difference between the current time and last update time. (30 days * 24 hours/day * 60 minutes/hour * 60 seconds/minute * 1000 milliseconds/second)
                 if (currentDate.getTime() - lastUpdateDate.getTime() >= 30 * 24 * 60 * 60 * 1000) {
                     const newAccessToken = await refreshAccess(ACCESS_KEY, CLIENT_SECRET);
                     ACCESS_TOKEN = newAccessToken // Update ACCESS_TOKEN with the new access token from the Twitch.tv authentication request

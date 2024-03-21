@@ -66,8 +66,6 @@ ipcMain.handle('addRecentlyViewed', async (_event, accountId, productId, product
                             }
                         }
 
-                        console.log(existingIndex)
-
                         if (existingIndex !== -1) { // If the product does exist, we only push the products up until the position of that product
                             for (let i = existingIndex; i > 1; i--) {
                                 let prevProductId = row[`ProductID${i - 1}`];
