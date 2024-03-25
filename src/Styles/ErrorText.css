@@ -3,3 +3,12 @@
     color: red;
     min-height: auto;
 }
+
+.ErrorTextPayment {
+    position: absolute;
+    color: red;
+    min-height: auto;
+    top: 670px;
+    left: 50%;
+    transform: translateX(-50%);
+}

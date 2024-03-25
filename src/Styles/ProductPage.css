@@ -123,6 +123,13 @@
     color: white;
 }
 
+.noMediaFound {
+    position: absolute;
+    top: 450px;
+    left: 50%;
+    transform: translateX(-50%)
+}
+
 .currentEnlargedMedia {
         width: 750px;
         height: 422px;
@@ -168,3 +175,4 @@
 .productNotOwned:hover {
     transform: scale(1.3)
 }
+

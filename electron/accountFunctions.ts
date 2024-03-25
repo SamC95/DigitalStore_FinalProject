@@ -230,3 +230,57 @@ ipcMain.handle('getAccountId', async (_event, username) => {
         })
     })
 })
+
+ipcMain.handle('deleteAccount', async (_event, accountId) => {
+    return new Promise((resolve, reject) => {
+        let accountDatabase = new sqlite3.Database('./AccountDatabase.db', sqlite3.OPEN_READWRITE, (error: { message: any; }) => {
+            if (error) {
+                console.error(error.message)
+            }
+
+            let deleteUserSql = 'DELETE FROM Users WHERE AccountID = ?'
+
+            accountDatabase.run(deleteUserSql, [accountId], function (error: { message: any; }) {
+                if (error) {
+                    console.error(error.message)
+                }
+                else {
+                    console.log('Users table row deleted')
+                }
+            })
+
+            let deletePurchasesSql = 'DELETE FROM UserPurchases WHERE AccountID = ?'
+
+            accountDatabase.run(deletePurchasesSql, [accountId], function (error: { message: any; }) {
+                if (error) {
+                    console.error(error.message)
+                }
+                else {
+                    console.log('UserPurchases table row deleted or not found')
+                }
+            })
+
+            let deleteRecentlyViewedSql = 'DELETE FROM RecentlyViewed WHERE AccountID = ?'
+
+            accountDatabase.run(deleteRecentlyViewedSql, [accountId], function (error: { message: any; }) {
+                if (error) {
+                    console.error(error.message)
+                }
+                else {
+                    console.log('RecentlyViewed table row deleted or not found')
+                }
+            })
+
+            let deleteBasketSql = 'DELETE FROM BasketProducts WHERE AccountID = ?'
+
+            accountDatabase.run(deleteBasketSql, [accountId], function (error: { message: any; }) {
+                if (error) {
+                    console.error(error.message)
+                }
+                else {
+                    console.log('BasketProducts table row deleted or not found')
+                }
+            })
+        })
+    })
+})

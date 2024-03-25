@@ -28,6 +28,7 @@ function BasketCheckout() {
     const [expiryYear, setExpiryYear] = useState("")
     const [cardName, setCardName] = useState("")
     const [cardCode, setCardCode] = useState("")
+    const [errorString, setErrorString] = useState("")
 
     useEffect(() => {
         getData()
@@ -69,6 +70,24 @@ function BasketCheckout() {
     }
 
     function handlePurchase() {
+        switch (true) {
+            case cardNum.length !== 16:
+                setErrorString('Card number must be 16-digits long')
+                return;
+
+            case expiryMonth.length !== 2 || expiryYear.length !== 2:
+                setErrorString('Expiry Date must be in a MM/YY format. E.g., 01/24')
+                return;
+
+            case cardName.length < 2:
+                setErrorString('Name is too short, must be at least two characters long')
+                return;
+
+            case cardCode.length !== 3:
+                setErrorString('CVV must be 3-digits long')
+                return;
+        }
+
         basketData.forEach(product => {
             ipcRenderer.invoke('addPurchase', accountId, product.ProductID, product.ProductName, product.ProductCover, JSON.stringify(product.ProductGenres), product.ProductPrice);
 
@@ -249,6 +268,8 @@ function BasketCheckout() {
 
                             <button className='purchaseButton' onClick={handlePurchase}>Purchase</button>
                         </div>
+
+                        <p className='ErrorTextPayment'>{errorString}</p>
                     </div>
                 </>
             )}

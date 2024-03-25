@@ -23,19 +23,20 @@ ipcMain.handle('setupRecentlyViewed', async (_event, accountId) => {
 
                         accountDatabase.run(accountAddSql, [accountId], async (error: { message: any; }) => {
                             if (error) {
+                                accountDatabase.close()
                                 reject(error.message)
                             }
                             else {
+                                accountDatabase.close()
                                 resolve('Row added successfully.');
                             }
                         });
                     }
                     else {
+                        accountDatabase.close()
                         resolve('Row already exists.');
                     }
                 }
-
-                accountDatabase.close()
             })
         })
     })
@@ -98,16 +99,16 @@ ipcMain.handle('addRecentlyViewed', async (_event, accountId, productId, product
                             let newProductSql = `UPDATE RecentlyViewed SET ProductID1 = ?, ProductName1 = ? WHERE AccountID = ?`;
                             accountDatabase.run(newProductSql, [productId, productName, accountId], async (error: { message: any; }) => {
                                 if (error) {
+                                    accountDatabase.close();
                                     reject(error.message)
                                 }
                                 else {
+                                    accountDatabase.close();
                                     resolve('Product added successfully')
                                 }
                             })
                         }
                     }
-
-                    accountDatabase.close();
                 })
             }
         })
@@ -139,12 +140,11 @@ ipcMain.handle('getRecentlyViewed', async (_event, accountId) => {
                             }
                         }
 
+                        accountDatabase.close()
                         resolve(recentlyViewedProducts)
                     }
                 })
             }
-
-            accountDatabase.close()
         })
     })
 })

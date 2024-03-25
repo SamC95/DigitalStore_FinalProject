@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function SettingsPage() {
+    const accountId = sessionStorage.getItem('AccountID')
     const [showModal, setShowModal] = useState(false);
     //const accountId = sessionStorage.getItem('AccountID')
     const navigate = useNavigate();
@@ -16,6 +17,8 @@ function SettingsPage() {
 
     function handleConfirm() {
         setShowModal(false);
+
+        deleteAccount();
     }
 
     function handleCancel() {
@@ -32,6 +35,12 @@ function SettingsPage() {
         ipcRenderer.send('centerWindow'); // Repositions window
 
         localStorage.setItem('hasResized', 'false') // Ensures window will resize on next log in
+    }
+
+    function deleteAccount() {
+        ipcRenderer.invoke('deleteAccount', accountId)
+
+        handleSignOut()
     }
 
     return (

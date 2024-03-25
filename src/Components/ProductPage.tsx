@@ -296,6 +296,12 @@ const ProductPage: React.FC = () => {
 
             {searching && <LoadingBar />}
 
+            {!searching && productMedia.length === 0 && (
+                <>
+                    <h2 className='noMediaFound'>No Media for this Product</h2>
+                </>
+            )}
+
             {!searching && (
                 <>
                     <div>
