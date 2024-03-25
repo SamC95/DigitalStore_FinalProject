@@ -14,9 +14,25 @@
     border-image-slice: 1;
 }
 
+.refundProduct {
+    position: absolute;
+    top: 445px;
+    width: 500px;
+    height: 220px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-width: 2px;
+    border-style: solid;
+    border-top: transparent;
+    border-right: transparent;
+    border-left: transparent;
+    border-image: linear-gradient(to right, white, #7F00FF);
+    border-image-slice: 1;
+}
+
 .deleteAccount {
     position: absolute;
-    top: 450px;
+    top: 650px;
     width: 500px;
     height: 175px;
     left: 50%;
@@ -55,6 +71,25 @@
     cursor: pointer;
 }
 
+.refundProductText {
+    text-align: left;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.refundProductButton {
+    position: relative;
+    top: -40px;
+    left: 175px;
+    background-color: #7F00FF;
+    border: transparent;
+    padding: 15px;
+    border-radius: 1rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: large;
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+}
+
 .deleteAccountText {
     text-align: left;
     color: red;
@@ -75,7 +110,22 @@
     cursor: pointer;
 }
 
+.refundProductDropdown {
+    border-color: transparent;
+    font-size: medium;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    border-width: 2px;
+    border-style: solid;
+    border-image: linear-gradient(to right, white, #7F00FF);
+    border-image-slice: 1;
+    z-index: 999;
+}
+
 .settingsButton:hover {
+    transform: scale(1.2);
+}
+
+.refundProductButton:hover {
     transform: scale(1.2);
 }
 
@@ -89,19 +139,19 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-    z-index: 9999; /* Ensure it appears above other content */
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .modalContent {
-    background-color: #7F00FF; /* Background color of the modal */
+    background-color: #7F00FF;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Add shadow for depth */
-    max-width: 500px; /* Adjust the maximum width of the modal */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
     text-align: center;
 }
 
@@ -113,16 +163,33 @@
 }
 
 .modalButton {
-        position: relative;
-        background-color: #7F00FF;
-        border: transparent;
-        padding: 15px;
-        margin-right: 10px;
-        border-radius: 1rem;
-        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-        font-size: large;
-        transition: transform 0.3s ease-in-out;
-        cursor: pointer;
+    position: relative;
+    background-color: #7F00FF;
+    border: transparent;
+    padding: 15px;
+    margin-right: 10px;
+    border-radius: 1rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: large;
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.refundModalButton {
+    position: relative;
+    background-color: #7F00FF;
+    border: transparent;
+    padding: 15px 30px;
+    margin-right: 10px;
+    border-radius: 1rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: large;
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.refundModalButton:hover {
+    transform: scale(1.5);
 }
 
 .modalButton:hover {

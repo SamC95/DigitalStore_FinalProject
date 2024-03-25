@@ -235,14 +235,14 @@ ipcMain.handle('receivePurchases', async(_event, accountId) => {
                             const productList = rows.map((row: {
                                 ProductID: any; ProductName: any;
                                 ProductCover: any; OrderID: any; ProductGenres: any;
-                                costOfPurchase: any;
+                                CostOfPurchase: any;
                             }) => ({
                                 ProductID: row.ProductID,
                                 ProductName: row.ProductName,
                                 ProductCover: row.ProductCover,
                                 ProductGenres: JSON.parse(row.ProductGenres),
                                 OrderID: row.OrderID,
-                                costOfPurchase: row.costOfPurchase
+                                CostOfPurchase: row.CostOfPurchase
                             }));
 
                             resolve(productList)
