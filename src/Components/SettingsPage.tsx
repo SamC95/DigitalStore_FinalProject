@@ -18,7 +18,6 @@ function SettingsPage() {
     const [showRefundModal, setShowRefundModal] = useState(false)
     const [productData, setProductData] = useState<Product[]>([]);
     const [showModal, setShowModal] = useState(false);
-    //const accountId = sessionStorage.getItem('AccountID')
     const navigate = useNavigate();
 
     useEffect(() => {

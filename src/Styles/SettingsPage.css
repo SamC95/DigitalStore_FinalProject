@@ -119,6 +119,7 @@
     border-image: linear-gradient(to right, white, #7F00FF);
     border-image-slice: 1;
     z-index: 999;
+    cursor: pointer;
 }
 
 .settingsButton:hover {

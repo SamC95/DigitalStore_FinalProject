@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron';
-import searchIcon from '../assets/4475396.png'
+import searchIcon from '../assets/icons8-magnifying-glass-50.png'
 import '../Styles/SearchDiv.css'
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';

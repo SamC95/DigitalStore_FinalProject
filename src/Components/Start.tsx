@@ -1,4 +1,4 @@
-import controllerLogo from '../assets/8002123.png'
+import controllerLogo from '../assets/game-controller.png'
 import igdbLogo from '../assets/igdb_transparent.png'
 import { useNavigate } from 'react-router-dom'
 import './App.tsx'
