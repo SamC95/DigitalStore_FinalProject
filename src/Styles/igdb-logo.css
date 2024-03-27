@@ -4,10 +4,10 @@
     height: 4.5rem;
     cursor: pointer;
     -webkit-app-region: no-drag;
-    transition: ease-in 0.25s;
+    transition: ease-in-out 0.3s;
     padding: auto;
 }
 
 .igdb-logo:hover {
-    filter: drop-shadow(0 0 1em #7F00FF)
+    transform: scale(1.1);
 }

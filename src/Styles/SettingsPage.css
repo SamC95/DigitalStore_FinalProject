@@ -1,7 +1,21 @@
+.settingsContainer {
+    height: 1000px;
+    margin-bottom: 50px;
+}
+
+.topHeader {
+    position: absolute;
+    top: 100px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    text-decoration: underline;
+}
+
 .signOut {
     position: absolute;
     top: 250px;
-    width: 500px;
+    width: 600px;
     height: 150px;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -12,12 +26,13 @@
     border-left: transparent;
     border-image: linear-gradient(to right, white, #7F00FF);
     border-image-slice: 1;
+    z-index: -1;
 }
 
 .refundProduct {
     position: absolute;
     top: 445px;
-    width: 500px;
+    width: 600px;
     height: 220px;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -28,12 +43,13 @@
     border-left: transparent;
     border-image: linear-gradient(to right, white, #7F00FF);
     border-image-slice: 1;
+    z-index: -1;
 }
 
 .deleteAccount {
     position: absolute;
     top: 650px;
-    width: 500px;
+    width: 600px;
     height: 175px;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -44,6 +60,37 @@
     border-left: transparent;
     border-image: linear-gradient(to right, white, #7F00FF);
     border-image-slice: 1;
+    z-index: -1;
+}
+
+.appCredits {
+    position: absolute;
+    top: 880px;
+    width: 600px;
+    height: 260px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-width: 2px;
+    border-style: solid;
+    border-top: transparent;
+    border-right: transparent;
+    border-left: transparent;
+    border-image: linear-gradient(to right, white, #7F00FF);
+    border-image-slice: 1;
+    z-index: -1;
+    line-height: 0.5;
+}
+
+.creditsContent {
+    align-items: center;
+    display: flex;
+}
+
+.creditsText {
+    display: inline-block;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    margin-left: 10px;
+    text-align: left;
 }
 
 .settingsHeader {
@@ -55,12 +102,14 @@
 .settingsText {
     text-align: left;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    margin-left: 10px;
+    text-align: left;
 }
 
 .settingsButton {
     position: relative;
     top: -50px;
-    left: 200px;
+    left: 240px;
     background-color: #7F00FF;
     border: transparent;
     padding: 15px;
@@ -74,12 +123,14 @@
 .refundProductText {
     text-align: left;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    margin-left: 10px;
+    text-align: left;
 }
 
 .refundProductButton {
     position: relative;
-    top: -40px;
-    left: 175px;
+    top: 40px;
+    left: 220px;
     background-color: #7F00FF;
     border: transparent;
     padding: 15px;
@@ -94,12 +145,14 @@
     text-align: left;
     color: red;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    margin-left: 10px;
+    text-align: left;
 }
 
 .deleteAccountButton {
     position: relative;
     top: -40px;
-    left: 175px;
+    left: 220px;
     background-color: red;
     border: transparent;
     padding: 15px;
@@ -111,6 +164,7 @@
 }
 
 .refundProductDropdown {
+    position: absolute;
     border-color: transparent;
     font-size: medium;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
@@ -120,6 +174,8 @@
     border-image-slice: 1;
     z-index: 999;
     cursor: pointer;
+    text-align: left;
+    left: 10px;
 }
 
 .settingsButton:hover {
@@ -195,4 +251,32 @@
 
 .modalButton:hover {
     transform: scale(1.5);
+}
+
+.icons8-logo {
+    background-color: transparent;
+    border-color: transparent;
+    height: 2rem;
+    cursor: pointer;
+    -webkit-app-region: no-drag;
+    transition: ease-in 0.25s;
+    padding: auto;
+}
+
+.icons8-logo:hover {
+    transform: scale(1.04)
+}
+
+.flatIcon-logo {
+    background-color: transparent;
+    border-color: transparent;
+    height: 1.5rem;
+    cursor: pointer;
+    -webkit-app-region: no-drag;
+    transition: ease-in 0.25s;
+    padding: auto;
+}
+
+.flatIcon-logo:hover {
+    transform: scale(1.04)
 }
