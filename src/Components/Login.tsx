@@ -54,7 +54,7 @@ function Login() {
             check if products are already purchased and retrieve library or for populating the library with purchased products
 
             SessionStorage would usually not be the optimal way to do this due to developer tools being 
-            accessible in browsers, however Electron has the option to prevent user access to developer tools.
+            accessible in browsers, however Electron has the option to prevent user access to developer tools which does help to reduce risk of modification.
             */
             if (accountId) { 
                 sessionStorage.setItem('AccountID', await accountId)

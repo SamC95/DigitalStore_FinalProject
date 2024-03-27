@@ -11,7 +11,6 @@ import BasketButton from './BasketButton';
 function SearchResults() {
     const location = useLocation();
     const [hasError, setError] = useState(location.state?.hasError)
-    // const navigate = useNavigate();
     const [gameList, setGameList] = useState(location.state?.gameList)
     var [searching, setSearching] = useState(location.state?.searching)
 
