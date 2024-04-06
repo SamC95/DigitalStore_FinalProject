@@ -43,7 +43,9 @@ const productCache: Record<string, Game[]> = {};
 const ProductPage: React.FC = () => {
     const { gameId } = useParams();
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [errorText, setErrorText] = useState<string | null>(null);
     const [searching, setSearching] = useState(false);
+    const [hasLoaded, setLoaded] = useState(false)
     const [productOwned, setProductOwned] = useState(false);
     const [productInBasket, setProductInBasket] = useState(false);
     const [productReleased, setProductReleased] = useState(false);
@@ -173,77 +175,85 @@ const ProductPage: React.FC = () => {
 
     useEffect(() => {
         async function retrieveProductData() {
-            setSearching(true);
-            setStoreRecentlyViewed(false);
+            try {
+                setSearching(true);
+                setStoreRecentlyViewed(false);
 
-            if (gameId !== undefined) {
-                if (productCache[gameId]) {
-                    console.log('Using cached result for: ', gameId)
-                    setProductInfo(productCache[gameId])
+                if (gameId !== undefined) {
+                    if (productCache[gameId]) {
+                        console.log('Using cached result for: ', gameId)
+                        setProductInfo(productCache[gameId])
 
-                    checkProductInBasket()
-                    checkProductPurchased()
-                    setSearching(false)
-                    setStoreRecentlyViewed(true)
-                }
-                else {
-                    // Retrieves the initial version of the game object
-                    const productData = await ipcRenderer.invoke('get-product-by-id', gameId);
-
-                    // Creates a new temporary variable used to store the updated version with image urls
-                    const updatedProductData = await Promise.all(
-                        productData.map(async (game: { id: any; genres: any; }) => {
-                            const imageData = await ipcRenderer.invoke('get-screenshots', game.id); // Retrieves image urls from API
-
-                            // Maps urls to an object of images
-                            const images = imageData.map((image: any) => {
-                                return { image_id: image.imageId };
-                            });
-
-                            const videoData = await ipcRenderer.invoke('get-videos', game.id)
-
-                            // Maps urls to an object of videos
-                            const videos = videoData.map((video: any) => {
-                                return { video_id: video.videoId }
-                            })
-
-                            const genreData = await ipcRenderer.invoke('get-genres', game.genres)
-
-                            const genres = genreData.map((genre: any) => {
-                                return genre;
-                            })
-
-                            const companiesData = await ipcRenderer.invoke('get-involved-companies', game.id)
-
-                            const involvedCompanies = companiesData.map((company: any) => {
-                                return company;
-                            })
-
-                            // Return a new Game object which contains the updated details with images
-                            return {
-                                ...game,
-                                images: images,
-                                videos: videos,
-                                genres: genres,
-                                involvedCompanies: involvedCompanies
-                            };
-                        })
-                    );
-
-                    // Overwrite the old Game object with the updated one
-                    setProductInfo(updatedProductData);
-
-                    if (gameId !== undefined) {
-                        productCache[gameId] = updatedProductData
+                        checkProductInBasket()
+                        checkProductPurchased()
+                        setSearching(false)
+                        setStoreRecentlyViewed(true)
                     }
+                    else {
+                        // Retrieves the initial version of the game object
+                        const productData = await ipcRenderer.invoke('get-product-by-id', gameId);
 
-                    checkProductInBasket()
-                    checkProductPurchased()
-                    setSearching(false);
-                    setStoreRecentlyViewed(true)
+                        // Creates a new temporary variable used to store the updated version with image urls
+                        const updatedProductData = await Promise.all(
+                            productData.map(async (game: { id: any; genres: any; }) => {
+                                const imageData = await ipcRenderer.invoke('get-screenshots', game.id); // Retrieves image urls from API
+
+                                // Maps urls to an object of images
+                                const images = imageData.map((image: any) => {
+                                    return { image_id: image.imageId };
+                                });
+
+                                const videoData = await ipcRenderer.invoke('get-videos', game.id)
+
+                                // Maps urls to an object of videos
+                                const videos = videoData.map((video: any) => {
+                                    return { video_id: video.videoId }
+                                })
+
+                                const genreData = await ipcRenderer.invoke('get-genres', game.genres)
+
+                                const genres = genreData.map((genre: any) => {
+                                    return genre;
+                                })
+
+                                const companiesData = await ipcRenderer.invoke('get-involved-companies', game.id)
+
+                                const involvedCompanies = companiesData.map((company: any) => {
+                                    return company;
+                                })
+
+                                // Return a new Game object which contains the updated details with images
+                                return {
+                                    ...game,
+                                    images: images,
+                                    videos: videos,
+                                    genres: genres,
+                                    involvedCompanies: involvedCompanies
+                                };
+                            })
+                        );
+
+                        // Overwrite the old Game object with the updated one
+                        setProductInfo(updatedProductData);
+
+                        if (gameId !== undefined) {
+                            productCache[gameId] = updatedProductData
+                        }
+
+                        checkProductInBasket()
+                        checkProductPurchased()
+                        setSearching(false);
+                        setLoaded(true)
+                        setStoreRecentlyViewed(true)
+                    }
                 }
             }
-        }
+            catch (error) {
+                console.error(error)
+                setSearching(false)
+                setErrorText('Failed to retrieve product data. Please try again.')
+            } // Should prevent hung loading in event that API data is missing or fails to load correctly
+    }
         retrieveProductData();
     }, [gameId]);
 
@@ -296,13 +306,19 @@ const ProductPage: React.FC = () => {
 
             {searching && <LoadingBar />}
 
-            {!searching && productMedia.length === 0 && (
+            {!searching && errorText !== null && (
+                <>
+                    <h2 className='productTitle'>{errorText}</h2>
+                </>
+            )}
+
+            {!searching && productMedia.length === 0 && errorText === null && hasLoaded === true && (
                 <>
                     <h2 className='noMediaFound'>No Media for this Product</h2>
                 </>
             )}
 
-            {!searching && (
+            {!searching && errorText === null && (
                 <>
                     <div>
                         <SearchBar />

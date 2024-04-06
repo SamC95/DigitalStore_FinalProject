@@ -38,6 +38,7 @@ interface Game {
 let featuredCache: Record<string, Game[]> = {};
 
 function StoreMainPage() {
+    const [errorText, setErrorText] = useState<string | null>(null);
     const hasResizedBefore = localStorage.getItem('hasResized')
     const [searching, setSearching] = useState(false)
 
@@ -123,7 +124,9 @@ function StoreMainPage() {
         }
         catch (error) {
             console.error(error)
-        }
+            setErrorText('API Retrieval Error. Please close the application and try again.');
+            setSearching(false)
+        } // Should prevent hung loading in event that API data is missing or fails to load correctly
     }
 
     // Resizes the window and centers it using the ipcMain functions in main.ts
@@ -195,7 +198,7 @@ function StoreMainPage() {
             }, 4000)
         }
     }, [firstListLoaded])
-    // Delays are done to prevent API overload from too many requests too quickly
+    // Delays are to prevent API overload from too many requests too quickly
 
     return (
         <>
@@ -205,7 +208,13 @@ function StoreMainPage() {
 
             {searching && <LoadingBar />}
 
-            {!searching && (
+            {!searching && errorText !== null && (
+                <div>
+                    <h2 className='featuredTitle'>{errorText}</h2>
+                </div>
+            )}
+
+            {!searching && (errorText === null) && (
                 <>
                     <div>
                         <SearchBar />
