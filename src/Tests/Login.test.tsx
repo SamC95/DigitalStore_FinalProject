@@ -1,7 +1,8 @@
-import { render, fireEvent, screen } from '@testing-library/react'
+import { render, fireEvent, screen, act, waitFor } from '@testing-library/react'
 import Login from '../Components/Login'
 import { MemoryRouter } from 'react-router-dom';
 import '@testing-library/jest-dom/';
+import { ipcRenderer } from 'electron';
 
 jest.mock('electron', () => ({
     ipcRenderer: {
@@ -10,7 +11,7 @@ jest.mock('electron', () => ({
 }));
 
 describe('Login Component', () => {
-    it('renders the login form', () => {
+    it('Renders the login form', () => {
         render(
             <MemoryRouter>
                 <Login />
@@ -26,7 +27,9 @@ describe('Login Component', () => {
         )
         const usernameInput = screen.getByLabelText('Username') as HTMLInputElement;
 
-        fireEvent.change(usernameInput, { target: { value: 'testuser' } })
+        act(() => {
+            fireEvent.change(usernameInput, { target: { value: 'testuser' } });
+        });
 
         expect(usernameInput.value).toBe('testuser')
     })
@@ -39,12 +42,14 @@ describe('Login Component', () => {
         )
         const passwordInput = screen.getByLabelText('Password') as HTMLInputElement;
 
-        fireEvent.change(passwordInput, { target: { value: 'testpassword' } });
+        act(() => {
+            fireEvent.change(passwordInput, { target: { value: 'testpassword' } });
+        });
 
         expect(passwordInput.value).toBe('testpassword')
     })
 
-    it('prevents form submission if username or password is empty', async () => {
+    it('Prevents form submission if username or password is empty', async () => {
         render(
             <MemoryRouter>
                 <Login />
@@ -58,5 +63,52 @@ describe('Login Component', () => {
 
         // Assert that the error message is displayed when the form is submitted with empty fields
         expect(screen.getByText(/(Username|Password) or Password field is empty/)).toBeInTheDocument();
+    });
+
+    it('Calls ipcRender.invoke with correct arguments on form submission', async () => {
+        render(
+            <MemoryRouter>
+                <Login />
+            </MemoryRouter>
+        );
+
+        const usernameInput = screen.getByLabelText('Username') as HTMLInputElement;
+        const passwordInput = screen.getByLabelText('Password') as HTMLInputElement;
+        const submitButton = screen.getByText('Submit');
+
+        act(() => {
+            fireEvent.change(usernameInput, { target: { value: 'validUser' } });
+            fireEvent.change(passwordInput, { target: { value: 'validPassword' } });
+        });
+
+        fireEvent.click(submitButton)
+
+        await waitFor(() => {
+            expect(ipcRenderer.invoke).toHaveBeenCalledWith('login-details', usernameInput.value, passwordInput.value)
+        })
+    })
+
+    it('Prevents form submission if login details are incorrect', async () => {
+        render(
+            <MemoryRouter>
+                <Login />
+            </MemoryRouter>
+        );
+
+        const usernameInput = screen.getByLabelText('Username') as HTMLInputElement;
+        const passwordInput = screen.getByLabelText('Password') as HTMLInputElement;
+        const submitButton = screen.getByText('Submit');
+
+        act(() => {
+            fireEvent.change(usernameInput, { target: { value: 'invalidUser' } });
+            fireEvent.change(passwordInput, { target: { value: 'invalidPassword' } });
+        });
+
+        fireEvent.click(submitButton);
+
+        // Ensure that the error message is displayed when the form is submitted with incorrect login details
+        await screen.findByText(/Username or password is incorrect/);
+
+        expect(screen.getByText('Username or password is incorrect')).toBeInTheDocument();
     });
 })

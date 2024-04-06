@@ -69,6 +69,10 @@ function AccountCreate() {
             event.preventDefault()
             setLoginMsg("Username cannot contain numbers or special characters")
         }
+        else if (!isEmailValid) {
+            event.preventDefault()
+            setLoginMsg("Email Address is not a valid format")
+        }
         else if (!validPassLength) {
             event.preventDefault()
             setLoginMsg("Password must be at least 8 characters long")
@@ -76,10 +80,6 @@ function AccountCreate() {
         else if (!passwordMatch) {
             event.preventDefault()
             setLoginMsg("Passwords must match")
-        }
-        else if (!isEmailValid) {
-            event.preventDefault()
-            setLoginMsg("Email Address is not a valid format")
         }
          else if (detailsTaken) {
              event.preventDefault()
