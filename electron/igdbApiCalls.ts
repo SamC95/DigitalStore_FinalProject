@@ -29,7 +29,6 @@ async function retrieveAccess() {
             if (error) {
                 reject(error)
             }
-            console.log('Connected to the Access database')
         })
 
         let sql = 'SELECT ACCESS_KEY, ACCESS_TOKEN, CLIENT_SECRET, LAST_UPDATED FROM AccessData WHERE NAME = "Retrieve_Data"'
@@ -500,7 +499,6 @@ ipcMain.handle('get-covers', async (_event, game) => {
         const imageIdFromDatabase = await getImageIdFromDatabase(game)
 
         if (imageIdFromDatabase) { // If product cover exists in database then retrieve it from there
-            console.log("Retrieved Image ID from database: ", imageIdFromDatabase)
             return Promise.resolve([{ imageId: imageIdFromDatabase }])
         }
 

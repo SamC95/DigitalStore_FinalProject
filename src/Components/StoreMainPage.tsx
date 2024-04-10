@@ -118,8 +118,6 @@ function StoreMainPage() {
                     setFeaturedData(featuredProducts)
                     setSearching(false)
                 }
-
-                console.log(featuredProducts)
             }
         }
         catch (error) {
