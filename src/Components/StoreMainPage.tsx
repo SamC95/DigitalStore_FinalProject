@@ -117,6 +117,8 @@ function StoreMainPage() {
                 if (featuredProducts.length !== 0) {
                     setFeaturedData(featuredProducts)
                     setSearching(false)
+
+                    setActiveButton(0)
                 }
             }
         }
@@ -255,6 +257,7 @@ function StoreMainPage() {
                                 </button>
                             ))}
                         </div>
+
                         {featuredLoaded && (
                             <>
                                 <HorizontalList randomNum={firstGenre} />

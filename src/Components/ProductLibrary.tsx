@@ -127,8 +127,8 @@ function ProductLibrary() {
                             <button className='filterListText' onClick={() => setSortBy('Z-A')}>Alphabetical (Z-A)</button><br />
 
                             <h4 className='filterListHeader'>Filter By Genre</h4>
-                            {getGenres().map((genre) => (
-                                <div>
+                            {getGenres().map((genre, index) => (
+                                <div key={index}>
                                     <button 
                                         className={`filterListText ${selectedGenres.includes(genre.toString()) ? 'selected' : ''}`}
                                         onClick={() => handleGenreToggle(genre.toString())}

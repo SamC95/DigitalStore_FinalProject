@@ -154,11 +154,11 @@ const ProductPage: React.FC = () => {
     // Defines the constraints for the video player, such as its size, title and the link that should be used
     const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoId = productMedia[0] }) => (
         <iframe
-            title="Embedded Video"
-            loading="lazy"
+            title="Product Video"
             width="750" // 16:9 width and height aspect ratio
             height="422"
             src={`https://www.youtube.com/embed/${videoId}`}
+            rel="0"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
@@ -167,17 +167,31 @@ const ProductPage: React.FC = () => {
     );
 
     useEffect(() => {
-        if (storeRecentlyViewed === true) {
+        let isMounted = true;
+    
+        if (storeRecentlyViewed === true && isMounted) {
             ipcRenderer.invoke('addRecentlyViewed', accountId, productInfo[0].id, productInfo[0].name)
-            setStoreRecentlyViewed(false);
+                .then(() => {
+                    if (isMounted) {
+                        setStoreRecentlyViewed(false);
+                    }
+                })
+                .catch((error: any) => {
+                    console.error('Error adding recently viewed:', error);
+                });
         }
-    }, [storeRecentlyViewed])
+    
+        return () => {
+            isMounted = false;
+        };
+    }, [storeRecentlyViewed, accountId, productInfo]);
 
     useEffect(() => {
         async function retrieveProductData() {
             try {
                 setSearching(true);
                 setStoreRecentlyViewed(false);
+                setProductMedia([]) // Resets product media when changing product pages
 
                 if (gameId !== undefined) {
                     if (productCache[gameId]) {
@@ -202,13 +216,6 @@ const ProductPage: React.FC = () => {
                                     return { image_id: image.imageId };
                                 });
 
-                                const videoData = await ipcRenderer.invoke('get-videos', game.id)
-
-                                // Maps urls to an object of videos
-                                const videos = videoData.map((video: any) => {
-                                    return { video_id: video.videoId }
-                                })
-
                                 const genreData = await ipcRenderer.invoke('get-genres', game.genres)
 
                                 const genres = genreData.map((genre: any) => {
@@ -219,6 +226,13 @@ const ProductPage: React.FC = () => {
 
                                 const involvedCompanies = companiesData.map((company: any) => {
                                     return company;
+                                })
+
+                                const videoData = await ipcRenderer.invoke('get-videos', game.id)
+
+                                // Maps urls to an object of videos
+                                const videos = videoData.map((video: any) => {
+                                    return { video_id: video.videoId }
                                 })
 
                                 // Return a new Game object which contains the updated details with images
