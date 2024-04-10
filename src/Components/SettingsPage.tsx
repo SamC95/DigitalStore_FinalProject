@@ -39,13 +39,22 @@ function SettingsPage() {
     }
 
     const handleRefund = async () => {
-        if (selectedProduct === "") {
-            setShowRefundModal(true)
+        if (selectedProduct === "") { // selectedProduct changes to a product id if one is selected, if not then it is an empty string
+            setShowRefundModal(true) 
             setRefundModalMessage("Please select a product to refund.");
         } else {
-            await ipcRenderer.invoke('removeProduct', accountId, selectedProduct)
-            setShowRefundModal(true)
-            setRefundModalMessage(`Product with ID ${selectedProduct} refunded successfully.`);
+            const selectedProductName = productData.find(product => product.ProductID === parseInt(selectedProduct, 10))?.ProductName
+            if (selectedProductName) { // Retrieves the product name based on the ID number, if it has found a value then it removes the product
+                await ipcRenderer.invoke('removeProduct', accountId, selectedProduct)
+                setShowRefundModal(true)
+                setRefundModalMessage(`${selectedProductName} refunded successfully.`);
+                setSelectedProduct("")
+            }
+            else { // If no match is found for that ID with a product name then it will error, this shouldn't trigger in normal use.
+                setShowRefundModal(true)
+                setRefundModalMessage(`Error retrieving product with ID ${selectedProduct}`)
+                setSelectedProduct("")
+            }
         }
     };
 

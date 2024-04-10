@@ -184,34 +184,31 @@ function BasketCheckout() {
 
                             <label className='shortCheckoutText'>
                                 Expiration<br />
-                                <input
+                                <select
                                     className='dateCheckoutField'
-                                    type="text"
-                                    placeholder='MM'
-                                    maxLength={2}
                                     value={expiryMonth}
-                                    onChange={(e) => {
-                                        const input = e.target.value
-
-                                        // Allows only numerical values starting with 0 and 1 with the appropriate month restrictions
-                                        const regex = /^(0[1-9]|1[0-2])?$|^[01]$/;
-
-                                        if (regex.test(input)) {
-                                            setExpiryMonth(e.target.value) // Checks the regex condition and ensures max length of 2 digits
-                                        }
-                                    }}
-                                />
-
+                                    onChange={(e) => setExpiryMonth(e.target.value)}
+                                >
+                                    <option value="">MM</option>
+                                    {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
+                                        <option key={month} value={month < 10 ? `0${month}` : `${month}`}>
+                                            {month < 10 ? `0${month}` : month}
+                                        </option>
+                                    ))}
+                                </select>
                                 <span>/</span>
-
-                                <input
+                                <select
                                     className='dateCheckoutField'
-                                    type="text"
-                                    placeholder='YY'
-                                    maxLength={2}
                                     value={expiryYear}
                                     onChange={(e) => setExpiryYear(e.target.value)}
-                                />
+                                >
+                                    <option value="">YY</option>
+                                    {Array.from({ length: 10 }, (_, i) => i + new Date().getFullYear()).map(year => (
+                                        <option key={year} value={year.toString().substring(2)}>
+                                            {year.toString().substring(2)}
+                                        </option>
+                                    ))}
+                                </select>
                             </label>
                         </div>
 
