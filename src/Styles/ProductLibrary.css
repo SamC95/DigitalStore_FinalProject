@@ -31,7 +31,7 @@
     width: calc((100% / 3) - 10px); 
     height: auto;
     background-color: transparent;
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.2s ease-in-out;
     flex-grow: 0;
     flex-shrink: 0;
     flex-basis: 100px;

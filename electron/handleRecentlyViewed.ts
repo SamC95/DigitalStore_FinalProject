@@ -43,8 +43,6 @@ ipcMain.handle('setupRecentlyViewed', async (_event, accountId) => {
 })
 
 ipcMain.handle('addRecentlyViewed', async (_event, accountId, productId, productName) => {
-    console.log(accountId, productId, productName)
-
     return new Promise((resolve, reject) => {
         let accountDatabase = new sqlite3.Database('./AccountDatabase.db', sqlite3.OPEN_READWRITE, (error: { message: any; }) => {
             if (error) {

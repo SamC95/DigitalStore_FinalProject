@@ -168,9 +168,8 @@ const ProductPage: React.FC = () => {
 
     useEffect(() => {
         if (storeRecentlyViewed === true) {
-            const resolve = ipcRenderer.invoke('addRecentlyViewed', accountId, productInfo[0].id, productInfo[0].name)
+            ipcRenderer.invoke('addRecentlyViewed', accountId, productInfo[0].id, productInfo[0].name)
             setStoreRecentlyViewed(false);
-            console.log(resolve)
         }
     }, [storeRecentlyViewed])
 
@@ -182,7 +181,6 @@ const ProductPage: React.FC = () => {
 
                 if (gameId !== undefined) {
                     if (productCache[gameId]) {
-                        console.log('Using cached result for: ', gameId)
                         setProductInfo(productCache[gameId])
 
                         checkProductInBasket()
@@ -261,8 +259,6 @@ const ProductPage: React.FC = () => {
     // Get the cover for the product, and then add that plus other product details into the basket
     async function addToBasket() {
         const productCover = await ipcRenderer.invoke('get-covers', gameId)
-
-        console.log(productInfo[0].genres)
 
         await ipcRenderer.invoke('addToBasket', accountId, productInfo[0].id,
             productInfo[0].name, productCover[0]?.imageId, productPrice, JSON.stringify(productInfo[0].genres));

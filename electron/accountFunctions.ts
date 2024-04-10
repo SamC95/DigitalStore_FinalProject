@@ -238,7 +238,7 @@ ipcMain.handle('deleteAccount', async (_event, accountId) => {
                 console.error(error.message)
             }
             else {
-                console.log('Users table row deleted')
+                console.log('User deleted')
             }
         })
 

@@ -84,7 +84,6 @@ function StoreMainPage() {
             setImageIds([])
 
             if (Object.keys(featuredCache).length > 0) {
-                console.log('Using cached result for featured data')
                 const cachedData = Object.values(featuredCache)[0];
                 setFeaturedData(cachedData)
                 setSearching(false)
@@ -133,7 +132,7 @@ function StoreMainPage() {
         // This effect will run once when the component is mounted for the first time
         if (hasResizedBefore === "false") {
             ipcRenderer.send('resizeWindow', { width: 1620, height: 900 });
-            ipcRenderer.send('defineMinSize', { width: 1600, height: 900 });
+            ipcRenderer.send('defineMinSize', { width: 1620, height: 900 });
             ipcRenderer.send('centerWindow');
 
             localStorage.setItem('hasResized', "true")
@@ -249,7 +248,6 @@ function StoreMainPage() {
                                     key={index}
                                     onClick={() => {
                                         handleButtonClick(index)
-                                        console.log('Clicked Button:', index);
                                     }
                                     }
                                 >

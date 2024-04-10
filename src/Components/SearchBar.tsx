@@ -44,7 +44,6 @@ const SearchBar = () => {
 
             // If this particular search has already been performed before, use the cache
             if (searchCache[searchInput]) {
-                console.log('Using cached result for: ', searchInput)
                 setGameList(searchCache[searchInput])
                 localStorage.setItem('gameList', JSON.stringify(searchCache[searchInput]))
                 setCacheRetrieved(true)
@@ -55,7 +54,6 @@ const SearchBar = () => {
 
                 // If the call returns no results, do nothing
                 if (data.length === 0) {
-                    console.log('No data')
                     setGameList(data)
                     localStorage.setItem('gameList', JSON.stringify(data))
                 }
@@ -104,7 +102,6 @@ const SearchBar = () => {
     // and results when they have loaded.
     useEffect(() => {
         if (searching || cacheRetrieved) {
-            console.log(gameList)
             navigate('/search-results', {state: { gameList, searching, hasError }})
         }
     }, [gameList, searchInput, searching, buttonPressed, navigate]);

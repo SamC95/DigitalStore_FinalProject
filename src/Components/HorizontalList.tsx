@@ -50,7 +50,6 @@ function HorizontalList({ randomNum }: HorizontalListProps) {
         const updatedGameList = await Promise.all(
             data.map(async (game: { id: any; }) => {
                 const coverData = await ipcRenderer.invoke('get-covers', game.id)
-                console.log(coverData)
 
                 if (Array.isArray(coverData) && coverData.length > 0) {
                     return {
@@ -75,7 +74,6 @@ function HorizontalList({ randomNum }: HorizontalListProps) {
         async function retrieveData() {
             setSearching(true)
             if (horizontalListCache[listNumber]) {
-                console.log('Using cached result for: ', GenreNames[listNumber])
                 setDataList(horizontalListCache[listNumber])
                 setSearching(false)
             }
