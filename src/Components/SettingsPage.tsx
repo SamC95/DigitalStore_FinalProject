@@ -1,5 +1,4 @@
 import '../Components/App.tsx'
-import { ipcRenderer } from 'electron';
 import NavBar from './NavBar.tsx';
 import igdbLogo from '../assets/igdb_transparent.png'
 import icons8logo from '../assets/icons8-logo-4D126FBA84-seeklogo.com.png'
@@ -7,6 +6,8 @@ import flatIconLogo from '../assets/Flaticon.png'
 import '../Styles/SettingsPage.css'
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+const { ipcRenderer } = window as any;
 
 interface Product { // Sets up the interface for the product with fields used in this component
     ProductID: number;

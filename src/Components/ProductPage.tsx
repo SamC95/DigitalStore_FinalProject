@@ -5,9 +5,10 @@ import SearchBar from './SearchBar.tsx';
 import VerticalNav from './VerticalNav.tsx';
 import { useEffect, useState } from 'react';
 import '../Styles/ProductPage.css'
-import { ipcRenderer } from 'electron';
 import LoadingBar from './LoadingBar.tsx';
 import BasketButton from './BasketButton.tsx';
+
+const { ipcRenderer } = window as any;
 
 // Interfaces for the Video Player and the MediaRenderer
 interface VideoPlayerProps {

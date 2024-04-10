@@ -16,7 +16,6 @@ async function accountCreation(username: any, emailAddress: any, password: any) 
         if (error) {
             console.error(error.message)
         }
-        console.log('Connected to the Account database')
     })
 
     // Waits for the generateUserID function to complete so that a random unique 7 digit account id number has been assigned
@@ -34,7 +33,7 @@ async function accountCreation(username: any, emailAddress: any, password: any) 
             console.error(error.message);
         }
         else {
-            console.log('User ' + username + ' added to the database with hashed password')
+            console.log('User ' + username + ' successfully added.')
         }
 
         // Closes the database after it has been used as needed
@@ -87,8 +86,6 @@ async function retrieveDetails(username: any, emailAddress: any) {
             if (error) {
                 console.error(error.message)
             }
-            console.log('Connected to the Account database')
-
 
             let sql = 'SELECT Username, EmailAddress FROM Users WHERE Username = ? OR EmailAddress = ?';
 
@@ -119,7 +116,6 @@ async function checkLoginDetails(username: any, password: any) {
             if (error) {
                 console.error(error.message)
             }
-            console.log('Connected to the Account database')
 
             let sql = 'SELECT Username, Password FROM Users WHERE Username = ?';
 
@@ -157,7 +153,6 @@ async function checkLoginDetails(username: any, password: any) {
 ipcMain.handle('login-details', async (_event, username, password) => {
     try {
         const validUser = await checkLoginDetails(username, password)
-        console.log(validUser)
 
         if (validUser) {
             return true
@@ -185,7 +180,6 @@ ipcMain.handle('account-create', async (_event, username, emailAddress, password
 ipcMain.handle('check-details', async (_event, username, emailAddress) => {
     try {
         const userExists = await retrieveDetails(username, emailAddress)
-        console.log(userExists)
 
         if (userExists) {
             return true;

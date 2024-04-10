@@ -8,7 +8,8 @@ import '../Styles/ErrorText.css'
 import '../Styles/InputField.css'
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { ipcRenderer } from 'electron';
+
+const { ipcRenderer } = window as any;
 
 function AccountCreate() {
     const navigate = useNavigate()

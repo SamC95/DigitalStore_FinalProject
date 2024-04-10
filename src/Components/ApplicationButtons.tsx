@@ -1,7 +1,8 @@
 import '../Styles/CloseApp.css'
 import '../Styles/MaximiseApp.css'
 import '../Styles/MinimiseApp.css'
-import { ipcRenderer } from 'electron'
+
+const { ipcRenderer } = window as any;
 
 function ApplicationButtons() {
     return (

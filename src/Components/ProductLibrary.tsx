@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import '../Components/App.tsx'
 import NavBar from './NavBar.tsx';
-import { ipcRenderer } from 'electron';
 import LoadingBar from './LoadingBar.tsx';
 import '../Styles/ProductLibrary.css'
 import { useNavigate } from 'react-router';
+
+const { ipcRenderer } = window as any;
 
 interface Product { // Sets up the interface for the product with fields used in this component
     ProductID: number;

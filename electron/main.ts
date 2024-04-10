@@ -35,9 +35,10 @@ function createWindow() {
     win = new BrowserWindow({
         icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
         webPreferences: {
+            webSecurity: true,
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: true,
-            contextIsolation: false,
+            contextIsolation: true,
             //devTools: false, // Prevents the user from opening browser developer mode
         },
         width: 450,
@@ -61,7 +62,7 @@ function createWindow() {
     if (VITE_DEV_SERVER_URL) {
         win.loadURL(VITE_DEV_SERVER_URL)
     } else {
-        // win.loadFile('dist/index.html')
+        win.loadFile('dist/index.html')
         win.loadFile(path.join(process.env.DIST, 'index.html'))
     }
 }

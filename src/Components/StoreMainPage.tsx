@@ -3,12 +3,13 @@ import NavBar from './NavBar.tsx'
 import VerticalNav from './VerticalNav.tsx';
 import SearchBar from './SearchBar.tsx';
 import '../Styles/FeaturedSection.css'
-import { ipcRenderer } from 'electron';
 import { SetStateAction, useEffect, useRef, useState } from 'react';
 import LoadingBar from './LoadingBar.tsx';
 import HorizontalList from './HorizontalList.tsx';
 import { Link } from 'react-router-dom';
 import BasketButton from './BasketButton.tsx';
+
+const { ipcRenderer } = window as any;
 
 /* 
 Gets random numbers that are used to define the genres that will appear

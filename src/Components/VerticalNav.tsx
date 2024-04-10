@@ -1,7 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom';
 import '../Styles/VerticalNav.css'
 import { useEffect, useState } from 'react';
-import { ipcRenderer } from 'electron';
+
+const { ipcRenderer } = window as any;
 
 // Interface for a game object
 interface Game {

@@ -1,11 +1,12 @@
 import '../Components/App.tsx'
-import { ipcRenderer } from 'electron';
 import LoadingBar from './LoadingBar.tsx';
 import SearchBar from './SearchBar.tsx';
 import { useEffect, useState } from 'react';
 import NavBar from './NavBar';
 import '../Styles/BasketCheckout.css'
 import { useNavigate } from 'react-router';
+
+const { ipcRenderer } = window as any;
 
 interface Product {
     ProductID: number;

@@ -1,11 +1,12 @@
 import './App.tsx'
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md'
-import { ipcRenderer } from 'electron';
 import { useState, useEffect } from 'react';
 import LoadingBar from './LoadingBar.tsx';
 import '../Styles/HorizontalList.css'
 import '../Styles/igdb-logo.css'
 import { Link } from 'react-router-dom';
+
+const { ipcRenderer } = window as any;
 
 interface HorizontalListProps {
     randomNum: number;

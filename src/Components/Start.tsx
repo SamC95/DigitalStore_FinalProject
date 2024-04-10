@@ -8,7 +8,8 @@ import '../Styles/ForgotPassButton.css'
 import '../Styles/CloseApp.css'
 import '../Styles/ControllerLogo.css'
 import '../Styles/igdb-logo.css'
-import { ipcRenderer } from 'electron'
+
+const { ipcRenderer } = window as any;
 
 function Start() {
     localStorage.setItem('hasResized', "false")
