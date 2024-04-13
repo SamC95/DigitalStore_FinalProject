@@ -225,6 +225,7 @@ ipcMain.handle('getAccountId', async (_event, username) => {
     })
 })
 
+// Deletes a user's account if they request it in the Settings menu of the application.
 ipcMain.handle('deleteAccount', async (_event, accountId) => {
     let accountDatabase = new sqlite3.Database('./AccountDatabase.db', sqlite3.OPEN_READWRITE, (error: { message: any; }) => {
         if (error) {
@@ -239,7 +240,7 @@ ipcMain.handle('deleteAccount', async (_event, accountId) => {
             }
             else {
                 console.log('User deleted')
-            }
+            } // Deletes the user
         })
 
         let deletePurchasesSql = 'DELETE FROM UserPurchases WHERE AccountID = ?'
@@ -250,7 +251,7 @@ ipcMain.handle('deleteAccount', async (_event, accountId) => {
             }
             else {
                 console.log('UserPurchases table row deleted or not found')
-            }
+            } // Deletes all user purchases
         })
 
         let deleteRecentlyViewedSql = 'DELETE FROM RecentlyViewed WHERE AccountID = ?'
@@ -261,7 +262,7 @@ ipcMain.handle('deleteAccount', async (_event, accountId) => {
             }
             else {
                 console.log('RecentlyViewed table row deleted or not found')
-            }
+            } // Deletes user account's "RecentlyViewed" row
         })
 
         let deleteBasketSql = 'DELETE FROM BasketProducts WHERE AccountID = ?'
@@ -272,11 +273,12 @@ ipcMain.handle('deleteAccount', async (_event, accountId) => {
             }
             else {
                 console.log('BasketProducts table row deleted or not found')
-            }
+            } // Deletes data on products in deleted user's basket
         })
     })
 })
 
+// Removes a product from the user's list of purchases if they request it in the Settings menu.
 ipcMain.handle('removeProduct', async (_event, accountId, productId) => {
     return new Promise((resolve, reject) => {
         let accountDatabase = new sqlite3.Database('./AccountDatabase.db', sqlite3.OPEN_READWRITE, (error: { message: any; }) => {

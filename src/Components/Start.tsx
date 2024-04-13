@@ -34,7 +34,7 @@ function Start() {
                     <img src={controllerLogo} className="logo" alt="logo" />
                 </a>
             </div>
-            <h1>Placeholder Title</h1>
+            <h1>Game Central</h1>
             <div className="Login">
                 <button className="StartButton" onClick={() => navigate('/login-page')}>
                     Login
