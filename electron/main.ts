@@ -39,7 +39,7 @@ function createWindow() {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: true,
             contextIsolation: true,
-            //devTools: false, // Prevents the user from opening browser developer mode
+            devTools: false, // Prevents the user from opening browser developer mode
         },
         width: 450,
         height: 600,
