@@ -80,8 +80,8 @@ function BasketCheckout() {
                 setErrorString('Expiry Date must be in a MM/YY format. E.g., 01/24')
                 return;
 
-            case cardName.length < 2:
-                setErrorString('Name is too short, must be at least two characters long')
+            case cardName.length < 4:
+                setErrorString('Name is too short, must be at least four characters long')
                 return;
 
             case cardCode.length !== 3:

@@ -14,11 +14,11 @@ function delay(ms: number | undefined) {
 /* 
 Retrieves required data to be able to make an API call from database file
 
-NOTE - If project has been downloaded from Github, Access.db is NOT included. 
+NOTE - If project has been downloaded from Github, Access.db is not included. 
         Please assign your own access key and token for the IGDB API into an sqlite3 .db file 
-        of the same name to gain access to required data.
+        of the same database name and table names to gain access to required data.
 
-        This does NOT apply to final project submission where Access.db will be included.
+        This does not apply to final project submission where Access.db will be included.
 */
 async function retrieveAccess() {
     const sqlite3 = require('sqlite3').verbose();
