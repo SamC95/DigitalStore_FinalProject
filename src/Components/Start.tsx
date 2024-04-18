@@ -18,8 +18,8 @@ function Start() {
 
     // Resizes the window using the ipcMain function in main.ts
     // For when the user returns to the page later, such as pressing back from create account or login sections
-    ipcRenderer.send('resizeWindow', {width: 450, height: 700})
-    ipcRenderer.send('defineMinSize', {width: 450, height: 700})
+    ipcRenderer.send('resizeWindow', { width: 450, height: 700 })
+    ipcRenderer.send('defineMinSize', { width: 450, height: 700 })
     ipcRenderer.send('centerWindow')
 
     function openLink() {
@@ -28,7 +28,9 @@ function Start() {
 
     return (
         <>
-        <ApplicationButtons/>
+            <div className='appHeader'>
+                <ApplicationButtons />
+            </div>
             <div>
                 <a>
                     <img src={controllerLogo} className="logo" alt="logo" />
@@ -50,7 +52,7 @@ function Start() {
             <div>
                 <h5>Data from: </h5>
                 <button onClick={openLink} className='igdb-logo'>
-                    <img src={igdbLogo} className="igdb-logo"/>
+                    <img src={igdbLogo} className="igdb-logo" />
                 </button>
             </div>
         </>

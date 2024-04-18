@@ -58,7 +58,7 @@ function Login() {
             SessionStorage would usually not be the optimal way to do this due to developer tools being 
             accessible in browsers, however Electron has the option to prevent user access to developer tools which does help to reduce risk of modification.
             */
-            if (accountId) { 
+            if (accountId) {
                 sessionStorage.setItem('AccountID', await accountId)
 
                 ipcRenderer.invoke('setupRecentlyViewed', await accountId) // Sets up recently viewed row on table for account on first log in
@@ -70,10 +70,12 @@ function Login() {
 
     return (
         <>
-            <ApplicationButtons />
-            <button className='BackButtonLogin' onClick={() => navigate('/')}>
-                {String.fromCharCode(8592)}
-            </button>
+            <div className='appHeader'>
+                <ApplicationButtons />
+                <button className='BackButtonLogin' onClick={() => navigate('/')}>
+                    {String.fromCharCode(8592)}
+                </button>
+            </div >
             <div>
                 <h1 className='LoginTitle'>
                     Welcome Back!

@@ -6,6 +6,7 @@ import '../Styles/TextBoxIndicator.css'
 import '../Styles/TextStyle.css'
 import '../Styles/ErrorText.css'
 import '../Styles/InputField.css'
+import '../Styles/AccountCreationModal.css'
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
@@ -22,17 +23,18 @@ function AccountCreate() {
     const [confirmPass, setConfirmPass] = useState("");
 
     const [loginMsg, setLoginMsg] = useState("");
+    const [showConfirmation, setShowConfirmation] = useState(false)
     var detailsTaken = false;
 
     // Resizes the window using the ipcMain function in main.ts
-    ipcRenderer.send('resizeWindow', {width: 450, height: 800})
+    ipcRenderer.send('resizeWindow', { width: 450, height: 800 })
 
     // Ensures that the username must be at least 3 characters long and checks that the field is not empty on submit
     const validUsernameLength = username.length >= 3;
     const usernameNotEmpty = username.length > 0;
 
     // Ensures that the username cannot include special characters
-    const validUsername =  /^[a-zA-Z0-9-]+$/.test(username);
+    const validUsername = /^[a-zA-Z0-9-]+$/.test(username);
 
     // Checks that the password is long enough and that the Password and Confirm Password fields match
     const validPassLength = password.length >= 8;
@@ -46,17 +48,22 @@ function AccountCreate() {
         setEmailValid(emailFormat.test(event.target.value))
     }
 
+    const closeConfirmation = () => {
+        setShowConfirmation(false);
+        navigate('/')
+    }
+
     const handleClick = async (event: { preventDefault: () => void; }) => {
         if (isEmailValid && validUsername) {
             const userExists = await ipcRenderer.invoke('check-details', username, emailAddress)
- 
+
             if (userExists) {
-             detailsTaken = true;
+                detailsTaken = true;
             }
             else {
-             detailsTaken = false
+                detailsTaken = false
             }
-         }
+        }
 
         pageChange(event)
     }
@@ -82,25 +89,27 @@ function AccountCreate() {
             event.preventDefault()
             setLoginMsg("Passwords must match")
         }
-         else if (detailsTaken) {
-             event.preventDefault()
-             setLoginMsg("This username or email address is already taken")
+        else if (detailsTaken) {
+            event.preventDefault()
+            setLoginMsg("This username or email address is already taken")
         }
         else {
             setLoginMsg("")
-            
+
             ipcRenderer.invoke("account-create", username, emailAddress, password)
 
-            navigate('/')
+            setShowConfirmation(true)
         }
     }
 
     return (
         <>
-        <ApplicationButtons/>
-            <button className='BackButtonLogin' onClick={() => navigate('/')}>
-                {String.fromCharCode(8592)}
-            </button>
+            <div className='appHeader'>
+                <ApplicationButtons />
+                <button className='BackButtonLogin' onClick={() => navigate('/')}>
+                    {String.fromCharCode(8592)}
+                </button>
+            </div>
             <div>
                 <h1 className='LoginTitle'>
                     Create an account!
@@ -179,6 +188,17 @@ function AccountCreate() {
             <p className='ErrorText'>
                 {loginMsg}
             </p>
+
+            {showConfirmation && (
+                <div className='modal-overlay'>
+                    <div className='modal'>
+                        <div className='modal-content'>
+                            <p>Account created successfully!</p>
+                            <button className='modal-button' onClick={closeConfirmation}>OK</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     )
 }
