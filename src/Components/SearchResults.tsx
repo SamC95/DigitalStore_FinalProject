@@ -87,8 +87,8 @@ function SearchResults() {
                     {!searching && !hasError && gameList.length > 0 && (
                         <ul key={gameList.length}>
                             {gameList.map((game: any) => (
-                                <Link to={`/product-page/${game.id}`} style={{ textDecoration: 'none', color: 'white' }}>
-                                    <li key={game.id}>
+                                <Link key={game.id} to={`/product-page/${game.id}`} style={{ textDecoration: 'none', color: 'white' }}>
+                                    <li>
                                         <img className='backgroundImage' src={`//images.igdb.com/igdb/image/upload/t_cover_big/${game.image_id}.jpg`} alt={`Cover for ${game.name}`} />
                                         <img className='gameImage' src={`//images.igdb.com/igdb/image/upload/t_cover_big/${game.image_id}.jpg`} alt={`Cover for ${game.name}`} />
                                         <p className='gameTitle'>{game.name}</p>

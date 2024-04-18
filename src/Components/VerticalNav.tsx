@@ -66,7 +66,6 @@ const VerticalNav = () => {
         const updatedGameList = await Promise.all(
             data.map(async (game: { id: any; }) => {
                 const coverData = await ipcRenderer.invoke('get-covers', game.id)
-                console.log(coverData)
 
                 if (Array.isArray(coverData) && coverData.length > 0) {
                     return {
