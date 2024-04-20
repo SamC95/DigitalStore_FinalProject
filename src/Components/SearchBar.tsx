@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const { ipcRenderer } = window as any;
-
+// import { ipcRenderer } from 'electron'; // -- Only for Unit Testing --
 
 // Interface for a game object
 interface Game {

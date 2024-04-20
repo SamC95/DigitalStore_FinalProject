@@ -2,7 +2,6 @@ import { BsBasket2Fill } from "react-icons/bs";
 import '../Styles/BasketButton.css'
 import { useNavigate } from "react-router-dom";
 
-
 function BasketButton() {
     const navigate = useNavigate();
 

@@ -6,6 +6,7 @@ import '../Styles/ProductLibrary.css'
 import { useNavigate } from 'react-router';
 
 const { ipcRenderer } = window as any;
+// import { ipcRenderer } from 'electron'; // -- Only for Unit Testing --
 
 interface Product { // Sets up the interface for the product with fields used in this component
     ProductID: number;

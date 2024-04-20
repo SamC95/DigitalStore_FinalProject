@@ -1,3 +1,20 @@
+/* 
+IMPORTANT
+Unit tests do not currently work with ContextIsolation enabled in main.ts
+to run unit tests, set ContextIsolation to false and replace any instance of:
+
+        const { ipcRenderer } = window as any;
+    
+        With
+
+        import { ipcRenderer } from 'electron'
+
+        In each component where it is present
+
+ContextIsolation should be set to true by default for security reasons
+Only perform the above steps to run unit tests correctly, until this issue is resolved.
+*/
+
 import { render, fireEvent, screen, act, waitFor } from '@testing-library/react'
 import AccountCreate from '../Components/AccountCreate'
 import { MemoryRouter } from 'react-router-dom'
@@ -6,10 +23,10 @@ import { ipcRenderer } from 'electron';
 
 jest.mock('electron', () => ({
     ipcRenderer: {
-        invoke: jest.fn(),
-        send: jest.fn(),
+      invoke: jest.fn(),
+      send: jest.fn(),
     },
-}));
+  }));
 
 describe('Account Creation Component', () => {
     it('Renders the account creation form', () => {

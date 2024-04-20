@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
 const { ipcRenderer } = window as any;
-
+// import { ipcRenderer } from 'electron'; // -- Only for Unit Testing --
 
 function Login() {
     const navigate = useNavigate()
@@ -25,7 +25,7 @@ function Login() {
     const passwordNotEmpty = password.length > 0
 
     const handleClick = async (event: { preventDefault: () => void; }) => {
-        const validUser = ipcRenderer.invoke('login-details', username, password)
+        const validUser = await ipcRenderer.invoke('login-details', username, password)
 
         if (await validUser) {
             validLogin = true
@@ -44,12 +44,12 @@ function Login() {
         }
         else if ((!validLogin)) {
             event.preventDefault()
-            setLoginMsg("Username or password is incorrect")
+            setLoginMsg("Username or Password is incorrect")
         }
         else {
             setLoginMsg("")
 
-            const accountId = ipcRenderer.invoke('getAccountId', username)
+            const accountId = await ipcRenderer.invoke('getAccountId', username)
 
             /* 
             Retrieves the AccountId to store in session storage. Used to retrieve recently viewed products, 

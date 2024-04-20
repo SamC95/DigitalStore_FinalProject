@@ -10,6 +10,7 @@ import '../Styles/ControllerLogo.css'
 import '../Styles/igdb-logo.css'
 
 const { ipcRenderer } = window as any;
+// import { ipcRenderer } from 'electron'; // -- Only for Unit Testing --
 
 function Start() {
     localStorage.setItem('hasResized', "false")

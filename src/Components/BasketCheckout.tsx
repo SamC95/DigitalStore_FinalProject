@@ -7,6 +7,7 @@ import '../Styles/BasketCheckout.css'
 import { useNavigate } from 'react-router';
 
 const { ipcRenderer } = window as any;
+// import { ipcRenderer } from 'electron'; // -- Only for Unit Testing --
 
 interface Product {
     ProductID: number;

@@ -38,7 +38,7 @@ function createWindow() {
             webSecurity: true,
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: true,
-            contextIsolation: true,
+            contextIsolation: true, // This should be on for security purposes, only disable to allow unit testing to function correctly until fixed
             devTools: false, // Prevents the user from opening browser developer mode
         },
         width: 450,

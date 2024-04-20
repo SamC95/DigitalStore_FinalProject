@@ -1,3 +1,20 @@
+/* 
+IMPORTANT
+Unit tests do not currently work with ContextIsolation enabled in main.ts
+to run unit tests, set ContextIsolation to false and replace any instance of:
+
+        const { ipcRenderer } = window as any;
+    
+        With
+
+        import { ipcRenderer } from 'electron'
+
+        In each component where it is present
+
+ContextIsolation should be set to true by default for security reasons
+Only perform the above steps to run unit tests correctly, until this issue is resolved.
+*/
+
 import { render, fireEvent, screen, act, waitFor } from '@testing-library/react'
 import Login from '../Components/Login'
 import { MemoryRouter } from 'react-router-dom';
@@ -6,9 +23,9 @@ import { ipcRenderer } from 'electron';
 
 jest.mock('electron', () => ({
     ipcRenderer: {
-        invoke: jest.fn(),
+      invoke: jest.fn(),
     },
-}));
+  }));
 
 describe('Login Component', () => {
     it('Renders the login form', () => {
@@ -107,8 +124,8 @@ describe('Login Component', () => {
         fireEvent.click(submitButton);
 
         // Ensure that the error message is displayed when the form is submitted with incorrect login details
-        await screen.findByText(/Username or password is incorrect/);
+        await screen.findByText(/Username or Password is incorrect/);
 
-        expect(screen.getByText('Username or password is incorrect')).toBeInTheDocument();
+        expect(screen.getByText(/Username or Password is incorrect/)).toBeInTheDocument();
     });
 })

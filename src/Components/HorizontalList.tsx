@@ -7,6 +7,7 @@ import '../Styles/igdb-logo.css'
 import { Link } from 'react-router-dom';
 
 const { ipcRenderer } = window as any;
+// import { ipcRenderer } from 'electron'; // -- Only for Unit Testing --
 
 interface HorizontalListProps {
     randomNum: number;

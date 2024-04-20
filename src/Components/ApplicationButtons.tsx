@@ -3,6 +3,7 @@ import '../Styles/MaximiseApp.css'
 import '../Styles/MinimiseApp.css'
 
 const { ipcRenderer } = window as any;
+// import { ipcRenderer } from 'electron'; // -- Only for Unit Testing --
 
 function ApplicationButtons() {
     return (

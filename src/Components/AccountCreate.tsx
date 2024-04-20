@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
 const { ipcRenderer } = window as any;
+// import { ipcRenderer } from 'electron'; // -- Only for Unit Testing --
 
 function AccountCreate() {
     const navigate = useNavigate()

@@ -9,6 +9,7 @@ import LoadingBar from './LoadingBar.tsx';
 import BasketButton from './BasketButton.tsx';
 
 const { ipcRenderer } = window as any;
+// import { ipcRenderer } from 'electron'; // -- Only for Unit Testing --
 
 // Interfaces for the Video Player and the MediaRenderer
 interface VideoPlayerProps {

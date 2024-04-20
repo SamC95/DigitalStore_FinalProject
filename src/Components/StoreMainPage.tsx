@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import BasketButton from './BasketButton.tsx';
 
 const { ipcRenderer } = window as any;
+// import { ipcRenderer } from 'electron'; // -- Only for Unit Testing --
 
 /* 
 Gets random numbers that are used to define the genres that will appear
