@@ -90,13 +90,13 @@ function StoreMainPage() {
                 setSearching(false)
             }
             else {
-                const data = await ipcRenderer.invoke('get-featured', currentDate, monthAgoDate)
+                const data = await ipcRenderer.invoke('get-featured', currentDate, monthAgoDate) // Retrieve up to 5 featured products
 
                 const featuredProducts = await Promise.all(
-                    data.map(async (game: { id: any; }) => {
+                    data.map(async (game: { id: any; }) => { // Once they have been retrieved, attempt to retrieve images for these products
                         const imageData = await ipcRenderer.invoke('get-screenshots', game.id)
 
-                        if (Array.isArray(imageData) && imageData.length > 0) {
+                        if (Array.isArray(imageData) && imageData.length > 0) { // If the product has images then the product is added
                             const imageIds = imageData.map((image) => image.image_id)
                             setImageIds((prevImageIds) => [...prevImageIds, ...imageIds])
 
@@ -106,17 +106,20 @@ function StoreMainPage() {
                             }
                         }
                         else {
-                            return game;
+                            return null; // If there are no images, return null instead
                         }
                     })
                 )
 
-                featuredCache = {
-                    cachedKey: featuredProducts,
+                // Filters out any products without images
+                const filteredFeaturedProducts = featuredProducts.filter(product => product !== null);
+
+                featuredCache = { // Cache the products that have been retrieved and filtered
+                    cachedKey: filteredFeaturedProducts,
                 };
 
                 if (featuredProducts.length !== 0) {
-                    setFeaturedData(featuredProducts)
+                    setFeaturedData(filteredFeaturedProducts)
                     setSearching(false)
 
                     setActiveButton(0)
