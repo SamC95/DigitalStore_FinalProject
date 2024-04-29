@@ -522,7 +522,7 @@ ipcMain.handle('get-covers', async (_event, game) => {
         const imageList = [];
 
         if (!response.ok) {
-            throw new Error('Failed to fetch covers: ' + response.status);
+            throw new Error('Failed to fetch cover\nThis could be due to API rate limits\nError Status Code: ' + response.status);
         }
 
         if (Array.isArray(coverData)) {
