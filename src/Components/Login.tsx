@@ -24,6 +24,7 @@ function Login() {
     const usernameNotEmpty = username.length > 0
     const passwordNotEmpty = password.length > 0
 
+    // Checks if the details match stored account credentials
     const handleClick = async (event: { preventDefault: () => void; }) => {
         const validUser = await ipcRenderer.invoke('login-details', username, password)
 
@@ -37,6 +38,7 @@ function Login() {
         pageChange(event)
     }
 
+    // Displays appropriate error messages
     const pageChange = async (event: { preventDefault: () => void; }) => {
         if ((!usernameNotEmpty || !passwordNotEmpty)) {
             event.preventDefault()

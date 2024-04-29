@@ -170,6 +170,7 @@ const ProductPage: React.FC = () => {
     useEffect(() => {
         let isMounted = true;
     
+        // Adds the product details to the recently viewed products of the logged in user once the page mounts
         if (storeRecentlyViewed === true && isMounted) {
             ipcRenderer.invoke('addRecentlyViewed', accountId, productInfo[0].id, productInfo[0].name)
                 .then(() => {

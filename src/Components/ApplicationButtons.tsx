@@ -5,6 +5,7 @@ import '../Styles/MinimiseApp.css'
 const { ipcRenderer } = window as any;
 // import { ipcRenderer } from 'electron'; // -- Only for Unit Testing --
 
+// Handles the maximise, minimise and closing of the application with custom buttons
 function ApplicationButtons() {
     return (
         <div>

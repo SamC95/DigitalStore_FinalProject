@@ -49,11 +49,13 @@ function AccountCreate() {
         setEmailValid(emailFormat.test(event.target.value))
     }
 
+    // When confirmation modal is closed, navigates to start page
     const closeConfirmation = () => {
         setShowConfirmation(false);
         navigate('/')
     }
 
+    // Checks if a user exists by the specified username or email address already
     const handleClick = async (event: { preventDefault: () => void; }) => {
         if (isEmailValid && validUsername) {
             const userExists = await ipcRenderer.invoke('check-details', username, emailAddress)
@@ -69,6 +71,7 @@ function AccountCreate() {
         pageChange(event)
     }
 
+    // Error messages for invalid inputs
     const pageChange = (event: { preventDefault: () => void; }) => {
         if ((!validUsernameLength || !usernameNotEmpty)) {
             event.preventDefault()
@@ -94,7 +97,7 @@ function AccountCreate() {
             event.preventDefault()
             setLoginMsg("This username or email address is already taken")
         }
-        else {
+        else { // If inputs are valid, creates account and shows confirmation message
             setLoginMsg("")
 
             ipcRenderer.invoke("account-create", username, emailAddress, password)

@@ -32,10 +32,12 @@ function BasketCheckout() {
     const [cardCode, setCardCode] = useState("")
     const [errorString, setErrorString] = useState("")
 
+    // Triggers the retrieval of basket data on page mounting
     useEffect(() => {
         getData()
     }, [accountId])
 
+    // Retrieves the users basket details
     const getData = async () => {
         try {
             setSearching(true)
@@ -71,6 +73,7 @@ function BasketCheckout() {
         setCardCode("")
     }
 
+    // Error handling for invalid inputs
     function handlePurchase() {
         switch (true) {
             case cardNum.length !== 16:
@@ -90,6 +93,7 @@ function BasketCheckout() {
                 return;
         }
 
+        // Adds each product to the list of user purchases and removes them from the basket
         basketData.forEach(product => {
             ipcRenderer.invoke('addPurchase', accountId, product.ProductID, product.ProductName, product.ProductCover, JSON.stringify(product.ProductGenres), product.ProductPrice);
 

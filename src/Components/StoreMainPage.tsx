@@ -37,6 +37,7 @@ interface Game {
     artwork_id: string;
 }
 
+// Stores the featured products data
 let featuredCache: Record<string, Game[]> = {};
 
 function StoreMainPage() {
