@@ -9,15 +9,15 @@ API Keys are not included in the GitHub version of this project.
 All Products retrieved from the IGDB API are Copyright of their respective owners and the application was not designed for commercial purposes, only academic ones.
 
 ## Contents
-* [Project Brief]()
-* [Approach]()
-* [Technologies]()
-* [Project Planning Diagrams]()
-* [Responsibilities]()
-* [Key Learnings]()
-* [Achievements]()
-* [Challenges]()
-* [Conclusions]()
+* [Project Aims](https://github.com/SamC95/DigitalStore-FinalProject/tree/main#project-aims)
+* [Approach](https://github.com/SamC95/DigitalStore-FinalProject/tree/main#approach)
+* [Technologies](https://github.com/SamC95/DigitalStore-FinalProject/tree/main#technologies)
+* [Project Planning Diagrams](https://github.com/SamC95/DigitalStore-FinalProject/tree/main#project-planning-diagrams)
+* [Responsibilities](https://github.com/SamC95/DigitalStore-FinalProject/tree/main#responsibilities)
+* [Key Learnings](https://github.com/SamC95/DigitalStore-FinalProject/tree/main#key-learnings)
+* [Achievements](https://github.com/SamC95/DigitalStore-FinalProject/tree/main#achievements)
+* [Challenges](https://github.com/SamC95/DigitalStore-FinalProject/tree/main#challenges)
+* [Conclusions](https://github.com/SamC95/DigitalStore-FinalProject/tree/main#conclusions)
 
 ## Project Aims
 * Develop an eCommerce Desktop Application using React & Electron
@@ -310,7 +310,7 @@ Below are a couple screenshots showing some application pages and their UI. I wa
 ## Achievements
 
 * This is the first time that I have developed an application of this scale and I believe I was able to effectively meet my core design & planning goals effectively; including the use of an account system and displaying the appropriate stored data to the user by utilising their unique account id number as a basis for what data is retrieved from the database.
-* Maintained a consistent design across the application and ensured that any situations where data may not load due to bugs or API errors were appropriately covered to ensure a good user experience.
+* Maintained a consistent design across the application and ensured that the application worked consistently with as little bugs as possible, and in the event that there were any situations where data may not load due to bugs or API errors; these were appropriately covered through error handling to ensure a good user experience.
 * Utilised new languages or frameworks that I had no prior experience with (Electron framework, Node.js, TypeScript) or ones that I only had relatively limited experience with (React, CSS, SQL).
 
 ## Challenges
@@ -322,6 +322,8 @@ I also wanted to implement unit testing more effectively but ran into some issue
 ## Conclusions
 
 Working on this project taught me a few key lessons. I feel that it effectively taught me the importance of proper planning and being flexible with design goals by prioritising what is most important to include. It also taught me that some unexpected roadblocks can occur in development and the importance of properly assigning extra time to account for these situations, an example being when I needed to adjust my usage of the API to store the data into a database to reduce load on the API; this is something that I did not realise during planning would be a hurdle.
+
+There were some small bugs that I was not able to resolve due to time constraints, such as some rare instances where API rate limits still occur on searches, however this is uncommon and if it does occur then the product will only be missing its cover art and all functionality works as intended otherwise. There is also a very rare bug where the SQL database is locked when viewing a product page resulting in some unexpected behaviour with the recently viewed products; however this does not cause any crashes or other unintended consequences.
 
 There were some features that I would have liked to include, such as parental controls to filter results to only a certain maximum age bracket. As well as some aspects of the program that I feel that I could improve with more time, such as making the UI a bit less basic looking and improving the basket and checkout section of the application so that it looks more professional. However, overall I am happy with the final outcome of the application and how I was able to implement the design goals I laid out in the planning an design phases.
 
