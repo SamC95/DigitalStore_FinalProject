@@ -309,8 +309,8 @@ Below are a couple screenshots showing some application pages and their UI. I wa
 
 ## Achievements
 
-* This is the first time that I have developed an application of this scale and I believe I was able to effectively meet my core design & planning goals effectively; including the use of an account system and displaying the appropriate stored data to the user by utilising their unique account id number as a basis for what data is retrieved from the database.
-* Maintained a consistent design across the application and ensured that the application worked consistently with as little bugs as possible, and in the event that there were any situations where data may not load due to bugs or API errors; these were appropriately covered through error handling to ensure a good user experience.
+* This is the first time that I have developed an application of this scale and I believe I was able to meet my core design & planning goals effectively; including the use of an account system and displaying the appropriate stored data to the user by utilising their unique account id number as a basis for what data is retrieved from the database.
+* Maintained a consistent design and ensured that the application worked consistently with as little bugs as possible, and in the event that there were any situations where data may not load due to bugs or API errors; these were appropriately covered through error handling to ensure a good user experience.
 * Utilised new languages or frameworks that I had no prior experience with (Electron framework, Node.js, TypeScript) or ones that I only had relatively limited experience with (React, CSS, SQL).
 
 ## Challenges
