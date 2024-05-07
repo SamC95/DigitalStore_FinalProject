@@ -77,6 +77,7 @@ As well as some features that did not end up being implemented in this version, 
 ![Static Badge](https://img.shields.io/badge/JSON-%23000000?style=for-the-badge&logo=JSON&logoColor=white)
 ![Static Badge](https://img.shields.io/badge/npm-%23CB3837?style=for-the-badge&logo=npm&logoColor=white)
 ![Static Badge](https://img.shields.io/badge/Jest-%23C21325?style=for-the-badge&logo=jest&logoColor=white)
+![Static Badge](https://img.shields.io/badge/VS%20Code-%23007ACC?style=for-the-badge&logo=Visual%20Studio%20Code&logoColor=white)
 
 ## Project Planning Diagrams
 
