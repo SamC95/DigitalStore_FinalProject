@@ -4,7 +4,7 @@ By [Sam Clark](https://github.com/SamC95)
 
 This project was my final year project submission in my third year at the University of Westminster
 
-API Keys are not included in the GitHub version of this project. You can get your own API keys on the [Twitch Developers](https://dev.twitch.tv/) page and store them in the included empty Access.db file.
+API Keys are not included in the GitHub version of this project. You can get your own API keys on the [Twitch Developers](https://dev.twitch.tv/) page and use the [documentation](https://api-docs.igdb.com/#getting-started) to set them up and store them in the included empty Access.db file.
 
 All Products retrieved from the IGDB API are Copyright of their respective owners and the application was not designed for commercial purposes, only academic ones.
 
