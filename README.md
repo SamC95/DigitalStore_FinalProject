@@ -60,23 +60,23 @@ As well as some features that did not end up being implemented in this version, 
 
 ### Front-end
 
-![Static Badge](https://img.shields.io/badge/HTML5-%23E34F26?style=for-the-badge&logo=HTML5&logoColor=white)
-![Static Badge](https://img.shields.io/badge/CSS3-%231572B6?style=for-the-badge&logo=CSS3&logoColor=white)
-![Static Badge](https://img.shields.io/badge/React-%2361DAFB?style=for-the-badge&logo=React&logoColor=white)
+![Static Badge](https://img.shields.io/badge/HTML5-%23E34F26?style=for-the-badge&logo=HTML5&logoColor=white)  
+![Static Badge](https://img.shields.io/badge/CSS3-%231572B6?style=for-the-badge&logo=CSS3&logoColor=white)  
+![Static Badge](https://img.shields.io/badge/React-%2361DAFB?style=for-the-badge&logo=React&logoColor=white)  
 ![Static Badge](https://img.shields.io/badge/TypeScript-%233178C6?style=for-the-badge&logo=TypeScript&logoColor=white)
 
 ### Back-end
 
-![Static Badge](https://img.shields.io/badge/Electron-%2347848F?style=for-the-badge&logo=Electron&logoColor=white)
-![Static Badge](https://img.shields.io/badge/Node.js-%235FA04E?style=for-the-badge&logo=Node.js&logoColor=white)
+![Static Badge](https://img.shields.io/badge/Electron-%2347848F?style=for-the-badge&logo=Electron&logoColor=white)  
+![Static Badge](https://img.shields.io/badge/Node.js-%235FA04E?style=for-the-badge&logo=Node.js&logoColor=white)  
 ![Static Badge](https://img.shields.io/badge/SQLite-%23003B57?style=for-the-badge&logo=SQLite&logoColor=white)
 
 ### Additional
 
-![Static Badge](https://img.shields.io/badge/IGDB%20API-%239147FF?style=for-the-badge&logo=IGDB&logoColor=white)
-![Static Badge](https://img.shields.io/badge/JSON-%23000000?style=for-the-badge&logo=JSON&logoColor=white)
-![Static Badge](https://img.shields.io/badge/npm-%23CB3837?style=for-the-badge&logo=npm&logoColor=white)
-![Static Badge](https://img.shields.io/badge/Jest-%23C21325?style=for-the-badge&logo=jest&logoColor=white)
+![Static Badge](https://img.shields.io/badge/IGDB%20API-%239147FF?style=for-the-badge&logo=IGDB&logoColor=white)  
+![Static Badge](https://img.shields.io/badge/JSON-%23000000?style=for-the-badge&logo=JSON&logoColor=white)  
+![Static Badge](https://img.shields.io/badge/npm-%23CB3837?style=for-the-badge&logo=npm&logoColor=white)  
+![Static Badge](https://img.shields.io/badge/Jest-%23C21325?style=for-the-badge&logo=jest&logoColor=white)  
 ![Static Badge](https://img.shields.io/badge/VS%20Code-%23007ACC?style=for-the-badge&logo=Visual%20Studio%20Code&logoColor=white)
 
 ## Project Planning Diagrams
