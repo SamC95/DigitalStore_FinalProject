@@ -15,7 +15,7 @@ This project was my final year project submission in my third year at the Univer
 * [Challenges]()
 * [Conclusions]()
 
-## Project Brief
+## Project Aims
 * Develop an eCommerce Desktop Application using React & Electron
 * Implement Back-end functionality using Node.js
 * Implement an account system with an SQL database
@@ -78,13 +78,13 @@ As well as some features that did not end up being implemented in this version, 
 
 ### Application Navigation Diagram
 
-This diagram was created to define the expected way in which the user can navigate from page to page in the application
+This diagram was created to define the expected way in which the user can navigate from page to page in the application.
 
 <img src="https://github.com/SamC95/DigitalStore-FinalProject/assets/132593571/713d8a73-b070-45c1-813f-93f7bb2b3cf2" width="800" />
 
 ### UI/UX Storyboards
 
-Several wireframes were created to represent each component in the application, with some annotations to make clear some expected interactions.
+Several storyboards were created to represent each component in the application, with some annotations to make clear some expected interactions.
 
 #### Start, Login & Create Account
 
