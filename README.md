@@ -317,7 +317,7 @@ Below are a couple screenshots showing some application pages and their UI. I wa
 
 The biggest challenges I faced around the development of the application were related to the IGDB API and ensuring that I was properly retrieving the data I wanted; as well as adjusting my approach with storing the data received so that API rate limits could be avoided as much as possible. Learning how to properly utilise the languages, frameworks and other tools that I decided to use was another key challenge that resulted in some hurdles that I had to overcome during development. I would say the last major challenge was designing the overall style of the application and ensuring that the UI met my initial storyboards as closely as possible.
 
-I also wanted to implement unit testing more effectively but ran into some issues getting it to work consistently due to ContextIsolation changing the behaviour of how ipcRenderer communicates which would result in errors during jest testing. This is an issue I would have liked to resolve and properly implement given more time but I still thoroughly tested my application with manual testing and test cases to ensure that functionaliy was working as intended.
+I also wanted to implement unit testing more effectively but ran into some issues getting it to work consistently due to ContextIsolation changing the behaviour of how ipcRenderer communicates which would result in errors during jest testing. This is an issue I would have liked to resolve and properly implement given more time but I still thoroughly tested my application with manual testing and test cases to ensure that functionality was working as intended.
 
 ## Conclusions
 
