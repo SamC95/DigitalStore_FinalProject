@@ -302,7 +302,7 @@ Below are a couple screenshots showing some application pages and their UI. I wa
 ## Key Learnings
 
 * Understand the critical importance of proper project planning & design phases; as well as being able to be pinpoint essential and non-essential features to ensure that tight deadlines are met.
-* Able to utilise React & TypeScript more effectively after having only had limited experience with them previously. As this was my first time developing an application using TypeScript and the React experience I had previously was limited to pre-defined GOV.UK components.
+* Able to utilise React & TypeScript more effectively after having only had limited or no experience with them previously. As this was my first time developing an application using TypeScript and the React experience I had previously was limited to pre-defined GOV.UK components.
 * Better understanding of utilising SQL databases to store and retrieve data for a wider range of different purposes compared to prior coursework projects.
 * Learnt to use the Electron framework and some of its features like ipcMain/ipcRenderer to communicate between the front-end and back-end of the application effectively.
 * Gained more experience with utilising APIs to display data dynamically, and how to properly make use of the JSON data provided by the API within my application.
