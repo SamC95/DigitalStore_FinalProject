@@ -13,7 +13,7 @@ All Products retrieved from the IGDB API are Copyright of their respective owner
 * [Approach](https://github.com/SamC95/DigitalStore-FinalProject/tree/main#approach)
 * [Technologies](https://github.com/SamC95/DigitalStore-FinalProject/tree/main#technologies)
 * [Project Planning Diagrams](https://github.com/SamC95/DigitalStore-FinalProject/tree/main#project-planning-diagrams)
-* [Responsibilities](https://github.com/SamC95/DigitalStore-FinalProject/tree/main#responsibilities)
+* [Implementation](https://github.com/SamC95/DigitalStore-FinalProject/tree/main#implementation)
 * [Key Learnings](https://github.com/SamC95/DigitalStore-FinalProject/tree/main#key-learnings)
 * [Achievements](https://github.com/SamC95/DigitalStore-FinalProject/tree/main#achievements)
 * [Challenges](https://github.com/SamC95/DigitalStore-FinalProject/tree/main#challenges)
@@ -115,7 +115,7 @@ Several storyboards were created to represent each component in the application,
 
 <img src="https://github.com/SamC95/DigitalStore-FinalProject/assets/132593571/e912a735-d42f-4a3f-aeb1-85614091de87" width="400" />
 
-## Responsibilities
+## Implementation
 
 ### Retrieving Product Data
 
