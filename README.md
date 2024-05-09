@@ -6,8 +6,6 @@ This project was my final year project submission in my third year at the Univer
 
 API Keys are not included in the GitHub version of this project. You can get your own API keys on the [Twitch Developers](https://dev.twitch.tv/) page and use the [documentation](https://api-docs.igdb.com/#getting-started) to set them up and store them in the included empty Access.db file.
 
-All Products retrieved from the IGDB API are Copyright of their respective owners and the application was not designed for commercial purposes, only academic ones.
-
 ## Contents
 * [Project Aims](https://github.com/SamC95/DigitalStore-FinalProject/tree/main#project-aims)
 * [Approach](https://github.com/SamC95/DigitalStore-FinalProject/tree/main#approach)
@@ -18,6 +16,7 @@ All Products retrieved from the IGDB API are Copyright of their respective owner
 * [Achievements](https://github.com/SamC95/DigitalStore-FinalProject/tree/main#achievements)
 * [Challenges](https://github.com/SamC95/DigitalStore-FinalProject/tree/main#challenges)
 * [Conclusions](https://github.com/SamC95/DigitalStore-FinalProject/tree/main#conclusions)
+* [Credits](https://github.com/SamC95/DigitalStore-FinalProject/tree/main#credits)
 
 ## Project Aims
 * Develop an eCommerce Desktop Application using React & Electron
@@ -327,4 +326,14 @@ Working on this project taught me a few key lessons. I feel that it effectively 
 There were some small bugs that I was not able to resolve due to time constraints, such as some rare instances where API rate limits still occur on searches, however this is uncommon and if it does occur then the product will only be missing its cover art and all functionality works as intended otherwise. There is also a very rare bug where the SQL database is locked when viewing a product page resulting in some unexpected behaviour with the recently viewed products; however this does not cause any crashes or other unintended consequences.
 
 There were some features that I would have liked to include, such as parental controls to filter results to only a certain maximum age bracket. As well as some aspects of the program that I feel that I could improve with more time, such as making the UI a bit less basic looking and improving the basket and checkout section of the application so that it looks more professional. However, overall I am happy with the final outcome of the application and how I was able to implement the design goals I laid out in the planning an design phases.
+
+## Credits
+
+Credit to [Twitch](https://twitch.tv) for the use of the The Internet Game Database (IGDB) API.
+
+Credit for Icons & Logos used in the application belong to: [Icons8](https://icons8.com/icons), [FlatIcon](https://www.flaticon.com) and [Hubspot](https://blog.hubspot.com/website/css-loading-animation)
+
+Initial Electron Setup was based on an Electron Boilerplate.
+
+All Products retrieved from the IGDB API are Copyright of their respective owners and the application was not designed for commercial purposes, only academic ones.
 
