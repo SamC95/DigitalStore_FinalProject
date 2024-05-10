@@ -55,6 +55,8 @@ As well as some features that did not end up being implemented in this version, 
 * Dark Mode / Light Mode Toggle
 * Parental Controls
 
+The application does not have any web server functionality included, the front-end and back-end code are within the same project structure and the database files are locally stored in the project folder.
+
 ## Technologies
 
 ### Front-end
@@ -66,12 +68,12 @@ As well as some features that did not end up being implemented in this version, 
 
 ### Back-end
 
-![Static Badge](https://img.shields.io/badge/Electron-%2347848F?style=for-the-badge&logo=Electron&logoColor=white)  
 ![Static Badge](https://img.shields.io/badge/Node.js-%235FA04E?style=for-the-badge&logo=Node.js&logoColor=white)  
 ![Static Badge](https://img.shields.io/badge/SQLite-%23003B57?style=for-the-badge&logo=SQLite&logoColor=white)
 
 ### Additional
 
+![Static Badge](https://img.shields.io/badge/Electron-%2347848F?style=for-the-badge&logo=Electron&logoColor=white)  
 ![Static Badge](https://img.shields.io/badge/IGDB%20API-%239147FF?style=for-the-badge&logo=IGDB&logoColor=white)  
 ![Static Badge](https://img.shields.io/badge/JSON-%23000000?style=for-the-badge&logo=JSON&logoColor=white)  
 ![Static Badge](https://img.shields.io/badge/npm-%23CB3837?style=for-the-badge&logo=npm&logoColor=white)  
