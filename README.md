@@ -55,8 +55,6 @@ As well as some features that did not end up being implemented in this version, 
 * Dark Mode / Light Mode Toggle
 * Parental Controls
 
-The application does not have any web server functionality included, the front-end and back-end code are within the same project structure and the database files are locally stored in the project folder.
-
 ## Technologies
 
 ### Front-end
